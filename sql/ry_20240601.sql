@@ -23,17 +23,13 @@ create table sys_dept (
 -- ----------------------------
 -- 初始化-部门表数据
 -- ----------------------------
-insert into sys_dept values(100,  0,   '0',          '若依科技',   0, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(101,  100, '0,100',      '深圳总公司', 1, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(102,  100, '0,100',      '长沙分公司', 2, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(103,  101, '0,100,101',  '研发部门',   1, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(104,  101, '0,100,101',  '市场部门',   2, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(105,  101, '0,100,101',  '测试部门',   3, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(106,  101, '0,100,101',  '财务部门',   4, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(107,  101, '0,100,101',  '运维部门',   5, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(108,  102, '0,100,102',  '市场部门',   1, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', sysdate(), '', null);
-insert into sys_dept values(109,  102, '0,100,102',  '财务部门',   2, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', sysdate(), '', null);
-
+INSERT INTO sys_dept(`dept_id`, `parent_id`, `ancestors`, `dept_name`, `order_num`, `leader`, `phone`, `email`, `status`, `del_flag`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (100, 0, '0', 'jy-学习平台', 0, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2025-01-08 20:35:58', 'admin', '2025-01-09 16:52:11');
+INSERT INTO sys_dept(`dept_id`, `parent_id`, `ancestors`, `dept_name`, `order_num`, `leader`, `phone`, `email`, `status`, `del_flag`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (101, 100, '0,100', '平台总运营', 1, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2025-01-08 20:35:58', 'admin', '2025-01-09 16:52:30');
+INSERT INTO sys_dept(`dept_id`, `parent_id`, `ancestors`, `dept_name`, `order_num`, `leader`, `phone`, `email`, `status`, `del_flag`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (103, 101, '0,100,101', '平台管理', 1, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2025-01-08 20:35:58', 'admin', '2025-01-09 16:53:18');
+INSERT INTO sys_dept(`dept_id`, `parent_id`, `ancestors`, `dept_name`, `order_num`, `leader`, `phone`, `email`, `status`, `del_flag`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (104, 101, '0,100,101', '课程研发', 2, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2025-01-08 20:35:58', 'admin', '2025-01-09 16:53:42');
+INSERT INTO sys_dept(`dept_id`, `parent_id`, `ancestors`, `dept_name`, `order_num`, `leader`, `phone`, `email`, `status`, `del_flag`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (105, 101, '0,100,101', '测试部门', 3, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2025-01-08 20:35:58', '', NULL);
+INSERT INTO sys_dept(`dept_id`, `parent_id`, `ancestors`, `dept_name`, `order_num`, `leader`, `phone`, `email`, `status`, `del_flag`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (200, 100, '0,100', '教师总管理', 2, '', '', '', '0', '0', 'admin', '2025-01-09 16:54:02', 'admin', '2025-01-09 16:54:55');
+INSERT INTO sys_dept(`dept_id`, `parent_id`, `ancestors`, `dept_name`, `order_num`, `leader`, `phone`, `email`, `status`, `del_flag`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (202, 200, '0,100,200', '教学部门', 99, NULL, NULL, NULL, '0', '0', 'admin', '2025-01-09 16:54:40', '', NULL);
 
 -- ----------------------------
 -- 2、用户信息表
@@ -93,11 +89,8 @@ create table sys_post
 -- ----------------------------
 -- 初始化-岗位信息表数据
 -- ----------------------------
-insert into sys_post values(1, 'ceo',  '董事长',    1, '0', 'admin', sysdate(), '', null, '');
-insert into sys_post values(2, 'se',   '项目经理',  2, '0', 'admin', sysdate(), '', null, '');
-insert into sys_post values(3, 'hr',   '人力资源',  3, '0', 'admin', sysdate(), '', null, '');
-insert into sys_post values(4, 'user', '普通员工',  4, '0', 'admin', sysdate(), '', null, '');
-
+INSERT INTO sys_post(`post_id`, `post_code`, `post_name`, `post_sort`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (1, 'admin', '超级管理员', 1, '0', 'admin', '2025-01-08 20:35:59', 'admin', '2025-01-09 16:56:07', '');
+INSERT INTO sys_post(`post_id`, `post_code`, `post_name`, `post_sort`, `status`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (2, 'admin1', '普通管理员', 2, '0', 'admin', '2025-01-08 20:35:59', 'admin', '2025-01-09 16:56:20', '');
 
 -- ----------------------------
 -- 4、角色信息表
