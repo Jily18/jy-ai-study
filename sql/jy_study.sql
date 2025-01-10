@@ -1,4 +1,3 @@
-
 --文章表
 CREATE TABLE `study_article` (
                                  `article_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '文章ID',
@@ -12,5 +11,12 @@ CREATE TABLE `study_article` (
                                  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+                                 `category` varchar(50) DEFAULT 'course' COMMENT '文章分类(course-课程文章,knowledge-知识库文章)',
+                                 `tags` varchar(255) DEFAULT NULL COMMENT '文章标签(逗号分隔)',
+                                 `summary` varchar(500) DEFAULT NULL COMMENT '文章摘要',
+                                 `view_count` bigint(20) DEFAULT '0' COMMENT '阅读量',
+                                 `like_count` bigint(20) DEFAULT '0' COMMENT '点赞数',
+                                 `collect_count` bigint(20) DEFAULT '0' COMMENT '收藏数',
+                                 `top` char(1) DEFAULT '0' COMMENT '是否置顶(0-否,1-是)',
                                  PRIMARY KEY (`article_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='课程文章表';

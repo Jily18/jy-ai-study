@@ -27,6 +27,21 @@ public class StudyArticle extends BaseEntity {
 
     private String remark;
 
+    private String category;
+    
+    private String tags;
+    
+    @Size(min = 0, max = 500, message = "文章摘要不能超过500个字符")
+    private String summary;
+    
+    private Long viewCount;
+    
+    private Long likeCount;
+    
+    private Long collectCount;
+    
+    private String top;
+
     // getter和setter方法
     public Long getArticleId() {
         return articleId;
@@ -76,6 +91,62 @@ public class StudyArticle extends BaseEntity {
         this.sort = sort;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public Long getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Long viewCount) {
+        this.viewCount = viewCount;
+    }
+
+    public Long getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(Long likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public Long getCollectCount() {
+        return collectCount;
+    }
+
+    public void setCollectCount(Long collectCount) {
+        this.collectCount = collectCount;
+    }
+
+    public String getTop() {
+        return top;
+    }
+
+    public void setTop(String top) {
+        this.top = top;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -90,6 +161,13 @@ public class StudyArticle extends BaseEntity {
                 .append("updateBy", getUpdateBy())
                 .append("updateTime", getUpdateTime())
                 .append("remark", getRemark())
+                .append("category", getCategory())
+                .append("tags", getTags())
+                .append("summary", getSummary())
+                .append("viewCount", getViewCount())
+                .append("likeCount", getLikeCount())
+                .append("collectCount", getCollectCount())
+                .append("top", getTop())
                 .toString();
     }
 }

@@ -16,10 +16,19 @@
         <result property="updateBy"     column="update_by"     />
         <result property="updateTime"   column="update_time"   />
         <result property="remark"       column="remark"        />
+        <result property="category"      column="category"       />
+        <result property="tags"         column="tags"          />
+        <result property="summary"      column="summary"       />
+        <result property="viewCount"    column="view_count"    />
+        <result property="likeCount"    column="like_count"    />
+        <result property="collectCount" column="collect_count" />
+        <result property="top"          column="top"           />
     </resultMap>
 
     <sql id="selectArticleVo">
-        select article_id, title, content, lesson_id, status, sort, create_by, create_time, update_by, update_time, remark
+        select article_id, title, content, lesson_id, status, sort, category, tags, 
+               summary, view_count, like_count, collect_count, top,
+               create_by, create_time, update_by, update_time, remark
         from study_article
     </sql>
 
@@ -59,6 +68,10 @@
         <if test="sort != null">sort,</if>
         <if test="remark != null and remark != ''">remark,</if>
         <if test="createBy != null and createBy != ''">create_by,</if>
+        <if test="category != null">category,</if>
+        <if test="tags != null">tags,</if>
+        <if test="summary != null">summary,</if>
+        <if test="top != null">top,</if>
         create_time
         )values(
         <if test="title != null and title != ''">#{title},</if>
@@ -68,6 +81,10 @@
         <if test="sort != null">#{sort},</if>
         <if test="remark != null and remark != ''">#{remark},</if>
         <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="category != null">#{category},</if>
+        <if test="tags != null">#{tags},</if>
+        <if test="summary != null">#{summary},</if>
+        <if test="top != null">#{top},</if>
         sysdate()
         )
     </insert>
@@ -82,6 +99,13 @@
             <if test="sort != null">sort = #{sort},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="category != null">category = #{category},</if>
+            <if test="tags != null">tags = #{tags},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="viewCount != null">view_count = #{viewCount},</if>
+            <if test="likeCount != null">like_count = #{likeCount},</if>
+            <if test="collectCount != null">collect_count = #{collectCount},</if>
+            <if test="top != null">top = #{top},</if>
             update_time = sysdate()
         </set>
         where article_id = #{articleId}
