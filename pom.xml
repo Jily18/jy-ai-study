@@ -193,6 +193,13 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <!-- 课程模块 -->
+            <dependency>
+                <groupId>com.jy.study</groupId>
+                <artifactId>jy-study-lesson</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -203,6 +210,7 @@
         <module>jy-study-quartz</module>
         <module>jy-study-generator</module>
         <module>jy-study-common</module>
+        <module>jy-study-lesson</module>
     </modules>
     <packaging>pom</packaging>
 

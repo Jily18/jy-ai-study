@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
-    <artifactId>jy-study-admin</artifactId>
+    <artifactId>ROOT</artifactId>
 
     <description>
         web服务入口
@@ -65,6 +65,12 @@
         <dependency>
             <groupId>com.jy.study</groupId>
             <artifactId>jy-study-generator</artifactId>
+        </dependency>
+
+        <!-- 课程模块-->
+        <dependency>
+            <groupId>com.jy.study</groupId>
+            <artifactId>jy-study-lesson</artifactId>
         </dependency>
 
     </dependencies>

@@ -289,7 +289,12 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/ajax/**", "anon");
         filterChainDefinitionMap.put("/js/**", "anon");
         filterChainDefinitionMap.put("/ruoyi/**", "anon");
+        filterChainDefinitionMap.put("/web/**", "anon");
         filterChainDefinitionMap.put("/captcha/captchaImage**", "anon");
+        
+        // 添加根路径匿名访问配置
+        filterChainDefinitionMap.put("/", "anon");
+        
         // 匿名访问不鉴权注解列表
         List<String> permitAllUrl = SpringUtils.getBean(PermitAllUrlProperties.class).getUrls();
         if (StringUtils.isNotEmpty(permitAllUrl))
@@ -302,8 +307,6 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/login", "anon,captchaValidate");
         // 注册相关
         filterChainDefinitionMap.put("/register", "anon,captchaValidate");
-        // 系统权限列表
-        // filterChainDefinitionMap.putAll(SpringUtils.getBean(IMenuService.class).selectPermsAll());
 
         Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
         filters.put("onlineSession", onlineSessionFilter());

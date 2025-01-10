@@ -85,6 +85,14 @@ public class SysIndexController extends BaseController
         return webIndex;
     }
 
+
+    // 根路径访问
+    @GetMapping("/")
+    public String root()
+    {
+        return "redirect:/web";
+    }
+
     // 锁定屏幕
     @GetMapping("/lockscreen")
     public String lockscreen(ModelMap mmap)
