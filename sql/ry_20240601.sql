@@ -116,7 +116,8 @@ create table sys_role (
 -- 初始化-角色信息表数据
 -- ----------------------------
 insert into sys_role values('1', '超级管理员', 'admin',  1, 1, '0', '0', 'admin', sysdate(), '', null, '超级管理员');
-insert into sys_role values('2', '普通角色',   'common', 2, 2, '0', '0', 'admin', sysdate(), '', null, '普通角色');
+insert into sys_role values('2', '普通管理员',   'common', 2, 2, '0', '0', 'admin', sysdate(), '', null, '普通角色');
+INSERT INTO sys_role (`role_id`, `role_name`, `role_key`, `role_sort`, `data_scope`, `status`, `del_flag`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (100, '前台用户', 'user', 5, '1', '0', '0', 'admin', '2025-01-13 15:38:47', '', NULL, NULL);
 
 
 -- ----------------------------
