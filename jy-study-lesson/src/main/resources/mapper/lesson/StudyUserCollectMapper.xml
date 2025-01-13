@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jy.study.lesson.mapper.StudyUserCollectMapper">
+
+    <resultMap type="StudyUserCollect" id="UserCollectResult">
+        <id     property="collectId"   column="collect_id"   />
+        <result property="userId"      column="user_id"      />
+        <result property="type"        column="type"         />
+        <result property="targetId"    column="target_id"    />
+        <result property="createTime"  column="create_time"  />
+    </resultMap>
+
+    <insert id="insertUserCollect" parameterType="StudyUserCollect">
+        insert into study_user_collect (
+            user_id,
+            type,
+            target_id,
+            create_time
+        ) values (
+            #{userId},
+            #{type},
+            #{targetId},
+            #{createTime}
+        )
+    </insert>
+
+    <select id="selectUserCollect" resultMap="UserCollectResult">
+        select * from study_user_collect
+        where user_id = #{userId} and type = #{type} and target_id = #{targetId}
+        limit 1
+    </select>
+
+    <delete id="deleteUserCollect">
+        delete from study_user_collect 
+        where user_id = #{userId} and type = #{type} and target_id = #{targetId}
+    </delete>
+
+    <select id="checkCollected" resultType="boolean">
+        select count(1) from study_user_collect
+        where user_id = #{userId} and type = #{type} and target_id = #{targetId}
+    </select>
+
+</mapper> 
