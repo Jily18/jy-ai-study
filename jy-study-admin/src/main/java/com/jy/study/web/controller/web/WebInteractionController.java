@@ -2,6 +2,7 @@ package com.jy.study.web.controller.web;
 
 import com.jy.study.common.core.controller.BaseController;
 import com.jy.study.common.core.domain.AjaxResult;
+import com.jy.study.common.utils.ShiroUtils;
 import com.jy.study.lesson.service.IStudyUserInteractionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -89,8 +90,8 @@ public class WebInteractionController extends BaseController {
             // 忽略异常，保持userId为null
         }
         
-//        String ipAddr = getIpAddr(getRequest());
-        interactionService.recordView(userId, type, targetId, "222");
+        String ipAddr = ShiroUtils.getIp();
+        interactionService.recordView(userId, type, targetId, ipAddr);
         return success();
     }
     
