@@ -14,6 +14,19 @@
 								文章标题：<input type="text" name="title"/>
 							</li>
 							<li>
+								文章分类：<select name="category">
+									<option value="">所有</option>
+									<option value="course">课程文章</option>
+									<option value="knowledge">知识库文章</option>
+								</select>
+							</li>
+							<li>
+								文章标签：<input type="text" name="tags"/>
+							</li>
+							<li>
+								文章摘要：<input type="text" name="summary"/>
+							</li>
+							<li>
 								状态：<select name="status" th:with="type=${@dict.getType('sys_normal_disable')}">
 									<option value="">所有</option>
 									<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
@@ -69,16 +82,16 @@
                 createUrl: prefix + "/add",
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
-                detailUrl: prefix + "/detail/{id}",
-                sortName: "sort",
-		        sortOrder: "asc",
+                exportUrl: prefix + "/export",
                 modalName: "文章",
                 columns: [{
                     checkbox: true
                 },
                 {
                     field: 'articleId',
-                    title: '文章ID'
+                    title: '文章ID',
+                    sortable: true,
+                    sortName: 'article_id'
                 },
                 {
                     field: 'title',
@@ -86,6 +99,56 @@
                     formatter: function(value, row, index) {
                         return $.table.tooltip(value);
                     }
+                },
+                {
+                    field: 'category',
+                    title: '文章分类',
+                    formatter: function(value, row, index) {
+                        if (value === 'course') {
+                            return '<span class="badge badge-primary">课程文章</span>';
+                        } else if (value === 'knowledge') {
+                            return '<span class="badge badge-success">知识库文章</span>';
+                        }
+                        return value;
+                    }
+                },
+                {
+                    field: 'tags',
+                    title: '文章标签',
+                    formatter: function(value, row, index) {
+                        if (!value) return '';
+                        var tags = value.split(',');
+                        var html = [];
+                        for (var i = 0; i < tags.length; i++) {
+                            html.push('<span class="badge badge-info">' + tags[i] + '</span>');
+                        }
+                        return html.join(' ');
+                    }
+                },
+                {
+                    field: 'summary',
+                    title: '文章摘要',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value, 20);
+                    }
+                },
+                {
+                    field: 'viewCount',
+                    title: '阅读量',
+                    sortable: true,
+                    sortName: 'view_count'
+                },
+                {
+                    field: 'likeCount',
+                    title: '点赞数',
+                    sortable: true,
+                    sortName: 'like_count'
+                },
+                {
+                    field: 'collectCount',
+                    title: '收藏数',
+                    sortable: true,
+                    sortName: 'collect_count'
                 },
                 {
                     field: 'status',

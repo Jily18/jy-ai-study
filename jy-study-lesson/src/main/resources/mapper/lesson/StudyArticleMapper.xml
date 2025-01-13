@@ -41,17 +41,29 @@
             <if test="status != null and status != ''">
                 AND status = #{status}
             </if>
-            <if test="lessonId != null">
-                AND lesson_id = #{lessonId}
+            <if test="category != null and category != ''">
+                AND category = #{category}
+            </if>
+            <if test="tags != null and tags != ''">
+                AND tags like concat('%', #{tags}, '%')
+            </if>
+            <if test="summary != null and summary != ''">
+                AND summary like concat('%', #{summary}, '%')
             </if>
             <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-                and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+                AND date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
             </if>
             <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-                and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+                AND date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
             </if>
         </where>
-        order by sort asc
+        <!-- 使用默认排序 -->
+        <if test="sort != null">
+            order by sort asc
+        </if>
+        <if test="sort == null">
+            order by create_time desc
+        </if>
     </select>
 
     <select id="selectArticleById" parameterType="Long" resultMap="StudyArticleResult">

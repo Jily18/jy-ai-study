@@ -27,11 +27,13 @@ public class StudyArticle extends BaseEntity {
 
     private String remark;
 
+    @Size(min = 0, max = 50, message = "文章分类长度不能超过50个字符")
     private String category;
     
+    @Size(min = 0, max = 255, message = "文章标签长度不能超过255个字符")
     private String tags;
     
-    @Size(min = 0, max = 500, message = "文章摘要不能超过500个字符")
+    @Size(min = 0, max = 500, message = "文章摘要长度不能超过500个字符")
     private String summary;
     
     private Long viewCount;

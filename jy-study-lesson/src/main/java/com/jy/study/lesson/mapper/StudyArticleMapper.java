@@ -5,6 +5,12 @@ import java.util.List;
 public interface StudyArticleMapper {
     public StudyArticle selectArticleById(Long articleId);
 
+    /**
+     * 查询文章列表
+     * 
+     * @param article 文章信息
+     * @return 文章集合
+     */
     public List<StudyArticle> selectArticleList(StudyArticle article);
 
     public int insertArticle(StudyArticle article);
