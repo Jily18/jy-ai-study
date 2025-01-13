@@ -6,6 +6,9 @@
     <title th:text="${article.title} + ' - 课程学习平台'">文章标题</title>
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link th:href="@{/css/animate.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.min.css}" rel="stylesheet"/>
+    <link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"/>
     <style>
         .navbar {
             box-shadow: 0 2px 4px rgba(0,0,0,.08);
@@ -110,9 +113,32 @@
         .btn-collect:hover {
             background: #e0a800;
         }
+        .btn-like.active {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-collect.active {
+            background: #ffc107;
+            color: #343a40;
+        }
     </style>
 </head>
 <body>
+    <!-- 基础JS依赖 -->
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    
+    <!-- 定义ctx变量 -->
+    <script th:inline="javascript">
+        var ctx = /*[[@{/}]]*/'';
+        var prefix = ctx + "web/interaction";
+    </script>
+    
+    <!-- 其他JS依赖 -->
+    <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+    <script th:src="@{/ruoyi/js/common.js}"></script>
+    <script th:src="@{/ruoyi/js/ry-ui.js}"></script>
+
     <!-- 导航栏 -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
@@ -163,10 +189,10 @@
         <div class="row">
             <div class="col-lg-8 mx-auto">
                 <div class="article-actions text-center mb-4">
-                    <button class="btn btn-like mr-3" onclick="likeArticle()">
+                    <button class="btn btn-like mr-3" onclick="toggleLike()" id="likeBtn">
                         <i class="fa fa-thumbs-up"></i> 点赞 (<span id="likeCount" th:text="${article.likeCount}">0</span>)
                     </button>
-                    <button class="btn btn-collect" onclick="collectArticle()">
+                    <button class="btn btn-collect" onclick="toggleCollect()" id="collectBtn">
                         <i class="fa fa-star"></i> 收藏 (<span id="collectCount" th:text="${article.collectCount}">0</span>)
                     </button>
                 </div>
@@ -201,16 +227,101 @@
         </div>
     </footer>
 
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
     <script>
-    function likeArticle() {
-        // 实现点赞功能
+    var isLiked = false;
+    var isCollected = false;
+
+    $(function() {
+        // 获取当前用户的点赞和收藏状态
+        $.ajax({
+            url: prefix + "/status",
+            type: "GET",
+            data: {
+                type: "2",
+                targetId: [[${article.articleId}]]
+            },
+            success: function(res) {
+                if (res.code == 0) {
+                    isLiked = res.data.liked;
+                    isCollected = res.data.collected;
+                    updateButtonStatus();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log("获取状态失败：" + error);
+            }
+        });
+    });
+
+    function toggleLike() {
+        if (!isLiked) {
+            $.post(ctx + "web/interaction/like", {
+                type: "2",
+                targetId: [[${article.articleId}]]
+            }, function(res) {
+                if (res.code == 0) {
+                    isLiked = true;
+                    $("#likeCount").text(parseInt($("#likeCount").text()) + 1);
+                    updateButtonStatus();
+                    $.modal.msgSuccess("点赞成功");
+                } else {
+                    $.modal.msgError(res.msg);
+                }
+            });
+        } else {
+            $.post(ctx + "web/interaction/unlike", {
+                type: "2",
+                targetId: [[${article.articleId}]]
+            }, function(res) {
+                if (res.code == 0) {
+                    isLiked = false;
+                    $("#likeCount").text(parseInt($("#likeCount").text()) - 1);
+                    updateButtonStatus();
+                    $.modal.msgSuccess("已取消点赞");
+                } else {
+                    $.modal.msgError(res.msg);
+                }
+            });
+        }
     }
 
-    function collectArticle() {
-        // 实现收藏功能
+    function toggleCollect() {
+        // 实现类似的收藏/取消收藏功能
+        // ...
     }
+
+    function updateButtonStatus() {
+        if (isLiked) {
+            $("#likeBtn").addClass("active");
+        } else {
+            $("#likeBtn").removeClass("active");
+        }
+        if (isCollected) {
+            $("#collectBtn").addClass("active");
+        } else {
+            $("#collectBtn").removeClass("active");
+        }
+    }
+
+    // 记录浏览量
+    $(function() {
+        $.ajax({
+            url: prefix + "/view",
+            type: "POST",
+            data: {
+                type: "2",
+                targetId: [[${article.articleId}]]
+            },
+            success: function(res) {
+                if (res.code != 0) {
+                    console.log("浏览量记录失败：" + res.msg);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log("浏览量记录请求失败：" + error);
+            }
+        });
+    });
     </script>
 </body>
 </html> 

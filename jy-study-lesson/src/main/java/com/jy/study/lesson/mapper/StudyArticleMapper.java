@@ -14,4 +14,14 @@ public interface StudyArticleMapper {
     public int deleteArticleById(Long articleId);
 
     public int deleteArticleByIds(String[] articleIds);
+
+    public int incrementViewCount(Long articleId);
+
+    public int incrementLikeCount(Long articleId);
+
+    public int decrementLikeCount(Long articleId);
+
+    public int incrementCollectCount(Long articleId);
+
+    public int decrementCollectCount(Long articleId);
 } 

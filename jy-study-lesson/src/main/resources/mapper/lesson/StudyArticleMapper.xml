@@ -122,4 +122,24 @@
         </foreach>
     </delete>
 
+    <update id="incrementViewCount">
+        update study_article set view_count = view_count + 1 where article_id = #{articleId}
+    </update>
+
+    <update id="incrementLikeCount">
+        update study_article set like_count = like_count + 1 where article_id = #{articleId}
+    </update>
+
+    <update id="decrementLikeCount">
+        update study_article set like_count = like_count - 1 where article_id = #{articleId}
+    </update>
+
+    <update id="incrementCollectCount">
+        update study_article set collect_count = collect_count + 1 where article_id = #{articleId}
+    </update>
+
+    <update id="decrementCollectCount">
+        update study_article set collect_count = collect_count - 1 where article_id = #{articleId}
+    </update>
+
 </mapper> 

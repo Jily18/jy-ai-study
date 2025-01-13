@@ -1,17 +1,19 @@
 # 项目相关配置
 ruoyi:
   # 名称
-  name: RuoYi
+  name: JY-Study
   # 版本
-  version: 4.7.9
+  version: 1.0.0
   # 版权年份
-  copyrightYear: 2025
+  copyrightYear: 2024
   # 实例演示开关
-  demoEnabled: false
-  # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-  profile: /home/ruoyi/uploadPath
+  demoEnabled: true
+  # 文件路径
+  profile: D:/jy-study/uploadPath
   # 获取ip地址开关
   addressEnabled: false
+  # 上下文路径
+  contextPath: /
 
 # 开发环境配置
 server:

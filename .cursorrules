@@ -1,5 +1,8 @@
 不要修改target下的文件，那里的代码是打包后用来执行的，修改那里的代码不会同步到正式的文件里。
 项目的sql文件在：D:\huangyizheng\jy-study\sql
+项目的用户端的页面在：D:\huangyizheng\jy-study\jy-study-admin\src\main\resources\templates\web
+项目的管理端的页面在：D:\huangyizheng\jy-study\jy-study-admin\src\main\resources\templates
+数据库的分析和解释在：D:\huangyizheng\jy-study\sql\数据库分析.md
 
 本项目使用若依框架开发，并且以若依项目为基础进行开发，若依项目地址：https://gitee.com/y_project/RuoYi
 若依框架的总体手册地址：http://doc.ruoyi.vip/ruoyi/
@@ -86,3 +89,5 @@ Thymeleaf 3.0.x
 缓存监控：对系统的缓存查询，查看、清理等操作。
 在线构建器：拖动表单元素生成相应的HTML代码。
 连接池监视：监视当期系统数据库连接池状态，可进行分析SQL找出系统性能瓶颈
+
+浏览量的逻辑： 只有登录用户才记录详细的浏览记录，游客只记录总浏览量
