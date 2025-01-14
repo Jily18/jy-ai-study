@@ -90,11 +90,23 @@
                 },
                 {
                     field: 'category',
-                    title: '课程分类'
+                    title: '课程分类',
+                    formatter: function(value, row, index) {
+                        return '<span class="badge badge-success">value</span>';
+                    }
                 },
                 {
                     field: 'tags',
-                    title: '课程标签(逗号分隔)'
+                    title: '课程标签(逗号分隔)',
+                    formatter: function(value, row, index) {
+                        if (!value) return '';
+                        var tags = value.split(',');
+                        var html = [];
+                        for (var i = 0; i < tags.length; i++) {
+                            html.push('<span class="badge badge-info">' + tags[i] + '</span>');
+                        }
+                        return html.join(' ');
+                    }
                 },
                 {
                     field: 'status',
