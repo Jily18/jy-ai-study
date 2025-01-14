@@ -126,4 +126,10 @@ public class LessonController extends BaseController
     {
         return toAjax(studyLessonService.deleteStudyLessonByLessonIds(ids));
     }
+
+    @GetMapping("/detail/{lessonId}")
+    public String detail(@PathVariable("lessonId") Long lessonId, ModelMap mmap) {
+        mmap.put("studyLesson", studyLessonService.selectStudyLessonByLessonId(lessonId));
+        return prefix + "/detail";
+    }
 }
