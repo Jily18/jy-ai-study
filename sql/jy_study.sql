@@ -3,7 +3,6 @@ CREATE TABLE `study_article` (
                                  `article_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '文章ID',
                                  `title` varchar(100) NOT NULL COMMENT '文章标题',
                                  `content` text NOT NULL COMMENT '文章内容',
-                                 `lesson_id` bigint(20) DEFAULT NULL COMMENT '所属课程ID',
                                  `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
                                  `sort` int(4) DEFAULT '0' COMMENT '排序',
                                  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',

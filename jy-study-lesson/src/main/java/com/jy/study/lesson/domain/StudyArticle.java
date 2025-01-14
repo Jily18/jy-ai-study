@@ -19,8 +19,6 @@ public class StudyArticle extends BaseEntity {
     @NotBlank(message = "文章内容不能为空")
     private String content;
 
-    private Long lessonId;
-
     private String status;  // 0正常 1停用
 
     private Integer sort;
@@ -67,14 +65,6 @@ public class StudyArticle extends BaseEntity {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Long getLessonId() {
-        return lessonId;
-    }
-
-    public void setLessonId(Long lessonId) {
-        this.lessonId = lessonId;
     }
 
     public String getStatus() {
@@ -155,7 +145,6 @@ public class StudyArticle extends BaseEntity {
                 .append("articleId", getArticleId())
                 .append("title", getTitle())
                 .append("content", getContent())
-                .append("lessonId", getLessonId())
                 .append("status", getStatus())
                 .append("sort", getSort())
                 .append("createBy", getCreateBy())
