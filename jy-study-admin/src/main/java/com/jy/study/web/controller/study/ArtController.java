@@ -1,4 +1,4 @@
-package com.jy.study.web.controller.art;
+package com.jy.study.web.controller.study;
 
 import com.jy.study.common.annotation.Log;
 import com.jy.study.common.core.controller.BaseController;
