@@ -3,7 +3,11 @@ package com.jy.study.web.controller.web;
 import com.jy.study.common.core.controller.BaseController;
 import com.jy.study.common.core.domain.AjaxResult;
 import com.jy.study.common.utils.ShiroUtils;
+import com.jy.study.lesson.service.IStudyLessonService;
 import com.jy.study.lesson.service.IStudyUserInteractionService;
+import com.jy.study.lesson.service.IStudyArticleService;
+import com.jy.study.lesson.domain.StudyLesson;
+import com.jy.study.lesson.domain.StudyArticle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.apache.shiro.SecurityUtils;
@@ -14,6 +18,13 @@ public class WebInteractionController extends BaseController {
     
     @Autowired
     private IStudyUserInteractionService interactionService;
+    
+    @Autowired
+    private IStudyArticleService articleService;
+    
+    @Autowired
+    private IStudyLessonService lessonService;
+
     
     @PostMapping("/like")
     public AjaxResult like(String type, Long targetId) {
@@ -79,8 +90,28 @@ public class WebInteractionController extends BaseController {
     }
     
     @PostMapping("/view")
+    @ResponseBody
     public AjaxResult recordView(String type, Long targetId) {
-        // 获取当前登录用户ID，未登录返回null
+        if (targetId == null) {
+            return AjaxResult.error("参数错误");
+        }
+        
+        // 验证目标是否存在且状态正常
+        if ("1".equals(type)) {
+            StudyLesson lesson = lessonService.selectStudyLessonByLessonId(targetId);
+            if (lesson == null || !"0".equals(lesson.getStatus())) {
+                return AjaxResult.error("课程不存在或已下架");
+            }
+        } else if ("2".equals(type)) {
+            StudyArticle article = articleService.selectArticleById(targetId);
+            if (article == null || !"0".equals(article.getStatus())) {
+                return AjaxResult.error("文章不存在或已下架");
+            }
+        } else {
+            return AjaxResult.error("类型错误");
+        }
+        
+        // 获取当前用户ID(未登录为null)
         Long userId = null;
         try {
             if (SecurityUtils.getSubject() != null && SecurityUtils.getSubject().getPrincipal() != null) {
@@ -90,9 +121,11 @@ public class WebInteractionController extends BaseController {
             // 忽略异常，保持userId为null
         }
         
+        // 获取IP地址
         String ipAddr = ShiroUtils.getIp();
+        // 记录浏览信息(先不异步做)
         interactionService.recordView(userId, type, targetId, ipAddr);
-        return success();
+        return AjaxResult.success();
     }
     
     // 内部类用于返回状态

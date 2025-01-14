@@ -60,4 +60,9 @@ public interface IStudyLessonService
      * @return 结果
      */
     public int deleteStudyLessonByLessonId(Long lessonId);
+
+    /**
+     * 更新课程浏览量
+     */
+    public int updateViewCount(Long lessonId);
 }

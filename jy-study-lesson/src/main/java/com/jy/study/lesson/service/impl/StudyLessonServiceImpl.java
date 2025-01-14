@@ -95,4 +95,15 @@ public class StudyLessonServiceImpl implements IStudyLessonService
     {
         return studyLessonMapper.deleteStudyLessonByLessonId(lessonId);
     }
+
+    /**
+     * 更新课程浏览量
+     */
+    @Override
+    public int updateViewCount(Long lessonId) {
+        StudyLesson lesson = new StudyLesson();
+        lesson.setLessonId(lessonId);
+        lesson.setViewCount(1L); // 每次增加1
+        return studyLessonMapper.updateViewCount(lesson);
+    }
 }

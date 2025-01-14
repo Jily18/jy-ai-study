@@ -58,4 +58,9 @@ public interface StudyLessonMapper {
     public int decrementLikeCount(Long lessonId);
     public int incrementCollectCount(Long lessonId);
     public int decrementCollectCount(Long lessonId);
+
+    /**
+     * 更新课程浏览量
+     */
+    public int updateViewCount(StudyLesson lesson);
 } 

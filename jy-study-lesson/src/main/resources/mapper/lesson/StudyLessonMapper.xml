@@ -130,6 +130,12 @@
         where lesson_id = #{lessonId}
     </update>
 
+    <update id="updateViewCount" parameterType="StudyLesson">
+        update study_lesson 
+        set view_count = view_count + #{viewCount}
+        where lesson_id = #{lessonId}
+    </update>
+
     <delete id="deleteStudyLessonByLessonId" parameterType="Long">
         delete from study_lesson where lesson_id = #{lessonId}
     </delete>

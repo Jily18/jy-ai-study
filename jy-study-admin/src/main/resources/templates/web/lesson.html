@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${lesson.title + ' - 课程学习平台'}">课程详情</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        .lesson-header {
+            background: linear-gradient(45deg, #6c757d, #343a40);
+            color: white;
+            padding: 60px 0;
+        }
+        .lesson-cover {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,.2);
+        }
+        .lesson-title {
+            font-size: 2rem;
+            margin: 20px 0;
+        }
+        .lesson-meta {
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+        .lesson-meta span {
+            margin-right: 20px;
+        }
+        .lesson-tags .badge {
+            margin-right: 8px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+        .lesson-content {
+            padding: 40px 0;
+        }
+        .lesson-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #495057;
+        }
+        .lesson-actions {
+            margin: 30px 0;
+        }
+        .btn-action {
+            margin-right: 15px;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+        <!-- 基础JS依赖 -->
+        <script th:src="@{/js/jquery.min.js}"></script>
+        <script th:src="@{/js/bootstrap.min.js}"></script>
+
+        <!-- 定义ctx变量 -->
+        <script th:inline="javascript">
+            var ctx = /*[[@{/}]]*/'';
+            var prefix = ctx + "web/interaction";
+        </script>
+
+        <!-- 其他JS依赖 -->
+        <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+        <script th:src="@{/ruoyi/js/common.js}"></script>
+        <script th:src="@{/ruoyi/js/ry-ui.js}"></script>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/web}">课程学习平台</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/web}"><i class="fa fa-home"></i> 首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/web/category}"><i class="fa fa-th-list"></i> 课程分类</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/web/featured}"><i class="fa fa-star"></i> 精选推荐</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 课程头部 -->
+    <div class="lesson-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <img th:if="${lesson.coverImg}" th:src="${lesson.coverImg}" class="lesson-cover" alt="课程封面">
+                    <img th:unless="${lesson.coverImg}" src="/img/default-course.jpg" class="lesson-cover" alt="默认封面">
+                </div>
+                <div class="col-md-8">
+                    <h1 class="lesson-title" th:text="${lesson.title}">课程标题</h1>
+                    <div class="lesson-meta">
+                        <span><i class="fa fa-eye"></i> <span th:text="${lesson.viewCount}">0</span> 次浏览</span>
+                        <span><i class="fa fa-thumbs-up"></i> <span th:text="${lesson.likeCount}">0</span> 次点赞</span>
+                        <span><i class="fa fa-bookmark"></i> <span th:text="${lesson.collectCount}">0</span> 次收藏</span>
+                    </div>
+                    <div class="lesson-tags">
+                        <span class="badge badge-primary" th:text="${lesson.category}">分类</span>
+                        <span class="badge badge-info" th:each="tag : ${#strings.arraySplit(lesson.tags, ',')}" th:text="${tag}">标签</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 课程内容 -->
+    <div class="lesson-content">
+        <div class="container">
+            <div class="lesson-description" th:utext="${lesson.description}">
+                课程描述...
+            </div>
+            <div class="lesson-actions">
+                <button class="btn btn-primary btn-action" onclick="startLearning()">
+                    <i class="fa fa-play-circle"></i> 开始学习
+                </button>
+                <button class="btn btn-outline-primary btn-action" onclick="toggleLike()">
+                    <i class="fa fa-thumbs-up"></i> 点赞
+                </button>
+                <button class="btn btn-outline-primary btn-action" onclick="toggleCollect()">
+                    <i class="fa fa-bookmark"></i> 收藏
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer bg-dark text-white py-4">
+        <div class="container text-center">
+            <p>© 2024 课程学习平台. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var prefix = ctx + "web/interaction";
+
+        // 记录浏览量
+        $(function() {
+            $.ajax({
+                url: prefix + "/view",
+                type: "POST",
+                data: {
+                    type: "1",  // 1表示课程
+                    targetId: [[${lesson.lessonId}]]
+                },
+                success: function(res) {
+                    if (res.code != 0) {
+                        console.log("浏览量记录失败：" + res.msg);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log("浏览量记录请求失败：" + error);
+                }
+            });
+        });
+
+        function startLearning() {
+            // TODO: 实现开始学习功能
+            alert('开始学习功能开发中...');
+        }
+
+        function toggleLike() {
+            // TODO: 实现点赞功能
+            alert('点赞功能开发中...');
+        }
+
+        function toggleCollect() {
+            // TODO: 实现收藏功能
+            alert('收藏功能开发中...');
+        }
+    </script>
+</body>
+</html> 
