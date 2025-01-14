@@ -34,7 +34,6 @@ CREATE TABLE `study_lesson` (
     `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
     `sort` int(4) DEFAULT '0' COMMENT '排序',
     `view_count` bigint(20) DEFAULT '0' COMMENT '浏览量',
-    `buy_count` bigint(20) DEFAULT '0' COMMENT '购买数',
     `like_count` bigint(20) DEFAULT '0' COMMENT '点赞数',
     `collect_count` bigint(20) DEFAULT '0' COMMENT '收藏数',
     `create_by` varchar(64) DEFAULT '' COMMENT '创建者',

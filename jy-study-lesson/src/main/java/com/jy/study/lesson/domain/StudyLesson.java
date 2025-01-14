@@ -51,9 +51,6 @@ public class StudyLesson extends BaseEntity
     @Excel(name = "浏览量")
     private Long viewCount;
 
-    /** 购买数 */
-    @Excel(name = "购买数")
-    private Long buyCount;
 
     /** 点赞数 */
     @Excel(name = "点赞数")
@@ -136,13 +133,6 @@ public class StudyLesson extends BaseEntity
         this.viewCount = viewCount;
     }
 
-    public Long getBuyCount() {
-        return buyCount;
-    }
-
-    public void setBuyCount(Long buyCount) {
-        this.buyCount = buyCount;
-    }
 
     public Long getLikeCount() {
         return likeCount;
@@ -172,7 +162,6 @@ public class StudyLesson extends BaseEntity
                 .append("status", getStatus())
                 .append("sort", getSort())
                 .append("viewCount", getViewCount())
-                .append("buyCount", getBuyCount())
                 .append("likeCount", getLikeCount())
                 .append("collectCount", getCollectCount())
                 .append("createBy", getCreateBy())

@@ -10,11 +10,9 @@
         <result property="description"  column="description"   />
         <result property="category"     column="category"      />
         <result property="tags"         column="tags"          />
-        <result property="teacherId"    column="teacher_id"    />
         <result property="status"       column="status"        />
         <result property="sort"         column="sort"          />
         <result property="viewCount"    column="view_count"    />
-        <result property="buyCount"     column="buy_count"     />
         <result property="likeCount"    column="like_count"    />
         <result property="collectCount" column="collect_count" />
         <result property="createBy"     column="create_by"     />
@@ -26,7 +24,7 @@
 
     <sql id="selectStudyLessonVo">
         select lesson_id, title, cover_img, description, category, tags, status, sort, 
-               view_count, buy_count, like_count, collect_count, create_by, create_time, 
+               view_count, like_count, collect_count, create_by, create_time,
                update_by, update_time, remark
         from study_lesson
     </sql>
@@ -52,39 +50,18 @@
         update study_lesson set collect_count = collect_count - 1 where lesson_id = #{lessonId}
     </update>
 
-    <select id="selectLessonList" parameterType="StudyLesson" resultMap="LessonResult">
-        select * from study_lesson
+    <select id="selectStudyLessonList" parameterType="StudyLesson" resultMap="LessonResult">
+        <include refid="selectStudyLessonVo"/>
         <where>
             <if test="title != null and title != ''">
                 AND title like concat('%', #{title}, '%')
             </if>
-            <if test="status != null and status != ''">
-                AND status = #{status}
+            <if test="description != null and description != ''">
+                AND description like concat('%', #{description}, '%')
             </if>
             <if test="category != null and category != ''">
                 AND category = #{category}
             </if>
-            <if test="teacherId != null">
-                AND teacher_id = #{teacherId}
-            </if>
-        </where>
-        order by sort
-    </select>
-
-    <select id="selectStudyLessonList" parameterType="StudyLesson" resultMap="LessonResult">
-        <include refid="selectStudyLessonVo"/>
-        <where>
-            <if test="title != null  and title != ''"> and title = #{title}</if>
-            <if test="coverImg != null  and coverImg != ''"> and cover_img = #{coverImg}</if>
-            <if test="description != null  and description != ''"> and description = #{description}</if>
-            <if test="category != null  and category != ''"> and category = #{category}</if>
-            <if test="tags != null  and tags != ''"> and tags = #{tags}</if>
-            <if test="status != null  and status != ''"> and status = #{status}</if>
-            <if test="sort != null "> and sort = #{sort}</if>
-            <if test="viewCount != null "> and view_count = #{viewCount}</if>
-            <if test="buyCount != null "> and buy_count = #{buyCount}</if>
-            <if test="likeCount != null "> and like_count = #{likeCount}</if>
-            <if test="collectCount != null "> and collect_count = #{collectCount}</if>
         </where>
     </select>
 
@@ -104,7 +81,6 @@
             <if test="status != null">status,</if>
             <if test="sort != null">sort,</if>
             <if test="viewCount != null">view_count,</if>
-            <if test="buyCount != null">buy_count,</if>
             <if test="likeCount != null">like_count,</if>
             <if test="collectCount != null">collect_count,</if>
             <if test="createBy != null">create_by,</if>
@@ -122,7 +98,6 @@
             <if test="status != null">#{status},</if>
             <if test="sort != null">#{sort},</if>
             <if test="viewCount != null">#{viewCount},</if>
-            <if test="buyCount != null">#{buyCount},</if>
             <if test="likeCount != null">#{likeCount},</if>
             <if test="collectCount != null">#{collectCount},</if>
             <if test="createBy != null">#{createBy},</if>
@@ -144,7 +119,6 @@
             <if test="status != null">status = #{status},</if>
             <if test="sort != null">sort = #{sort},</if>
             <if test="viewCount != null">view_count = #{viewCount},</if>
-            <if test="buyCount != null">buy_count = #{buyCount},</if>
             <if test="likeCount != null">like_count = #{likeCount},</if>
             <if test="collectCount != null">collect_count = #{collectCount},</if>
             <if test="createBy != null">create_by = #{createBy},</if>
