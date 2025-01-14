@@ -31,8 +31,6 @@ CREATE TABLE `study_lesson` (
     `description` text COMMENT '课程描述',
     `category` varchar(50) DEFAULT NULL COMMENT '课程分类',
     `tags` varchar(255) DEFAULT NULL COMMENT '课程标签(逗号分隔)',
-    `teacher_id` bigint(20) DEFAULT NULL COMMENT '讲师ID',
-    `price` decimal(10,2) DEFAULT '0.00' COMMENT '课程价格',
     `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
     `sort` int(4) DEFAULT '0' COMMENT '排序',
     `view_count` bigint(20) DEFAULT '0' COMMENT '浏览量',

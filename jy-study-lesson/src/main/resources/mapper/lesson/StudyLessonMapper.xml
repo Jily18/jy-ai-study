@@ -11,7 +11,6 @@
         <result property="category"     column="category"      />
         <result property="tags"         column="tags"          />
         <result property="teacherId"    column="teacher_id"    />
-        <result property="price"        column="price"         />
         <result property="status"       column="status"        />
         <result property="sort"         column="sort"          />
         <result property="viewCount"    column="view_count"    />
@@ -25,7 +24,12 @@
         <result property="remark"       column="remark"        />
     </resultMap>
 
-    <sql id="selectStudyLessonVo"> select lesson_id, title, cover_img, description, category, tags, teacher_id, price, status, sort, view_count, buy_count, like_count, collect_count, create_by, create_time, update_by, update_time, remark from study_lesson </sql>
+    <sql id="selectStudyLessonVo">
+        select lesson_id, title, cover_img, description, category, tags, status, sort, 
+               view_count, buy_count, like_count, collect_count, create_by, create_time, 
+               update_by, update_time, remark
+        from study_lesson
+    </sql>
 
     <!-- 计数相关SQL -->
     <update id="incrementViewCount">
@@ -48,7 +52,6 @@
         update study_lesson set collect_count = collect_count - 1 where lesson_id = #{lessonId}
     </update>
 
-
     <select id="selectLessonList" parameterType="StudyLesson" resultMap="LessonResult">
         select * from study_lesson
         <where>
@@ -68,7 +71,6 @@
         order by sort
     </select>
 
-    <!-- 其他增删改查SQL -->
     <select id="selectStudyLessonList" parameterType="StudyLesson" resultMap="LessonResult">
         <include refid="selectStudyLessonVo"/>
         <where>
@@ -77,8 +79,6 @@
             <if test="description != null  and description != ''"> and description = #{description}</if>
             <if test="category != null  and category != ''"> and category = #{category}</if>
             <if test="tags != null  and tags != ''"> and tags = #{tags}</if>
-            <if test="teacherId != null "> and teacher_id = #{teacherId}</if>
-            <if test="price != null "> and price = #{price}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
             <if test="sort != null "> and sort = #{sort}</if>
             <if test="viewCount != null "> and view_count = #{viewCount}</if>
@@ -101,8 +101,6 @@
             <if test="description != null">description,</if>
             <if test="category != null">category,</if>
             <if test="tags != null">tags,</if>
-            <if test="teacherId != null">teacher_id,</if>
-            <if test="price != null">price,</if>
             <if test="status != null">status,</if>
             <if test="sort != null">sort,</if>
             <if test="viewCount != null">view_count,</if>
@@ -121,8 +119,6 @@
             <if test="description != null">#{description},</if>
             <if test="category != null">#{category},</if>
             <if test="tags != null">#{tags},</if>
-            <if test="teacherId != null">#{teacherId},</if>
-            <if test="price != null">#{price},</if>
             <if test="status != null">#{status},</if>
             <if test="sort != null">#{sort},</if>
             <if test="viewCount != null">#{viewCount},</if>
@@ -145,8 +141,6 @@
             <if test="description != null">description = #{description},</if>
             <if test="category != null">category = #{category},</if>
             <if test="tags != null">tags = #{tags},</if>
-            <if test="teacherId != null">teacher_id = #{teacherId},</if>
-            <if test="price != null">price = #{price},</if>
             <if test="status != null">status = #{status},</if>
             <if test="sort != null">sort = #{sort},</if>
             <if test="viewCount != null">view_count = #{viewCount},</if>

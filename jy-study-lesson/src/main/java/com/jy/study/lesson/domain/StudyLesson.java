@@ -39,14 +39,6 @@ public class StudyLesson extends BaseEntity
     @Excel(name = "课程标签(逗号分隔)")
     private String tags;
 
-    /** 讲师ID */
-    @Excel(name = "讲师ID")
-    private Long teacherId;
-
-    /** 课程价格 */
-    @Excel(name = "课程价格")
-    private BigDecimal price;
-
     /** 状态（0正常 1停用） */
     @Excel(name = "状态", readConverterExp = "0=正常,1=停用")
     private String status;
@@ -120,22 +112,6 @@ public class StudyLesson extends BaseEntity
         this.tags = tags;
     }
 
-    public Long getTeacherId() {
-        return teacherId;
-    }
-
-    public void setTeacherId(Long teacherId) {
-        this.teacherId = teacherId;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
     public String getStatus() {
         return status;
     }
@@ -193,8 +169,6 @@ public class StudyLesson extends BaseEntity
                 .append("description", getDescription())
                 .append("category", getCategory())
                 .append("tags", getTags())
-                .append("teacherId", getTeacherId())
-                .append("price", getPrice())
                 .append("status", getStatus())
                 .append("sort", getSort())
                 .append("viewCount", getViewCount())
