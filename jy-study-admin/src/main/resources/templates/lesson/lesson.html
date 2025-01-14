@@ -74,7 +74,9 @@
                 {
                     field: 'lessonId',
                     title: '课程ID',
-                    visible: false
+                    visible: false,
+                    sortable: true,
+                    sortName: 'lesson_id'
                 },
                 {
                     field: 'title',
@@ -86,7 +88,10 @@
                 },
                 {
                     field: 'description',
-                    title: '课程描述'
+                    title: '课程描述',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value, 50, "open");
+                    }
                 },
                 {
                     field: 'category',
@@ -97,7 +102,7 @@
                 },
                 {
                     field: 'tags',
-                    title: '课程标签(逗号分隔)',
+                    title: '课程标签',
                     formatter: function(value, row, index) {
                         if (!value) return '';
                         var tags = value.split(',');
@@ -114,23 +119,48 @@
                 },
                 {
                     field: 'sort',
-                    title: '排序'
+                    title: '排序',
+                    sortable: true
                 },
                 {
                     field: 'viewCount',
-                    title: '浏览量'
+                    title: '浏览量',
+                    sortable: true,
+                    sortName: 'view_count'
                 },
                 {
                     field: 'likeCount',
-                    title: '点赞数'
+                    title: '点赞数',
+                    sortable: true,
+                    sortName: 'like_count'
                 },
                 {
                     field: 'collectCount',
-                    title: '收藏数'
+                    title: '收藏数',
+                    sortable: true,
+                    sortName: 'collect_count'
                 },
                 {
+                    field: 'createBy',
+                    title: '创建者'
+                }, {
+                    field: 'createTime',
+                    title: '创建时间',
+                    sortable: true,
+                    sortName: 'create_time'
+                },
+                 {
+                     field: 'updateTime',
+                     title: '更新时间',
+                     sortable: true,
+                     sortName: 'update_time'
+                 },
+                {
                     field: 'remark',
-                    title: '备注'
+                    title: '备注',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value, 10, "open");
+                    }
                 },
                 {
                     title: '操作',
