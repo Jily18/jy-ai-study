@@ -228,6 +228,16 @@
     </footer>
 
     <script>
+    // 处理需要登录的操作
+    function handleLoginRequired(action) {
+        layer.confirm('此功能需要登录，是否去登录？', {
+            btn: ['去登录','取消'],
+            title: '提示'
+        }, function(){
+            window.location.href = ctx + '/web/login';
+        });
+    }
+
     var isLiked = false;
     var isCollected = false;
 
@@ -254,6 +264,12 @@
     });
 
     function toggleLike() {
+        // 检查登录状态
+        if(![[${session.webUser != null}]]) {
+            handleLoginRequired('like');
+            return;
+        }
+        
         if (!isLiked) {
             $.post(ctx + "web/interaction/like", {
                 type: "2",
@@ -286,8 +302,41 @@
     }
 
     function toggleCollect() {
-        // 实现类似的收藏/取消收藏功能
-        // ...
+        // 检查登录状态
+        if(![[${session.webUser != null}]]) {
+            handleLoginRequired('collect');
+            return;
+        }
+        
+        if (!isCollected) {
+            $.post(ctx + "web/interaction/collect", {
+                type: "2",
+                targetId: [[${article.articleId}]]
+            }, function(res) {
+                if (res.code == 0) {
+                    isCollected = true;
+                    $("#collectCount").text(parseInt($("#collectCount").text()) + 1);
+                    updateButtonStatus();
+                    $.modal.msgSuccess("收藏成功");
+                } else {
+                    $.modal.msgError(res.msg);
+                }
+            });
+        } else {
+            $.post(ctx + "web/interaction/uncollect", {
+                type: "2",
+                targetId: [[${article.articleId}]]
+            }, function(res) {
+                if (res.code == 0) {
+                    isCollected = false;
+                    $("#collectCount").text(parseInt($("#collectCount").text()) - 1);
+                    updateButtonStatus();
+                    $.modal.msgSuccess("已取消收藏");
+                } else {
+                    $.modal.msgError(res.msg);
+                }
+            });
+        }
     }
 
     function updateButtonStatus() {

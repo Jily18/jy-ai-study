@@ -111,11 +111,63 @@
         .lesson-tags .badge {
             margin-right: 5px;
         }
+        .dropdown-item {
+            padding: 8px 20px;
+            color: #333;
+            transition: all 0.2s;
+        }
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #2196F3;
+        }
+        .dropdown-item i {
+            margin-right: 8px;
+            width: 16px;
+            text-align: center;
+        }
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .user-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #fff;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            z-index: 1000;
+        }
+        
+        .user-dropdown:hover .user-dropdown-content {
+            display: block;
+        }
+        
+        .user-dropdown-item {
+            display: block;
+            padding: 12px 16px;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .user-dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #2196F3;
+        }
+        
+        .user-dropdown-item i {
+            margin-right: 8px;
+            width: 16px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <!-- 导航栏 -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" th:href="@{/web}">课程学习平台</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
@@ -133,19 +185,32 @@
                         <a class="nav-link" th:href="@{/web/featured}"><i class="fa fa-star"></i> 精选推荐</a>
                     </li>
                     <th:block th:if="${session.webUser == null}">
-                        <a class="nav-item nav-link" th:href="@{/web/login}">登录</a>
-                        <a class="nav-item nav-link" th:href="@{/web/register}">注册</a>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/web/login}">
+                                <i class="fa fa-sign-in"></i> 登录
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/web/register}">
+                                <i class="fa fa-user-plus"></i> 注册
+                            </a>
+                        </li>
                     </th:block>
                     <th:block th:unless="${session.webUser == null}">
-                        <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                        <li class="nav-item user-dropdown">
+                            <a class="nav-link" href="#">
+                                <i class="fa fa-user-circle"></i>
                                 <span th:text="${session.webUser.userName}">用户</span>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">个人中心</a>
-                                <a class="dropdown-item" th:href="@{/web/logout}">退出登录</a>
+                            <div class="user-dropdown-content">
+                                <a class="user-dropdown-item" th:href="@{/web/user/profile}">
+                                    <i class="fa fa-user"></i> 个人中心
+                                </a>
+                                <a class="user-dropdown-item" th:href="@{/web/logout}">
+                                    <i class="fa fa-sign-out"></i> 退出登录
+                                </a>
                             </div>
-                        </div>
+                        </li>
                     </th:block>
                 </ul>
             </div>
@@ -171,7 +236,6 @@
             <div class="col-md-4" th:each="lesson : ${lessons}">
                 <div class="card lesson-card">
                     <img th:if="${lesson.coverImg}" th:src="${lesson.coverImg}" class="card-img-top" alt="课程封面">
-                    <img th:unless="${lesson.coverImg}" src="/img/default-course.jpg" class="card-img-top" alt="默认封面">
                     <div class="card-body">
                         <div class="lesson-meta">
                             <span class="badge badge-primary" th:text="${lesson.category}">分类</span>
@@ -236,9 +300,11 @@
             </div>
         </div>
     </footer>
+    <!-- Scripts -->
     <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/ajax/libs/popper.js/popper.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
-    <script th:src="@{/ajax/libs/flot/jquery.flot.js}"></script>
+    <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
     <script>
         $(function() {
             // 搜索功能

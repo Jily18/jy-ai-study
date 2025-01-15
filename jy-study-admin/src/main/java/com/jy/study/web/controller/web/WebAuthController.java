@@ -23,7 +23,9 @@ import com.jy.study.framework.shiro.service.SysPasswordService;
 import com.jy.study.framework.web.service.ConfigService;
 import com.jy.study.system.service.ISysUserService;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @Controller
@@ -171,13 +173,30 @@ public class WebAuthController extends BaseController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        SysUser user = (SysUser)session.getAttribute("webUser");
-        if (user != null) {
-            AsyncManager.me().execute(AsyncFactory.recordLogininfor(user.getLoginName(), com.jy.study.common.constant.Constants.LOGOUT, 
-                MessageUtils.message("user.logout.success")));
+    public String logout(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            // 获取当前登录用户
+            SysUser user = (SysUser)session.getAttribute("webUser");
+            if (user != null) {
+                // 清除session
+                session.removeAttribute("webUser");
+                
+                // 清除可能存在的记住我cookie
+                Cookie[] cookies = request.getCookies();
+                if (cookies != null) {
+                    for (Cookie cookie : cookies) {
+                        if ("rememberMe".equals(cookie.getName())) {
+                            cookie.setMaxAge(0);
+                            cookie.setPath(request.getContextPath());
+                            response.addCookie(cookie);
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("退出登录异常", e);
         }
-        session.removeAttribute("webUser");
         return "redirect:/web";
     }
 } 
