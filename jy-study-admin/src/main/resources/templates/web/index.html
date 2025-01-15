@@ -132,6 +132,21 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/web/featured}"><i class="fa fa-star"></i> 精选推荐</a>
                     </li>
+                    <th:block th:if="${session.webUser == null}">
+                        <a class="nav-item nav-link" th:href="@{/web/login}">登录</a>
+                        <a class="nav-item nav-link" th:href="@{/web/register}">注册</a>
+                    </th:block>
+                    <th:block th:unless="${session.webUser == null}">
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
+                                <span th:text="${session.webUser.userName}">用户</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#">个人中心</a>
+                                <a class="dropdown-item" th:href="@{/web/logout}">退出登录</a>
+                            </div>
+                        </div>
+                    </th:block>
                 </ul>
             </div>
         </div>
@@ -221,9 +236,9 @@
             </div>
         </div>
     </footer>
-
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/ajax/libs/flot/jquery.flot.js}"></script>
     <script>
         $(function() {
             // 搜索功能

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录</title>
+    <link th:href="@{favicon.ico}" rel="shortcut icon"/>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/jquery.contextMenu.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/animate.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/skins.css}" rel="stylesheet"/>
+    <link th:href="@{/ruoyi/css/ry-ui.css?v=4.7.9}" rel="stylesheet"/>
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+        }
+        .login-form {
+            max-width: 400px;
+            width: 100%;
+            padding: 30px;
+            margin: auto;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-page">
+        <div class="container">
+            <div class="login-form">
+                <h3 class="text-center mb-4">用户登录</h3>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="username" placeholder="用户名" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" placeholder="密码" required>
+                    </div>
+                    <div class="form-group" th:if="${captchaEnabled}">
+                        <div class="row">
+                            <div class="col-7">
+                                <input type="text" class="form-control" name="validateCode" placeholder="验证码" maxlength="5">
+                            </div>
+                            <div class="col-5">
+                                <img class="imgcode" th:src="@{/captcha/captchaImage(type=math)}" width="100%">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">登录</button>
+                    <div class="mt-3 text-center">
+                        <a th:href="@{/web/register}" class="text-muted">还没有账号？立即注册</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/ajax/libs/flot/jquery.flot.js}"></script>
+    <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+
+    <script th:inline="javascript">
+    $(function() {
+        var ctx = [[${#servletContext.contextPath}]];
+
+        // 错误提示
+        function showError(message) {
+            layer.msg(message, {
+                icon: 2,
+                time: 2000,
+                shade: [0.3, '#000']
+            });
+        }
+
+        // 成功提示
+        function showSuccess(message) {
+            layer.msg(message, {
+                icon: 1,
+                time: 1000,
+                shade: [0.3, '#000']
+            });
+        }
+
+        $('.imgcode').click(function() {
+            var url = ctx + "/captcha/captchaImage?type=math&s=" + Math.random();
+            $(this).attr("src", url);
+        });
+
+        $("#loginForm").on("submit", function(e) {
+            e.preventDefault();
+            
+            // 表单验证
+            var username = $("input[name='username']").val().trim();
+            var password = $("input[name='password']").val().trim();
+            if (username === '') {
+                showError('请输入用户名');
+                return false;
+            }
+            if (password === '') {
+                showError('请输入密码');
+                return false;
+            }
+            
+            // 如果开启了验证码，检查验证码
+            var validateCode = $("input[name='validateCode']");
+            if (validateCode.length > 0 && validateCode.val().trim() === '') {
+                showError('请输入验证码');
+                return false;
+            }
+
+            var loadingIndex = layer.load(2, {
+                shade: [0.3, '#fff']
+            });
+
+            $.ajax({
+                type: "POST",
+                url: ctx + "/web/login",
+                data: $(this).serialize(),
+                dataType: "json",
+                success: function(res) {
+                    layer.close(loadingIndex);
+                    if(res.code == 0) {
+                        showSuccess('登录成功');
+                        setTimeout(function() {
+                            location.href = ctx + "/web";
+                        }, 1000);
+                    } else {
+
+                        showError(res.msg || '登录失败');
+                        // 刷新验证码
+                        if(validateCode.length > 0) {
+                            $('.imgcode').click();
+                        }
+                        // 如果是验证码错误，清空验证码输入框
+                        if(res.msg && res.msg.indexOf('验证码') !== -1) {
+                            validateCode.val('');
+                        }
+                        // 如果是密码错误，清空密码输入框
+                        if(res.msg && res.msg.indexOf('密码') !== -1) {
+                            $("input[name='password']").val('');
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    layer.close(loadingIndex);
+                    // 修改错误处理逻辑
+                    var errorMsg = '';
+                    try {
+                        var response = xhr.responseJSON;
+                        errorMsg = response ? (response.msg || response.message || '登录失败') : '登录失败';
+                    } catch(e) {
+                        errorMsg = '登录请求失败，请稍后重试';
+                    }
+                    showError(errorMsg);
+                    
+                    // 刷新验证码
+                    if(validateCode.length > 0) {
+                        $('.imgcode').click();
+                    }
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html> 

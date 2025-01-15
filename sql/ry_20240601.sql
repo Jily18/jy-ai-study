@@ -30,7 +30,9 @@ INSERT INTO sys_dept(`dept_id`, `parent_id`, `ancestors`, `dept_name`, `order_nu
 INSERT INTO sys_dept(`dept_id`, `parent_id`, `ancestors`, `dept_name`, `order_num`, `leader`, `phone`, `email`, `status`, `del_flag`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (105, 101, '0,100,101', '测试部门', 3, '若依', '15888888888', 'ry@qq.com', '0', '0', 'admin', '2025-01-08 20:35:58', '', NULL);
 INSERT INTO sys_dept(`dept_id`, `parent_id`, `ancestors`, `dept_name`, `order_num`, `leader`, `phone`, `email`, `status`, `del_flag`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (200, 100, '0,100', '教师总管理', 2, '', '', '', '0', '0', 'admin', '2025-01-09 16:54:02', 'admin', '2025-01-09 16:54:55');
 INSERT INTO sys_dept(`dept_id`, `parent_id`, `ancestors`, `dept_name`, `order_num`, `leader`, `phone`, `email`, `status`, `del_flag`, `create_by`, `create_time`, `update_by`, `update_time`) VALUES (202, 200, '0,100,200', '教学部门', 99, NULL, NULL, NULL, '0', '0', 'admin', '2025-01-09 16:54:40', '', NULL);
-
+-- 创建前台用户部门
+INSERT INTO sys_dept(dept_id, parent_id, ancestors, dept_name, order_num, leader, status, create_by, create_time)
+VALUES (300, 100, '0,100', '前台用户', 1, 'admin', '0', 'admin', sysdate());
 -- ----------------------------
 -- 2、用户信息表
 -- ----------------------------

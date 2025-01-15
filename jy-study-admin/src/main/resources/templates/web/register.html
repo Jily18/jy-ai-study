@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户注册</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        .register-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+        }
+        .register-form {
+            max-width: 400px;
+            width: 100%;
+            padding: 30px;
+            margin: auto;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="register-page">
+        <div class="container">
+            <div class="register-form">
+                <h3 class="text-center mb-4">用户注册</h3>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="loginName" placeholder="用户名" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" placeholder="密码" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="confirmPassword" placeholder="确认密码" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control" name="email" placeholder="邮箱">
+                    </div>
+                    <div class="form-group" th:if="${captchaEnabled}">
+                        <div class="row">
+                            <div class="col-7">
+                                <input type="text" class="form-control" name="validateCode" placeholder="验证码" maxlength="5">
+                            </div>
+                            <div class="col-5">
+                                <img class="imgcode" th:src="@{/captcha/captchaImage(type=math)}" width="100%">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">注册</button>
+                    <div class="mt-3 text-center">
+                        <a th:href="@{/web/login}" class="text-muted">已有账号？立即登录</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/ajax/libs/flot/jquery.flot.js}"></script>
+    <script th:inline="javascript">
+    $(function() {
+        var ctx = [[${#servletContext.contextPath}]];
+
+        $('.imgcode').click(function() {
+            var url = ctx + "/captcha/captchaImage?type=math&s=" + Math.random();
+            $(this).attr("src", url);
+        });
+
+        $("#registerForm").on("submit", function(e) {
+            e.preventDefault();
+            if($("input[name='password']").val() != $("input[name='confirmPassword']").val()) {
+                alert("两次输入的密码不一致");
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: ctx + "/web/register",
+                data: $(this).serialize(),
+                success: function(res) {
+                    if(res.code == 0) {
+                        alert("注册成功，请登录");
+                        location.href = ctx + "/web/login";
+                    } else {
+                        alert(res.msg);
+                        $('.imgcode').click();
+                    }
+                },
+                error: function() {
+                    alert("注册请求失败，请稍后重试");
+                    $('.imgcode').click();
+                }
+            });
+        });
+    });
+    </script>
+</body>
+</html> 

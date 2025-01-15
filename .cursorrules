@@ -5,6 +5,10 @@
 数据库的分析和解释在：D:\huangyizheng\jy-study\sql\数据库分析.md
 
 和课程、文章等有关的java类（domain、mapper、service等）在jy-study-lesson模块中，而控制器controller都在jy-study-admin模块中。
+举例：D:\huangyizheng\jy-study\jy-study-lesson\src\main\java\com\jy\study\lesson\domain\StudyLesson.java
+D:\huangyizheng\jy-study\jy-study-lesson\src\main\java\com\jy\study\lesson\service\impl\StudyLessonServiceImpl.java
+D:\huangyizheng\jy-study\jy-study-lesson\src\main\java\com\jy\study\lesson\mapper\StudyLessonMapper.java
+D:\huangyizheng\jy-study\jy-study-lesson\src\main\java\com\jy\study\lesson\service\IStudyLessonService.java
 
 本项目使用若依框架开发，并且以若依项目为基础进行开发，若依项目地址：https://gitee.com/y_project/RuoYi
 若依框架的总体手册地址：http://doc.ruoyi.vip/ruoyi/
