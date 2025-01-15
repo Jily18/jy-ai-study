@@ -4,63 +4,166 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>用户注册</title>
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/ajax/libs/layer/theme/default/layer.css}" rel="stylesheet"/>
+
+    static/ajax/libs/layer/css/layer.css
     <style>
-        .register-page {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            background: #f5f5f5;
+        body {
+            background: linear-gradient(135deg, rgba(30, 144, 255, 0.7) 0%, rgba(0, 0, 128, 0.7) 100%);
+            margin: 0;
+            font-family: "Microsoft YaHei", sans-serif;
         }
-        .register-form {
-            max-width: 400px;
-            width: 100%;
-            padding: 30px;
+        .login-container {
+            display: flex;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .login-box {
+            display: flex;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
             margin: auto;
-            background: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 1000px;
+            overflow: hidden;
+        }
+        .login-form-side {
+            padding: 40px;
+            width: 400px;
+            background: white;
+        }
+        .illustration-side {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.70) 0%, rgba(25, 118, 210, 0.70) 100%);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .illustration-side::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url([[${#servletContext.contextPath}]]/img/login-bg.png) no-repeat center center;
+            background-size: cover;
+            opacity: 0.1;
+        }
+        .form-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .form-control {
+            height: 45px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .form-control:focus {
+            border-color: #2196F3;
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+        }
+        .btn-login {
+            height: 45px;
+            border-radius: 6px;
+            background: #2196F3;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-login:hover {
+            background: #1976D2;
+            transform: translateY(-1px);
+        }
+        .illustration-content {
+            position: relative;
+            z-index: 1;
+        }
+        .illustration-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .illustration-text {
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        .captcha-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .captcha-input {
+            flex: 1;
+        }
+        .captcha-img {
+            height: 45px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .register-link a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="register-page">
-        <div class="container">
-            <div class="register-form">
-                <h3 class="text-center mb-4">用户注册</h3>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-form-side">
+                <div class="form-title">用户注册</div>
                 <form id="registerForm">
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="loginName" placeholder="用户名" required>
+                    <input type="text" class="form-control" name="loginName" placeholder="用户名" required>
+                    <input type="password" class="form-control" name="password" placeholder="密码" required>
+                    <input type="password" class="form-control" name="confirmPassword" placeholder="确认密码" required>
+                    <input type="email" class="form-control" name="email" placeholder="邮箱">
+                    <div class="captcha-group" th:if="${captchaEnabled}">
+                        <input type="text" class="form-control captcha-input" name="validateCode" placeholder="验证码" maxlength="5">
+                        <img class="captcha-img imgcode" th:src="@{/captcha/captchaImage(type=math)}">
                     </div>
-                    <div class="form-group">
-                        <input type="password" class="form-control" name="password" placeholder="密码" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="password" class="form-control" name="confirmPassword" placeholder="确认密码" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="email" class="form-control" name="email" placeholder="邮箱">
-                    </div>
-                    <div class="form-group" th:if="${captchaEnabled}">
-                        <div class="row">
-                            <div class="col-7">
-                                <input type="text" class="form-control" name="validateCode" placeholder="验证码" maxlength="5">
-                            </div>
-                            <div class="col-5">
-                                <img class="imgcode" th:src="@{/captcha/captchaImage(type=math)}" width="100%">
-                            </div>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">注册</button>
-                    <div class="mt-3 text-center">
-                        <a th:href="@{/web/login}" class="text-muted">已有账号？立即登录</a>
+                    <button type="submit" class="btn btn-login btn-block">注册</button>
+                    <div class="register-link">
+                        <a th:href="@{/web/login}">已有账号？立即登录</a>
                     </div>
                 </form>
+            </div>
+            <div class="illustration-side">
+                <div class="illustration-content">
+                    <div class="illustration-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap h-10 w-10 text-blue-600"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"></path><path d="M22 10v6"></path><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path></svg>
+                        加入我们</div>
+                    <div class="illustration-text">
+                        注册成为我们的会员<br>
+                        开启您的学习之旅<br>
+                        享受丰富的学习资源
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Scripts -->
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/ajax/libs/flot/jquery.flot.js}"></script>
