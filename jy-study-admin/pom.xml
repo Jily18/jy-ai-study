@@ -73,6 +73,13 @@
             <artifactId>jy-study-lesson</artifactId>
         </dependency>
 
+        <!-- 公共模块 -->
+        <dependency>
+            <groupId>com.jy.study</groupId>
+            <artifactId>jy-study-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
