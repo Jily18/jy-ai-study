@@ -3,6 +3,8 @@
 项目的用户端的页面在：D:\huangyizheng\jy-study\jy-study-admin\src\main\resources\templates\web
 项目的管理端的页面在：D:\huangyizheng\jy-study\jy-study-admin\src\main\resources\templates
 数据库的分析和解释在：D:\huangyizheng\jy-study\sql\数据库分析.md
+js、css等文件的引用优先使用：D:\huangyizheng\jy-study\jy-study-admin\src\main\resources\static 下的本地文件
+
 
 和课程、文章等有关的java类（domain、mapper、service等）在jy-study-lesson模块中，而控制器controller都在jy-study-admin模块中。
 举例：D:\huangyizheng\jy-study\jy-study-lesson\src\main\java\com\jy\study\lesson\domain\StudyLesson.java
