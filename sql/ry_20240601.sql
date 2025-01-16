@@ -547,6 +547,7 @@ insert into sys_config values(9,  '主框架页-是否开启页脚',         'sy
 insert into sys_config values(10, '主框架页-是否开启页签',         'sys.index.tagsView',               'true',          'Y', 'admin', sysdate(), '', null, '是否开启菜单多页签显示（true显示，false隐藏）');
 insert into sys_config values(11, '用户登录-黑名单列表',           'sys.login.blackIPList',            '',              'Y', 'admin', sysdate(), '', null, '设置登录IP黑名单限制，多个匹配项以;分隔，支持匹配（*通配、网段）');
 
+INSERT INTO sys_config (`config_id`, `config_name`, `config_key`, `config_value`, `config_type`, `create_by`, `create_time`, `update_by`, `update_time`, `remark`) VALUES (100, '前台验证码', 'sys.account.captchaEnabled', 'true', 'Y', 'admin', '2025-01-16 14:26:58', '', NULL, NULL);
 
 -- ----------------------------
 -- 14、系统访问记录
