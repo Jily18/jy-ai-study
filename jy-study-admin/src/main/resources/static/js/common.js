@@ -32,10 +32,10 @@ function handleLike(type, targetId, onSuccess) {
         },
         success: function(res) {
             if(res.code === 0) {
-                layer.msg('点赞成功');
+                $.modal.msgSuccess('点赞成功');
                 if(onSuccess) onSuccess(res);
             } else {
-                layer.msg(res.msg);
+                $.modal.msgError(res.msg);
             }
         }
     });
@@ -58,10 +58,10 @@ function handleUnlike(type, targetId, onSuccess) {
         },
         success: function(res) {
             if(res.code === 0) {
-                layer.msg('已取消点赞');
+                $.modal.msgSuccess('已取消点赞');
                 if(onSuccess) onSuccess(res);
             } else {
-                layer.msg(res.msg);
+                $.modal.msgError(res.msg);
             }
         }
     });
@@ -84,10 +84,10 @@ function handleCollect(type, targetId, onSuccess) {
         },
         success: function(res) {
             if(res.code === 0) {
-                layer.msg('收藏成功');
+                $.modal.msgSuccess('收藏成功');
                 if(onSuccess) onSuccess(res);
             } else {
-                layer.msg(res.msg);
+                $.modal.msgError(res.msg);
             }
         }
     });
@@ -110,10 +110,10 @@ function handleUncollect(type, targetId, onSuccess) {
         },
         success: function(res) {
             if(res.code === 0) {
-                layer.msg('已取消收藏');
+                $.modal.msgSuccess('已取消收藏');
                 if(onSuccess) onSuccess(res);
             } else {
-                layer.msg(res.msg);
+                $.modal.msgError(res.msg);
             }
         }
     });
