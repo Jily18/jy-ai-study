@@ -175,10 +175,50 @@
             $(this).attr("src", url);
         });
 
+        // 密码格式验证
+        function checkPassword(password) {
+            // 1: 纯数字 2: 纯字母 3: 字母+数字 4: 字母+数字+特殊字符
+            var chrtype = 3; // 默认使用最严格的验证
+            if(/^\d+$/.test(password)) {
+                chrtype = 1;
+            } else if(/^[a-zA-Z]+$/.test(password)) {
+                chrtype = 2;
+            } else if(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/.test(password)) {
+                chrtype = 3;
+            }
+            
+            if(chrtype == 1) {
+                alert("密码不能为纯数字");
+                return false;
+            } else if(chrtype == 2) {
+                alert("密码不能为纯字母");
+                return false;
+            } else if(chrtype == 3) {
+                if(password.length < 8) {
+                    alert("字母+数字组合的密码长度至少为8位");
+                    return false;
+                }
+            } else if(chrtype == 4) {
+                if(password.length < 10) {
+                    alert("包含特殊字符的密码长度至少为10位");
+                    return false;
+                }
+                if(!/[~!@#$%^&*()\-_=+]/.test(password)) {
+                    alert("密码必须包含至少一个特殊字符：~!@#$%^&*()-_=+");
+                    return false;
+                }
+            }
+            return true;
+        }
+
         $("#registerForm").on("submit", function(e) {
             e.preventDefault();
-            if($("input[name='password']").val() != $("input[name='confirmPassword']").val()) {
+            var password = $("input[name='password']").val();
+            if(password != $("input[name='confirmPassword']").val()) {
                 alert("两次输入的密码不一致");
+                return;
+            }
+            if(!checkPassword(password)) {
                 return;
             }
             $.ajax({
@@ -203,4 +243,4 @@
     });
     </script>
 </body>
-</html> 
+</html>
