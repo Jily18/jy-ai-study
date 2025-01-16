@@ -86,11 +86,13 @@
     <!-- 基础JS依赖 -->
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
-    
+    <script th:src="@{/js/common.js}"></script>
+
     <!-- 定义ctx变量 -->
     <script th:inline="javascript">
         var ctx = /*[[@{/}]]*/'';
         var prefix = ctx + "web/interaction";
+        var isUserLoggedIn = [[${session.webUser != null}]];
     </script>
     
     <!-- 其他JS依赖 -->
@@ -154,88 +156,75 @@
 
     <script>
         var prefix = ctx + "web/interaction";
-
-        // 记录浏览量
+        var isLiked = false;
+        var isCollected = false;
+        
         $(function() {
+            // 获取当前用户的点赞和收藏状态
             $.ajax({
-                url: prefix + "/view",
-                type: "POST",
+                url: prefix + "/status",
+                type: "GET",
                 data: {
-                    type: "1",  // 1表示课程
+                    type: "1",
                     targetId: [[${lesson.lessonId}]]
                 },
                 success: function(res) {
-                    if (res.code != 0) {
-                        console.log("浏览量记录失败：" + res.msg);
+                    if (res.code == 0) {
+                        isLiked = res.data.liked;
+                        isCollected = res.data.collected;
+                        updateButtonStatus();
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.log("浏览量记录请求失败：" + error);
                 }
             });
         });
 
-        function startLearning() {
-            // TODO: 实现开始学习功能
-            alert('开始学习功能开发中...');
-        }
-
-        // 处理需要登录的操作
-        function handleLoginRequired(action) {
-            layer.confirm('此功能需要登录，是否去登录？', {
-                btn: ['去登录','取消'],
-                title: '提示'
-            }, function(){
-                window.location.href = ctx + '/web/login';
-            });
-        }
-
         function toggleLike() {
-            $.ajax({
-                url: prefix + "/like",
-                type: "POST",
-                data: {
-                    type: "1",  // 1表示课程
-                    targetId: [[${lesson.lessonId}]]
-                },
-                success: function(res) {
-                    if(res.code === 401) {
-                        handleLoginRequired('like');
-                    } else if(res.code === 0) {
-                        layer.msg('点赞成功');
-                        // 更新点赞数量
-                        var count = parseInt($(".lesson-meta span:nth-child(2)").text()) + 1;
-                        $(".lesson-meta span:nth-child(2)").text(count);
-                        $("#likeBtn").addClass("active");
-                    } else {
-                        layer.msg(res.msg);
-                    }
-                }
-            });
+            if (!isLiked) {
+                handleLike("1", [[${lesson.lessonId}]], function() {
+                    isLiked = true;
+                    var count = parseInt($(".lesson-meta span:nth-child(2)").text()) + 1;
+                    $(".lesson-meta span:nth-child(2)").text(count);
+                    updateButtonStatus();
+                });
+            } else {
+                handleUnlike("1", [[${lesson.lessonId}]], function() {
+                    isLiked = false;
+                    var count = parseInt($(".lesson-meta span:nth-child(2)").text()) - 1;
+                    $(".lesson-meta span:nth-child(2)").text(count);
+                    updateButtonStatus();
+                });
+            }
         }
 
         function toggleCollect() {
-            $.ajax({
-                url: prefix + "/collect",
-                type: "POST",
-                data: {
-                    type: "1",  // 1表示课程
-                    targetId: [[${lesson.lessonId}]]
-                },
-                success: function(res) {
-                    if(res.code === 401) {
-                        handleLoginRequired('collect');
-                    } else if(res.code === 0) {
-                        layer.msg('收藏成功');
-                        // 更新收藏数量
-                        var count = parseInt($(".lesson-meta span:nth-child(3)").text()) + 1;
-                        $(".lesson-meta span:nth-child(3)").text(count);
-                        $("#collectBtn").addClass("active");
-                    } else {
-                        layer.msg(res.msg);
-                    }
-                }
-            });
+            if (!isCollected) {
+                handleCollect("1", [[${lesson.lessonId}]], function() {
+                    isCollected = true;
+                    var count = parseInt($(".lesson-meta span:nth-child(3)").text()) + 1;
+                    $(".lesson-meta span:nth-child(3)").text(count);
+                    updateButtonStatus();
+                });
+            } else {
+                handleUncollect("1", [[${lesson.lessonId}]], function() {
+                    isCollected = false;
+                    var count = parseInt($(".lesson-meta span:nth-child(3)").text()) - 1;
+                    $(".lesson-meta span:nth-child(3)").text(count);
+                    updateButtonStatus();
+                });
+            }
+        }
+
+        function updateButtonStatus() {
+            if (isLiked) {
+                $("#likeBtn").addClass("active");
+            } else {
+                $("#likeBtn").removeClass("active");
+            }
+            if (isCollected) {
+                $("#collectBtn").addClass("active");
+            } else {
+                $("#collectBtn").removeClass("active");
+            }
         }
     </script>
 </body>

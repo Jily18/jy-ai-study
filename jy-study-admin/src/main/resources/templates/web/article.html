@@ -127,11 +127,13 @@
     <!-- 基础JS依赖 -->
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
-    
+    <script th:src="@{/js/common.js}"></script>
+
     <!-- 定义ctx变量 -->
     <script th:inline="javascript">
         var ctx = /*[[@{/}]]*/'';
         var prefix = ctx + "web/interaction";
+        var isUserLoggedIn = [[${session.webUser != null}]];
     </script>
     
     <!-- 其他JS依赖 -->
@@ -208,15 +210,6 @@
     </footer>
 
     <script>
-    // 处理需要登录的操作
-    function handleLoginRequired(action) {
-        layer.confirm('此功能需要登录，是否去登录？', {
-            btn: ['去登录','取消'],
-            title: '提示'
-        }, function(){
-            window.location.href = ctx + '/web/login';
-        });
-    }
 
     var isLiked = false;
     var isCollected = false;
@@ -244,77 +237,33 @@
     });
 
     function toggleLike() {
-        // 检查登录状态
-        if(![[${session.webUser != null}]]) {
-            handleLoginRequired('like');
-            return;
-        }
-        
         if (!isLiked) {
-            $.post(ctx + "web/interaction/like", {
-                type: "2",
-                targetId: [[${article.articleId}]]
-            }, function(res) {
-                if (res.code == 0) {
-                    isLiked = true;
-                    $("#likeCount").text(parseInt($("#likeCount").text()) + 1);
-                    updateButtonStatus();
-                    $.modal.msgSuccess("点赞成功");
-                } else {
-                    $.modal.msgError(res.msg);
-                }
+            handleLike("2", [[${article.articleId}]], function() {
+                isLiked = true;
+                $("#likeCount").text(parseInt($("#likeCount").text()) + 1);
+                updateButtonStatus();
             });
         } else {
-            $.post(ctx + "web/interaction/unlike", {
-                type: "2",
-                targetId: [[${article.articleId}]]
-            }, function(res) {
-                if (res.code == 0) {
-                    isLiked = false;
-                    $("#likeCount").text(parseInt($("#likeCount").text()) - 1);
-                    updateButtonStatus();
-                    $.modal.msgSuccess("已取消点赞");
-                } else {
-                    $.modal.msgError(res.msg);
-                }
+            handleUnlike("2", [[${article.articleId}]], function() {
+                isLiked = false;
+                $("#likeCount").text(parseInt($("#likeCount").text()) - 1);
+                updateButtonStatus();
             });
         }
     }
 
     function toggleCollect() {
-        // 检查登录状态
-        if(![[${session.webUser != null}]]) {
-            handleLoginRequired('collect');
-            return;
-        }
-        
         if (!isCollected) {
-            $.post(ctx + "web/interaction/collect", {
-                type: "2",
-                targetId: [[${article.articleId}]]
-            }, function(res) {
-                if (res.code == 0) {
-                    isCollected = true;
-                    $("#collectCount").text(parseInt($("#collectCount").text()) + 1);
-                    updateButtonStatus();
-                    $.modal.msgSuccess("收藏成功");
-                } else {
-                    $.modal.msgError(res.msg);
-                }
+            handleCollect("2", [[${article.articleId}]], function() {
+                isCollected = true;
+                $("#collectCount").text(parseInt($("#collectCount").text()) + 1);
+                updateButtonStatus();
             });
         } else {
-            $.post(ctx + "web/interaction/uncollect", {
-                type: "2",
-                targetId: [[${article.articleId}]]
-            }, function(res) {
-                if (res.code == 0) {
-                    isCollected = false;
-                    $("#collectCount").text(parseInt($("#collectCount").text()) - 1);
-                    updateButtonStatus();
-                    $.modal.msgSuccess("已取消收藏");
-                } else {
-                    $.modal.msgError(res.msg);
-                }
+            handleUncollect("2", [[${article.articleId}]], function() {
+                isCollected = false;
+                $("#collectCount").text(parseInt($("#collectCount").text()) - 1);
+                updateButtonStatus();
             });
         }
     }
