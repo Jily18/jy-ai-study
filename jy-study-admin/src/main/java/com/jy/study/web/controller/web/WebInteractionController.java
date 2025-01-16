@@ -9,16 +9,19 @@ import com.jy.study.lesson.service.IStudyUserInteractionService;
 import com.jy.study.lesson.service.IStudyArticleService;
 import com.jy.study.lesson.domain.StudyLesson;
 import com.jy.study.lesson.domain.StudyArticle;
+import com.jy.study.web.controller.common.CommonController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.apache.shiro.SecurityUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/web/interaction")
 public class WebInteractionController extends BaseController {
-    
+    private static final Logger log = LoggerFactory.getLogger(WebInteractionController.class);
     @Autowired
     private IStudyUserInteractionService interactionService;
     
@@ -52,18 +55,20 @@ public class WebInteractionController extends BaseController {
     }
 
     @PostMapping("/like")
-    public AjaxResult like(String type, Long targetId) {
-        Long userId = getUserId();
+    public AjaxResult like(String type, Long targetId, HttpServletRequest request) {
+        Long userId = getCurrentUserId(request);
+        log.info("/like !! userId:"+userId);
+
         if (userId == null) {
             return error("请先登录");
         }
         boolean result = interactionService.like(userId, type, targetId);
-        return result ? success() : error("您已经点过赞了");
+        return result ? success() : error("您已经点赞过了");
     }
     
     @PostMapping("/unlike")
-    public AjaxResult unlike(String type, Long targetId) {
-        Long userId = getUserId();
+    public AjaxResult unlike(String type, Long targetId, HttpServletRequest request) {
+        Long userId = getCurrentUserId(request);
         if (userId == null) {
             return error("请先登录");
         }
@@ -72,8 +77,10 @@ public class WebInteractionController extends BaseController {
     }
     
     @PostMapping("/collect")
-    public AjaxResult collect(String type, Long targetId) {
-        Long userId = getUserId();
+    public AjaxResult collect(String type, Long targetId, HttpServletRequest request){
+        Long userId = getCurrentUserId(request);
+        log.info("/collect !! userId:"+userId);
+
         if (userId == null) {
             return error("请先登录");
         }
@@ -82,8 +89,8 @@ public class WebInteractionController extends BaseController {
     }
     
     @PostMapping("/uncollect")
-    public AjaxResult uncollect(String type, Long targetId) {
-        Long userId = getUserId();
+    public AjaxResult uncollect(String type, Long targetId, HttpServletRequest request) {
+        Long userId = getCurrentUserId(request);
         if (userId == null) {
             return error("请先登录");
         }
@@ -94,7 +101,7 @@ public class WebInteractionController extends BaseController {
     @GetMapping("/status")
     public AjaxResult getStatus(String type, Long targetId, HttpServletRequest request) {
         Long userId = getCurrentUserId(request);
-        
+        log.info("/status !! userId:"+userId);
         boolean liked = false;
         boolean collected = false;
         if (userId != null) {
