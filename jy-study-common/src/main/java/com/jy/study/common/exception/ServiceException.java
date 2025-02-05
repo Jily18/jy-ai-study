@@ -3,7 +3,7 @@ package com.jy.study.common.exception;
 /**
  * 业务异常
  * 
- * @author ruoyi
+ * @author jily
  */
 public final class ServiceException extends RuntimeException
 {

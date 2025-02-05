@@ -15,7 +15,7 @@ import com.jy.study.system.service.ISysConfigService;
 /**
  * 注册验证
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 public class SysRegisterController extends BaseController

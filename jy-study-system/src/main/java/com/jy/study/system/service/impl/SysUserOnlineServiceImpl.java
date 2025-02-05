@@ -19,7 +19,7 @@ import com.jy.study.system.service.ISysUserOnlineService;
 /**
  * 在线用户 服务层处理
  * 
- * @author ruoyi
+ * @author jily
  */
 @Service
 public class SysUserOnlineServiceImpl implements ISysUserOnlineService

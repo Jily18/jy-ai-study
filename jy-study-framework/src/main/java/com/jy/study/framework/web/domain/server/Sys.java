@@ -3,7 +3,7 @@ package com.jy.study.framework.web.domain.server;
 /**
  * 系统相关信息
  * 
- * @author ruoyi
+ * @author jily
  */
 public class Sys
 {

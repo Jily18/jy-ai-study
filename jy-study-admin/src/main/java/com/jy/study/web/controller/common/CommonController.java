@@ -25,7 +25,7 @@ import com.jy.study.common.utils.file.FileUtils;
 /**
  * 通用请求处理
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 @RequestMapping("/common")

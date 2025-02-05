@@ -18,7 +18,7 @@ import com.jy.study.common.utils.uuid.Seq;
 /**
  * 文件上传工具类
  * 
- * @author ruoyi
+ * @author jily
  */
 public class FileUploadUtils
 {

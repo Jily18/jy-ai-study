@@ -24,7 +24,7 @@ import com.jy.study.system.service.ISysDictTypeService;
 /**
  * 字典 业务层处理
  * 
- * @author ruoyi
+ * @author jily
  */
 @Service
 public class SysDictTypeServiceImpl implements ISysDictTypeService

@@ -24,7 +24,7 @@ import com.jy.study.system.service.ISysDictTypeService;
 /**
  * 数据字典信息
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 @RequestMapping("/system/dict")

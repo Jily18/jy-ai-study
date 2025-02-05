@@ -6,7 +6,7 @@ import com.jy.study.common.core.domain.entity.SysRole;
 /**
  * 角色表 数据层
  * 
- * @author ruoyi
+ * @author jily
  */
 public interface SysRoleMapper
 {

@@ -22,7 +22,7 @@ import com.jy.study.common.utils.uuid.IdUtils;
 /**
  * 文件处理工具类
  * 
- * @author ruoyi
+ * @author jily
  */
 public class FileUtils
 {

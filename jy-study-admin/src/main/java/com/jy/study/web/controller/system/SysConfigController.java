@@ -23,7 +23,7 @@ import com.jy.study.system.service.ISysConfigService;
 /**
  * 参数配置 信息操作处理
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 @RequestMapping("/system/config")

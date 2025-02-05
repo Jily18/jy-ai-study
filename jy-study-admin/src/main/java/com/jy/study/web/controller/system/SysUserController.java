@@ -38,7 +38,7 @@ import com.jy.study.system.service.ISysUserService;
 /**
  * 用户信息
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 @RequestMapping("/system/user")

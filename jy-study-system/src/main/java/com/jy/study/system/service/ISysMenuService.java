@@ -11,7 +11,7 @@ import com.jy.study.common.core.domain.entity.SysUser;
 /**
  * 菜单 业务层
  * 
- * @author ruoyi
+ * @author jily
  */
 public interface ISysMenuService
 {

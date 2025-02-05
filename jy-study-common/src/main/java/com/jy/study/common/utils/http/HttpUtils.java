@@ -25,7 +25,7 @@ import com.jy.study.common.utils.StringUtils;
 /**
  * 通用http发送方法
  * 
- * @author ruoyi
+ * @author jily
  */
 public class HttpUtils
 {

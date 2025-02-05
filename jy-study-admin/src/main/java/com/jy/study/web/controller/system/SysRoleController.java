@@ -29,7 +29,7 @@ import com.jy.study.system.service.ISysUserService;
 /**
  * 角色信息
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 @RequestMapping("/system/role")

@@ -14,7 +14,7 @@ import com.jy.study.framework.interceptor.RepeatSubmitInterceptor;
 /**
  * 通用配置
  * 
- * @author ruoyi
+ * @author jily
  */
 @Configuration
 public class ResourcesConfig implements WebMvcConfigurer

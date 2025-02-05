@@ -16,7 +16,7 @@ import com.jy.study.common.utils.ShiroUtils;
 /**
  * 数据脱敏序列化过滤
  *
- * @author ruoyi
+ * @author jily
  */
 public class SensitiveJsonSerializer extends JsonSerializer<String> implements ContextualSerializer
 {

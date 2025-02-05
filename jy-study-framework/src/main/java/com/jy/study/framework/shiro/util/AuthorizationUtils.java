@@ -7,7 +7,7 @@ import com.jy.study.framework.shiro.realm.UserRealm;
 /**
  * 用户授权信息
  * 
- * @author ruoyi
+ * @author jily
  */
 public class AuthorizationUtils
 {

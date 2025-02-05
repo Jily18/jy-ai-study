@@ -7,7 +7,7 @@ import com.jy.study.system.domain.SysUserOnline;
 /**
  * 在线用户 服务层
  * 
- * @author ruoyi
+ * @author jily
  */
 public interface ISysUserOnlineService
 {

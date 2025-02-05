@@ -11,7 +11,7 @@ import com.jy.study.generator.service.IGenTableColumnService;
 /**
  * 业务字段 服务层实现
  * 
- * @author ruoyi
+ * @author jily
  */
 @Service
 public class GenTableColumnServiceImpl implements IGenTableColumnService

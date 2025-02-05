@@ -7,7 +7,7 @@ import com.jy.study.common.core.domain.entity.SysMenu;
 /**
  * 菜单表 数据层
  * 
- * @author ruoyi
+ * @author jily
  */
 public interface SysMenuMapper
 {

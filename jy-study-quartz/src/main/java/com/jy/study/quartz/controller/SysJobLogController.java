@@ -26,7 +26,7 @@ import com.jy.study.quartz.service.ISysJobService;
 /**
  * 调度日志操作处理
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 @RequestMapping("/monitor/jobLog")

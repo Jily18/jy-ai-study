@@ -30,7 +30,7 @@ import com.jy.study.quartz.util.ScheduleUtils;
 /**
  * 调度任务信息操作处理
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 @RequestMapping("/monitor/job")

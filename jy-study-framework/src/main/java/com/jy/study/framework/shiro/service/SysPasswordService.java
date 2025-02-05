@@ -20,7 +20,7 @@ import com.jy.study.framework.manager.factory.AsyncFactory;
 /**
  * 登录密码方法
  * 
- * @author ruoyi
+ * @author jily
  */
 @Component
 public class SysPasswordService

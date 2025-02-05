@@ -7,7 +7,7 @@ import com.jy.study.system.domain.SysUserRole;
 /**
  * 用户 业务层
  * 
- * @author ruoyi
+ * @author jily
  */
 public interface ISysUserService
 {

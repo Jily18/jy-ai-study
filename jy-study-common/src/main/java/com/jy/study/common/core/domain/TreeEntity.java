@@ -3,7 +3,7 @@ package com.jy.study.common.core.domain;
 /**
  * Tree基类
  * 
- * @author ruoyi
+ * @author jily
  */
 public class TreeEntity extends BaseEntity
 {

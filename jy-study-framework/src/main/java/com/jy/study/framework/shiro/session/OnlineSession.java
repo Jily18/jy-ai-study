@@ -8,7 +8,7 @@ import com.jy.study.common.enums.OnlineStatus;
 /**
  * 在线用户会话属性
  * 
- * @author ruoyi
+ * @author jily
  */
 public class OnlineSession extends SimpleSession
 {

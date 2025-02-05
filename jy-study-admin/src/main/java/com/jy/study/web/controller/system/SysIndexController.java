@@ -29,7 +29,7 @@ import com.jy.study.system.service.ISysMenuService;
 /**
  * 首页 业务处理
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 public class SysIndexController extends BaseController

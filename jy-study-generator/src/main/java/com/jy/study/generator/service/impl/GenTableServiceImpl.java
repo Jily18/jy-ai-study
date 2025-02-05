@@ -41,7 +41,7 @@ import com.jy.study.generator.util.VelocityUtils;
 /**
  * 业务 服务层实现
  * 
- * @author ruoyi
+ * @author jily
  */
 @Service
 public class GenTableServiceImpl implements IGenTableService

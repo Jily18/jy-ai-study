@@ -5,7 +5,7 @@ import java.util.Locale;
 /**
  * 通用常量信息
  * 
- * @author ruoyi
+ * @author jily
  */
 public class Constants
 {
