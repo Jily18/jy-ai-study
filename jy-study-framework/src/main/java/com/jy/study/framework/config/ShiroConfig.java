@@ -245,7 +245,7 @@ public class ShiroConfig
         // 设置realm.
         securityManager.setRealm(userRealm);
         // 记住我
-        securityManager.setRememberMeManager(rememberMe ? rememberMeManager() : null);
+        securityManager.setRememberMeManager(rememberMeManager());
         // 注入缓存管理器;
         securityManager.setCacheManager(getEhCacheManager());
         // session管理器
@@ -307,6 +307,23 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/login", "anon,captchaValidate");
         // 注册相关
         filterChainDefinitionMap.put("/register", "anon,captchaValidate");
+
+        // 添加学生端相关配置
+        filterChainDefinitionMap.put("/web/auth/login", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/web/auth/register", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/web/auth/logout", "logout");
+        
+        // 允许访问的静态资源
+        filterChainDefinitionMap.put("/web/css/**", "anon");
+        filterChainDefinitionMap.put("/web/js/**", "anon");
+        filterChainDefinitionMap.put("/web/images/**", "anon");
+        
+        // 首页和公共页面允许匿名访问
+        filterChainDefinitionMap.put("/web/index", "anon");
+        filterChainDefinitionMap.put("/web/public/**", "anon");
+        
+        // 需要登录才能访问的接口
+        filterChainDefinitionMap.put("/web/user/**", "user");
 
         Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
         filters.put("onlineSession", onlineSessionFilter());

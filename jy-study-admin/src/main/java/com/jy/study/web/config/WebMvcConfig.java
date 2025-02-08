@@ -16,6 +16,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(webLoginInterceptor)
                 .addPathPatterns("/web/**")
-                .excludePathPatterns("/web/login", "/web/register", "/web/captcha/**");
+                .excludePathPatterns("/web/login", "/web/checkLogin", "/web/register", "/web/captcha/**");
     }
 } 

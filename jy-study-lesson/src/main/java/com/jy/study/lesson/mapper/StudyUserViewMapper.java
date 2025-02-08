@@ -1,8 +1,9 @@
 package com.jy.study.lesson.mapper;
 
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import com.jy.study.lesson.domain.StudyUserView;
-
+@Mapper
 public interface StudyUserViewMapper {
     public int insertUserView(StudyUserView view);
     

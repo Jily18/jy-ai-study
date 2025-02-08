@@ -1,5 +1,6 @@
 package com.jy.study.lesson.service.impl;
 
+import com.jy.study.common.utils.ShiroUtils;
 import com.jy.study.lesson.mapper.StudyUserViewMapper;
 import com.jy.study.lesson.mapper.StudyUserLikeMapper;
 import com.jy.study.lesson.mapper.StudyUserCollectMapper;
@@ -34,13 +35,17 @@ public class StudyUserInteractionServiceImpl implements IStudyUserInteractionSer
     private StudyLessonMapper lessonMapper;
 
     @Override
-    public void recordView(Long userId, String type, Long targetId, String ipAddr) {
+    public void recordView(String type, Long targetId) {
         // 无论是否登录都记录浏览量
         if ("1".equals(type)) {
             lessonMapper.incrementViewCount(targetId);
         } else if ("2".equals(type)) {
             articleMapper.incrementViewCount(targetId);
         }
+        // 获取当前用户ID(使用Shiro)
+        Long userId = ShiroUtils.getUserId();
+        // 获取IP地址(使用Shiro工具类)
+        String ipAddr = ShiroUtils.getIp();
         
         // 只有登录用户才记录详细的浏览记录
         if (userId != null) {

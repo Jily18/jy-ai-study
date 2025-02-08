@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -92,7 +92,7 @@
     <script th:inline="javascript">
         var ctx = /*[[@{/}]]*/'';
         var prefix = ctx + "web/interaction";
-        var isUserLoggedIn = [[${session.webUser != null}]];
+        window.isAuthenticated = [[${@shiroService.getPrincipal() != null}]];
     </script>
     
     <!-- 其他JS依赖 -->
@@ -198,17 +198,15 @@
 
         function toggleCollect() {
             if (!isCollected) {
-                handleCollect("1", [[${lesson.lessonId}]], function() {
+                handleCollect("1", /*[[${lesson.lessonId}]]*/ null, function() {
                     isCollected = true;
-                    var count = parseInt($(".lesson-meta span:nth-child(3)").text()) + 1;
-                    $(".lesson-meta span:nth-child(3)").text(count);
+                    $("#collectCount").text(parseInt($("#collectCount").text()) + 1);
                     updateButtonStatus();
                 });
             } else {
-                handleUncollect("1", [[${lesson.lessonId}]], function() {
+                handleUncollect("1", /*[[${lesson.lessonId}]]*/ null, function() {
                     isCollected = false;
-                    var count = parseInt($(".lesson-meta span:nth-child(3)").text()) - 1;
-                    $(".lesson-meta span:nth-child(3)").text(count);
+                    $("#collectCount").text(parseInt($("#collectCount").text()) - 1);
                     updateButtonStatus();
                 });
             }
@@ -226,6 +224,26 @@
                 $("#collectBtn").removeClass("active");
             }
         }
+
+        // 记录浏览量
+        $(function() {
+            $.ajax({
+                url: prefix + "/view",
+                type: "POST",
+                data: {
+                    type: "1",
+                    targetId: /*[[${lesson.lessonId}]]*/ ''
+                },
+                success: function(res) {
+                    if (res.code != 0) {
+                        console.log("浏览量记录失败：" + res.msg);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log("浏览量记录请求失败：" + error);
+                }
+            });
+        });
     </script>
 </body>
 </html>

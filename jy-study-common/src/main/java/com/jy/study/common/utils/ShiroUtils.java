@@ -8,6 +8,8 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import com.jy.study.common.core.domain.entity.SysUser;
 import com.jy.study.common.utils.bean.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * shiro 工具类
@@ -16,6 +18,8 @@ import com.jy.study.common.utils.bean.BeanUtils;
  */
 public class ShiroUtils
 {
+    private static final Logger log = LoggerFactory.getLogger(ShiroUtils.class);
+
     public static Subject getSubject()
     {
         return SecurityUtils.getSubject();
@@ -55,6 +59,9 @@ public class ShiroUtils
 
     public static Long getUserId()
     {
+        if(getSysUser() == null){
+            return null;
+        }
         return getSysUser().getUserId().longValue();
     }
 

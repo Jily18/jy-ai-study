@@ -5,54 +5,68 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * 前台登录拦截器
+ */
 @Component
 public class WebLoginInterceptor implements HandlerInterceptor {
-    
+    private static final Logger log = LoggerFactory.getLogger(WebLoginInterceptor.class);
+
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) 
-            throws Exception {
-        // 获取当前请求路径
-        String requestURI = request.getRequestURI();
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        String path = request.getRequestURI().substring(request.getContextPath().length());
         
-        // 白名单路径直接放行
-        if (isAllowPath(requestURI)) {
+        // 如果是白名单路径，直接放行
+        if (isAllowPath(path)) {
             return true;
         }
         
-        // 只拦截需要登录的操作接口
-        if (isRequireLoginPath(requestURI)) {
-            // 检查用户是否登录
-            HttpSession session = request.getSession();
-            if (session.getAttribute("webUser") == null) {
-                // 如果是AJAX请求，返回JSON
-                if (isAjaxRequest(request)) {
-                    response.setContentType("application/json;charset=UTF-8");
-                    response.getWriter().write("{\"code\":401,\"msg\":\"请先登录\"}");
-                } else {
-                    // 普通请求则跳转到登录页
-                    response.sendRedirect(request.getContextPath() + "/web/login");
-                }
+        // 如果不是需要登录的路径，直接放行
+        if (!isRequireLoginPath(path)) {
+            return true;
+        }
+
+        // 使用Shiro检查登录状态
+        Subject subject = SecurityUtils.getSubject();
+        log.debug("WebLoginInterceptor - checking auth status: {}", subject != null ? subject.isAuthenticated() : "null");
+
+        if (subject == null || !subject.isAuthenticated()) {
+            log.warn("User not authenticated, redirecting to login page");
+            // 如果是AJAX请求，返回JSON
+            if (isAjaxRequest(request)) {
+                response.setStatus(401);
+                response.setContentType("application/json;charset=UTF-8");
+                response.getWriter().write("{\"code\":401,\"msg\":\"请先登录\"}");
                 return false;
             }
+            // 普通请求重定向到登录页
+            response.sendRedirect(request.getContextPath() + "/web/login");
+            return false;
         }
         return true;
     }
-    
+
     private boolean isAjaxRequest(HttpServletRequest request) {
         String xRequestedWith = request.getHeader("X-Requested-With");
         return "XMLHttpRequest".equals(xRequestedWith);
     }
-    
+
     private boolean isRequireLoginPath(String path) {
         // 需要登录的接口路径
         String[] requireLoginPaths = {
-            "/web/interaction/like",
-            "/web/interaction/collect",
-            "/web/user/"
+                "/web/interaction/like",
+                "/web/interaction/unlike",
+                "/web/interaction/collect",
+                "/web/interaction/uncollect",
+                "/web/user/"
+                
         };
-        
+
         for (String loginPath : requireLoginPaths) {
             if (path.startsWith(loginPath)) {
                 return true;
@@ -60,20 +74,24 @@ public class WebLoginInterceptor implements HandlerInterceptor {
         }
         return false;
     }
-    
+
     private boolean isAllowPath(String path) {
         // 定义白名单路径
         String[] allowPaths = {
-            "/web/login",
-            "/web/register",
-            "/web/captcha",
-            "/css/",
-            "/js/",
-            "/img/",
-            "/ajax/",
-            "/captcha/"
+                "/web/login",
+                "/web/register",
+                "/web/captcha",
+                "/web/index",
+                "/web/public",
+                "/web/checkLogin",
+                "/web/interaction/view",
+                "/css/",
+                "/js/",
+                "/img/",
+                "/ajax/",
+                "/captcha/"
         };
-        
+
         for (String allowPath : allowPaths) {
             if (path.startsWith(allowPath)) {
                 return true;

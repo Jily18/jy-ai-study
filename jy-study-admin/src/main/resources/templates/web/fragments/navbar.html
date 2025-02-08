@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <meta charset="UTF-8">
     <title>Navbar Fragment</title>
@@ -23,7 +23,7 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/web/featured}"><i class="fa fa-star"></i> 精选推荐</a>
                     </li>
-                    <th:block th:if="${session.webUser == null}">
+                    <th:block shiro:guest="">
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/web/login}">
                                 <i class="fa fa-sign-in"></i> 登录
@@ -35,11 +35,11 @@
                             </a>
                         </li>
                     </th:block>
-                    <th:block th:unless="${session.webUser == null}">
+                    <th:block shiro:authenticated="">
                         <li class="nav-item user-dropdown">
                             <a class="nav-link" href="#">
                                 <i class="fa fa-user-circle"></i>
-                                <span th:text="${session.webUser.userName}">用户</span>
+                                <span th:text="${@shiroService.getPrincipal().userName}">用户</span>
                             </a>
                             <div class="user-dropdown-content">
                                 <a class="user-dropdown-item" th:href="@{/web/user/profile}">

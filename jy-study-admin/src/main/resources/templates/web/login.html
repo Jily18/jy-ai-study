@@ -124,6 +124,20 @@
         .register-link a:hover {
             text-decoration: underline;
         }
+        .remember-me {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .remember-me input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        .remember-me label {
+            color: #666;
+            font-weight: normal;
+            margin: 0;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -137,6 +151,10 @@
                     <div class="captcha-group" th:if="${captchaEnabled}">
                         <input type="text" class="form-control captcha-input" name="validateCode" placeholder="验证码" maxlength="5">
                         <img class="captcha-img imgcode" th:src="@{/captcha/captchaImage(type=math)}">
+                    </div>
+                    <div class="remember-me">
+                        <input type="checkbox" id="rememberMe" name="rememberMe" checked>
+                        <label for="rememberMe">记住我</label>
                     </div>
                     <button type="submit" class="btn btn-login btn-block">登录</button>
                     <div class="register-link">
@@ -199,6 +217,8 @@
             // 表单验证
             var username = $("input[name='username']").val().trim();
             var password = $("input[name='password']").val().trim();
+            var rememberMe = $("input[name='rememberMe']").prop("checked");
+            
             if (username === '') {
                 showError('请输入用户名');
                 return false;
@@ -222,7 +242,12 @@
             $.ajax({
                 type: "POST",
                 url: ctx + "/web/login",
-                data: $(this).serialize(),
+                data: {
+                    username: username,
+                    password: password,
+                    rememberMe: rememberMe,
+                    validateCode: validateCode.length > 0 ? validateCode.val() : ''
+                },
                 dataType: "json",
                 success: function(res) {
                     layer.close(loadingIndex);

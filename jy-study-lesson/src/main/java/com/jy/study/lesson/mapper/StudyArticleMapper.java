@@ -1,7 +1,10 @@
 package com.jy.study.lesson.mapper;
 import com.jy.study.lesson.domain.StudyArticle;
+import org.apache.ibatis.annotations.Mapper;
+
 import java.util.List;
 
+@Mapper
 public interface StudyArticleMapper {
     public StudyArticle selectArticleById(Long articleId);
 

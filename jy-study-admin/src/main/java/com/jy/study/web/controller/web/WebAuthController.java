@@ -31,6 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
+
 @Controller
 @RequestMapping("/web")
 public class WebAuthController extends BaseController {
@@ -60,48 +65,21 @@ public class WebAuthController extends BaseController {
 
     @PostMapping("/login")
     @ResponseBody
-    public AjaxResult ajaxLogin(String username, String password, String validateCode, HttpServletRequest request) {
+    public AjaxResult ajaxLogin(String username, String password, Boolean rememberMe) {
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
+        Subject subject = SecurityUtils.getSubject();
         try {
-            HttpSession session = request.getSession();
-            
-            if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
-                return AjaxResult.error("用户名或密码不能为空");
-            }
-
-            // 验证码校验
-            if (configService.getKey("sys.account.captchaEnabled").equals("true")) {
-                if (StringUtils.isEmpty(validateCode)) {
-                    return AjaxResult.error("验证码不能为空");
-                }
-                if (!validateCode.equalsIgnoreCase((String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY))) {
-                    return AjaxResult.error("验证码错误");
-                }
-            }
-            
-            // 用户验证
-            SysUser user = userService.selectUserByLoginName(username);
-            if (user == null) {
-//                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL,
-//                    MessageUtils.message("user.not.exists")));
-                return AjaxResult.error("用户不存在");
-            }
-            
-            if (!passwordService.matches(user, password)) {
-//                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL,
-//                    MessageUtils.message("user.password.not.match")));
-                return AjaxResult.error("密码错误");
-            }
-
-            // 记录登录信息
-//            AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS,
-//                MessageUtils.message("user.login.success")));
+            subject.login(token);
+            // 登录成功后记录登录信息
+            SysUser user = ShiroUtils.getSysUser();
             recordLoginInfo(user);
-            
-            session.setAttribute("webUser", user);
-            return AjaxResult.success("登录成功");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return AjaxResult.error("系统错误：" + e.getMessage());
+            return success();
+        } catch (AuthenticationException e) {
+            String msg = "用户或密码错误";
+            if (StringUtils.isNotEmpty(e.getMessage())) {
+                msg = e.getMessage();
+            }
+            return error(msg);
         }
     }
 
@@ -206,30 +184,19 @@ public class WebAuthController extends BaseController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
-        try {
-            // 获取当前登录用户
-            SysUser user = (SysUser)session.getAttribute("webUser");
-            if (user != null) {
-                // 清除session
-                session.removeAttribute("webUser");
-                
-                // 清除可能存在的记住我cookie
-                Cookie[] cookies = request.getCookies();
-                if (cookies != null) {
-                    for (Cookie cookie : cookies) {
-                        if ("rememberMe".equals(cookie.getName())) {
-                            cookie.setMaxAge(0);
-                            cookie.setPath(request.getContextPath());
-                            response.addCookie(cookie);
-                            break;
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.error("退出登录异常", e);
-        }
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        // 使用Shiro登出
+        SecurityUtils.getSubject().logout();
         return "redirect:/web";
+    }
+
+    @GetMapping("/checkLogin")
+    @ResponseBody
+    public AjaxResult checkLogin() {
+        Subject subject = SecurityUtils.getSubject();
+        if (subject != null && subject.isAuthenticated()) {
+            return success();
+        }
+        return error("未登录");
     }
 } 

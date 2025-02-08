@@ -4,7 +4,7 @@ public interface IStudyUserInteractionService {
     /**
      * 记录浏览
      */
-    void recordView(Long userId, String type, Long targetId, String ipAddr);
+    void recordView(String type, Long targetId);
 
     /**
      * 点赞
