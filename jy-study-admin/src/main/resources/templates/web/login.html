@@ -150,10 +150,12 @@
                     <input type="password" class="form-control" name="password" placeholder="密码">
                     <div class="captcha-group" th:if="${captchaEnabled}">
                         <input type="text" class="form-control captcha-input" name="validateCode" placeholder="验证码" maxlength="5">
-                        <img class="captcha-img imgcode" th:src="@{/captcha/captchaImage(type=math)}">
+                        <a href="javascript:void(0);" title="点击更换验证码">
+                            <img class="captcha-img imgcode" th:src="@{/captcha/captchaImage(type=math)}">
+                        </a>
                     </div>
                     <div class="remember-me">
-                        <input type="checkbox" id="rememberMe" name="rememberMe" checked>
+                        <input type="checkbox" id="rememberMe" name="rememberme">
                         <label for="rememberMe">记住我</label>
                     </div>
                     <button type="submit" class="btn btn-login btn-block">登录</button>
@@ -211,13 +213,13 @@
             $(this).attr("src", url);
         });
 
+        // 修改登录表单提交处理
         $("#loginForm").on("submit", function(e) {
             e.preventDefault();
             
-            // 表单验证
             var username = $("input[name='username']").val().trim();
             var password = $("input[name='password']").val().trim();
-            var rememberMe = $("input[name='rememberMe']").prop("checked");
+            var rememberMe = $("#rememberMe").prop("checked"); // 确保正确获取记住我的状态
             
             if (username === '') {
                 showError('请输入用户名');
@@ -245,7 +247,7 @@
                 data: {
                     username: username,
                     password: password,
-                    rememberMe: rememberMe,
+                    rememberMe:rememberMe,
                     validateCode: validateCode.length > 0 ? validateCode.val() : ''
                 },
                 dataType: "json",
@@ -257,7 +259,6 @@
                             location.href = ctx + "/web";
                         }, 1000);
                     } else {
-
                         showError(res.msg || '登录失败');
                         // 刷新验证码
                         if(validateCode.length > 0) {

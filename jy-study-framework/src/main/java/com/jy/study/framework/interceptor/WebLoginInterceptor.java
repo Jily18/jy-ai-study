@@ -33,8 +33,6 @@ public class WebLoginInterceptor implements HandlerInterceptor {
 
         // 使用Shiro检查登录状态
         Subject subject = SecurityUtils.getSubject();
-        log.debug("WebLoginInterceptor - checking auth status: {}", subject != null ? subject.isAuthenticated() : "null");
-
         if (subject == null || !subject.isAuthenticated()) {
             log.warn("User not authenticated, redirecting to login page");
             // 如果是AJAX请求，返回JSON
@@ -64,7 +62,6 @@ public class WebLoginInterceptor implements HandlerInterceptor {
                 "/web/interaction/collect",
                 "/web/interaction/uncollect",
                 "/web/user/"
-                
         };
 
         for (String loginPath : requireLoginPaths) {

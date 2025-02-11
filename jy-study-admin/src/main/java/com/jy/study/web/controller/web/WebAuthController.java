@@ -4,6 +4,7 @@ import com.jy.study.web.controller.common.CommonController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,10 +37,19 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/web")
 public class WebAuthController extends BaseController {
-    
+
+    /**
+     * 是否开启记住我功能
+     */
+    @Value("${shiro.rememberMe.enabled: true}")
+    private boolean rememberMe;
+
     @Autowired
     private ISysUserService userService;
     
@@ -53,6 +63,8 @@ public class WebAuthController extends BaseController {
     public String login(ModelMap mmap) {
         mmap.put("captchaEnabled", configService.getKey("sys.account.captchaEnabled"));
         mmap.put("captchaType", "math");
+        // 是否开启记住我
+        mmap.put("isRemembered", rememberMe);
         return "web/login";
     }
 
@@ -60,19 +72,18 @@ public class WebAuthController extends BaseController {
     public String register(ModelMap mmap) {
         mmap.put("captchaEnabled", configService.getKey("sys.account.captchaEnabled"));
         mmap.put("captchaType", "math");
+        // 是否开启记住我
+        mmap.put("isRemembered", rememberMe);
         return "web/register";
     }
 
     @PostMapping("/login")
     @ResponseBody
     public AjaxResult ajaxLogin(String username, String password, Boolean rememberMe) {
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe);
+        UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe != null && rememberMe);
         Subject subject = SecurityUtils.getSubject();
         try {
             subject.login(token);
-            // 登录成功后记录登录信息
-            SysUser user = ShiroUtils.getSysUser();
-            recordLoginInfo(user);
             return success();
         } catch (AuthenticationException e) {
             String msg = "用户或密码错误";
@@ -174,14 +185,6 @@ public class WebAuthController extends BaseController {
         }
     }
 
-    /**
-     * 记录登录信息
-     */
-    private void recordLoginInfo(SysUser user) {
-        user.setLoginIp(ShiroUtils.getIp());
-        user.setLoginDate(DateUtils.getNowDate());
-        userService.updateUserInfo(user);
-    }
 
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response) {
