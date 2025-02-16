@@ -94,6 +94,17 @@
             background: #1976D2;
             transform: translateY(-1px);
         }
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .register-link a {
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
         .illustration-content {
             position: relative;
             z-index: 1;
@@ -166,6 +177,9 @@
                         <label for="rememberme">记住我</label>
                     </div>
                     <button class="btn btn-login" id="btnSubmit" data-loading="正在验证登录，请稍候...">登录</button>
+                    <div class="register-link">
+                        <a th:href="@{/register}">还没有账号？立即注册</a>
+                    </div>
                 </form>
             </div>
             <div class="illustration-side">
