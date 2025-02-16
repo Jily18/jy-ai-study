@@ -198,13 +198,13 @@
 
         function toggleCollect() {
             if (!isCollected) {
-                handleCollect("1", /*[[${lesson.lessonId}]]*/ null, function() {
+                handleCollect("1", [[${lesson.lessonId}]] , function() {
                     isCollected = true;
                     $("#collectCount").text(parseInt($("#collectCount").text()) + 1);
                     updateButtonStatus();
                 });
             } else {
-                handleUncollect("1", /*[[${lesson.lessonId}]]*/ null, function() {
+                handleUncollect("1", [[${lesson.lessonId}]] ,function() {
                     isCollected = false;
                     $("#collectCount").text(parseInt($("#collectCount").text()) - 1);
                     updateButtonStatus();
