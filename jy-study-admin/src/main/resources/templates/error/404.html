@@ -20,7 +20,8 @@
     <script th:inline="javascript">
       var ctx = [[@{/}]];
       function index() {
-    	  window.top.location = ctx + "index";
+    	  var indexUrl = [[${@config.getKey('shiro.user.indexUrl')}]];
+    	  window.top.location = ctx + (indexUrl || "index");
       }
     </script>
 </body>
