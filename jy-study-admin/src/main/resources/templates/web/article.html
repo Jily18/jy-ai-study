@@ -96,30 +96,46 @@
         .btn-like, .btn-collect {
             padding: 10px 30px;
             border-radius: 25px;
-            transition: all .2s;
-            border: none;
+            transition: all .3s ease;
+            border: 2px solid;
+            background: transparent;
+            font-weight: 500;
         }
         .btn-like {
-            background: #dc3545;
-            color: white;
+            color: #28a745;
+            border-color: #28a745;
         }
         .btn-like:hover {
-            background: #c82333;
-        }
-        .btn-collect {
-            background: #ffc107;
-            color: #343a40;
-        }
-        .btn-collect:hover {
-            background: #e0a800;
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
         }
         .btn-like.active {
-            background: #dc3545;
+            background: #28a745;
             color: white;
+            border-color: #28a745;
+        }
+        .btn-collect {
+            color: #5b73e8;
+            border-color: #5b73e8;
+        }
+        .btn-collect:hover {
+            background: rgba(91, 115, 232, 0.1);
+            color: #5b73e8;
         }
         .btn-collect.active {
-            background: #ffc107;
-            color: #343a40;
+            background: #5b73e8;
+            color: white;
+            border-color: #5b73e8;
+        }
+        .btn-like i, .btn-collect i {
+            margin-right: 5px;
+        }
+        .btn-like.active i, .btn-collect.active i {
+            animation: bounce 0.5s;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
     </style>
 </head>
@@ -173,10 +189,10 @@
             <div class="col-lg-8 mx-auto">
                 <div class="article-actions text-center mb-4">
                     <button class="btn btn-like mr-3" onclick="toggleLike()" id="likeBtn">
-                        <i class="fa fa-thumbs-up"></i> 点赞 (<span id="likeCount" th:text="${article.likeCount}">0</span>)
+                        <i class="fa fa-thumbs-up"></i> 点赞 <span id="likeCount" th:text="${article.likeCount}">0</span>
                     </button>
                     <button class="btn btn-collect" onclick="toggleCollect()" id="collectBtn">
-                        <i class="fa fa-star"></i> 收藏 (<span id="collectCount" th:text="${article.collectCount}">0</span>)
+                        <i class="fa fa-star"></i> 收藏 <span id="collectCount" th:text="${article.collectCount}">0</span>
                     </button>
                 </div>
                 <article class="article-content" th:utext="${article.content}">
@@ -272,13 +288,18 @@
     function updateButtonStatus() {
         if (isLiked) {
             $("#likeBtn").addClass("active");
+            $("#likeBtn").html('<i class="fa fa-thumbs-up"></i> 已赞 <span id="likeCount">' + $("#likeCount").text() + '</span>');
         } else {
             $("#likeBtn").removeClass("active");
+            $("#likeBtn").html('<i class="fa fa-thumbs-up"></i> 点赞 <span id="likeCount">' + $("#likeCount").text() + '</span>');
         }
         if (isCollected) {
             $("#collectBtn").addClass("active");
+            $("#collectBtn").html('<i class="fa fa-star"></i> 已收藏 <span id="collectCount">' + $("#collectCount").text() + '</span>');
         } else {
             $("#collectBtn").removeClass("active");
+            $("#collectBtn").html('<i class="fa fa-star"></i> 收藏 <span id="collectCount">' + $("#collectCount").text() + '</span>');
+
         }
     }
 

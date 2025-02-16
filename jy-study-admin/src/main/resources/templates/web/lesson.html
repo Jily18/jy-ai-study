@@ -80,6 +80,59 @@
         .navbar {
             box-shadow: 0 2px 4px rgba(0,0,0,.08);
         }
+        .btn-like, .btn-collect {
+            padding: 10px 30px;
+            border-radius: 25px;
+            transition: all .3s ease;
+            border: 2px solid;
+            background: transparent;
+            font-weight: 500;
+        }
+        
+        .btn-like {
+            color: #28a745;
+            border-color: #28a745;
+        }
+        
+        .btn-like:hover {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+        
+        .btn-like.active {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .btn-collect {
+            color: #5b73e8;
+            border-color: #5b73e8;
+        }
+        
+        .btn-collect:hover {
+            background: rgba(91, 115, 232, 0.1);
+            color: #5b73e8;
+        }
+
+        .btn-collect.active {
+            background: #5b73e8;
+            color: white;
+            border-color: #5b73e8;
+        }
+
+        .btn-like i, .btn-collect i {
+            margin-right: 5px;
+        }
+
+        .btn-like.active i, .btn-collect.active i {
+            animation: bounce 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
     </style>
 </head>
 <body>
@@ -133,15 +186,12 @@
             <div class="lesson-description" th:utext="${lesson.description}">
                 课程描述...
             </div>
-            <div class="lesson-actions">
-                <button class="btn btn-primary btn-action" onclick="startLearning()">
-                    <i class="fa fa-play-circle"></i> 开始学习
+            <div class="lesson-actions text-center mb-4">
+                <button class="btn btn-like mr-3" onclick="toggleLike()" id="likeBtn">
+                    <i class="fa fa-thumbs-up"></i> 点赞 <span id="likeCount" th:text="${lesson.likeCount}">0</span>
                 </button>
-                <button class="btn btn-outline-primary btn-action" onclick="toggleLike()">
-                    <i class="fa fa-thumbs-up"></i> 点赞
-                </button>
-                <button class="btn btn-outline-primary btn-action" onclick="toggleCollect()">
-                    <i class="fa fa-bookmark"></i> 收藏
+                <button class="btn btn-collect" onclick="toggleCollect()" id="collectBtn">
+                    <i class="fa fa-star"></i> 收藏 <span id="collectCount" th:text="${lesson.collectCount}">0</span>
                 </button>
             </div>
         </div>
@@ -182,15 +232,13 @@
             if (!isLiked) {
                 handleLike("1", [[${lesson.lessonId}]], function() {
                     isLiked = true;
-                    var count = parseInt($(".lesson-meta span:nth-child(2)").text()) + 1;
-                    $(".lesson-meta span:nth-child(2)").text(count);
+                    $("#likeCount").text(parseInt($("#likeCount").text()) + 1);
                     updateButtonStatus();
                 });
             } else {
                 handleUnlike("1", [[${lesson.lessonId}]], function() {
                     isLiked = false;
-                    var count = parseInt($(".lesson-meta span:nth-child(2)").text()) - 1;
-                    $(".lesson-meta span:nth-child(2)").text(count);
+                    $("#likeCount").text(parseInt($("#likeCount").text()) - 1);
                     updateButtonStatus();
                 });
             }
@@ -198,13 +246,13 @@
 
         function toggleCollect() {
             if (!isCollected) {
-                handleCollect("1", [[${lesson.lessonId}]] , function() {
+                handleCollect("1", [[${lesson.lessonId}]], function() {
                     isCollected = true;
                     $("#collectCount").text(parseInt($("#collectCount").text()) + 1);
                     updateButtonStatus();
                 });
             } else {
-                handleUncollect("1", [[${lesson.lessonId}]] ,function() {
+                handleUncollect("1", [[${lesson.lessonId}]], function() {
                     isCollected = false;
                     $("#collectCount").text(parseInt($("#collectCount").text()) - 1);
                     updateButtonStatus();
@@ -215,13 +263,17 @@
         function updateButtonStatus() {
             if (isLiked) {
                 $("#likeBtn").addClass("active");
+                $("#likeBtn").html('<i class="fa fa-thumbs-up"></i> 已赞 <span id="likeCount">' + $("#likeCount").text() + '</span>');
             } else {
                 $("#likeBtn").removeClass("active");
+                $("#likeBtn").html('<i class="fa fa-thumbs-up"></i> 点赞 <span id="likeCount">' + $("#likeCount").text() + '</span>');
             }
             if (isCollected) {
                 $("#collectBtn").addClass("active");
+                $("#collectBtn").html('<i class="fa fa-star"></i> 已收藏 <span id="collectCount">' + $("#collectCount").text() + '</span>');
             } else {
                 $("#collectBtn").removeClass("active");
+                $("#collectBtn").html('<i class="fa fa-star"></i> 收藏 <span id="collectCount">' + $("#collectCount").text() + '</span>');
             }
         }
 
@@ -232,7 +284,7 @@
                 type: "POST",
                 data: {
                     type: "1",
-                    targetId: /*[[${lesson.lessonId}]]*/ ''
+                    targetId: [[${lesson.lessonId}]]
                 },
                 success: function(res) {
                     if (res.code != 0) {
