@@ -326,10 +326,10 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/web/images/**", "anon");
         //把这个大的放在之后，才不会覆盖掉login导致不使用验证码
         filterChainDefinitionMap.put("/web/**","anon");
-        filterChainDefinitionMap.put("/web","anon,user");//而且还要把也加上user不然不知道为什么加载不出
+        filterChainDefinitionMap.put("/web","anon");//而且还要把也加上user不然不知道为什么加载不出
 
         // 首页和公共页面允许匿名访问
-        filterChainDefinitionMap.put("/web/index", "anon,user");
+        filterChainDefinitionMap.put("/web/index", "anon");
         filterChainDefinitionMap.put("/web/public/**", "anon");
         
         // 需要登录才能访问的接口

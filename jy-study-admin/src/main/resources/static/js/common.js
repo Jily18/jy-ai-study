@@ -7,7 +7,6 @@ function getFullCtxPath() {
 
 // 处理需要登录的操作，返回true表示需要登录
 function handleLoginRequired(callback) {
-    console.log("window.isAuthenticated:", window.isAuthenticated);
 
     // 检查会话状态
     $.ajax({
@@ -32,7 +31,7 @@ function handleLoginRequired(callback) {
         btn: ['去登录','取消'],
         title: '提示'
     }, function(){
-        window.location.href = ctx + 'web/login';
+        window.location.href = ctx + 'login';
     });
     return true;
 }
