@@ -186,13 +186,6 @@ public class WebAuthController extends BaseController {
     }
 
 
-    @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
-        // 使用Shiro登出
-        SecurityUtils.getSubject().logout();
-        return "redirect:/web";
-    }
-
     @GetMapping("/checkLogin")
     @ResponseBody
     public AjaxResult checkLogin() {
