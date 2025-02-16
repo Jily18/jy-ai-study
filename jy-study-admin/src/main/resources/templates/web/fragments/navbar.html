@@ -23,6 +23,11 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/web/featured}"><i class="fa fa-star"></i> 精选推荐</a>
                     </li>
+                    <li class="nav-item" shiro:hasRole="admin">
+                        <a class="nav-link" th:href="@{/index}">
+                            <i class="fa fa-cogs"></i> 后台管理
+                        </a>
+                    </li>
                     <th:block shiro:guest="">
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/login}">
