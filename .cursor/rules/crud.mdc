@@ -1,0 +1,18 @@
+---
+description: 
+globs: 
+---
+---
+description: 增删改查
+globs: *.java,*.css,*.js,*.html,*.vue
+alwaysApply: false
+---
+### 你需要执行下面步骤
+1、如果没有指定表结构请自行设计按照需求设计表结构 [db.mdc](mdc:.cursor/rules/db.mdc)
+2、如果没提供说清楚表结构，请停止执行，让用户详细说下表结构需求
+3、返回建表语句，无需创建sql文件
+4、代码都需写在de-modules中
+5、编写java代码，严格参考已有de-system模块的代码 [java.mdc](mdc:.cursor/rules/java.mdc) [SysUserController.java](mdc:de-modules/de-system/src/main/java/com/yunqu/emergency/system/controller/system/SysUserController.java)
+
+
+

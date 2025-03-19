@@ -1,0 +1,42 @@
+---
+description: Git相关规范和最佳实践的提示词
+globs: "**/*.{js,jsx,ts,tsx,java,xml,md,sql}"
+---
+# Git 规范指南
+
+## 提交信息规范
+
+- 提交信息必须遵循以下格式：`<type>: <description>`
+- type 必须是以下类型之一：
+  - feat: 新功能
+  - fix: 修复bug
+  - docs: 文档更新
+  - style: 代码格式调整
+  - refactor: 代码重构
+  - test: 测试相关
+  - chore: 构建/工具相关
+
+## 分支管理
+
+- main/master: 主分支，保持稳定可发布状态
+- develop: 开发分支，最新开发代码
+- feature/*: 功能分支，用于开发新特性
+- hotfix/*: 紧急修复分支
+- release/*: 发布分支
+
+## 工作流程
+
+1. 从develop分支创建feature分支
+2. 在feature分支进行开发
+3. 完成开发后提交Pull Request
+4. 代码审查通过后合并到develop分支
+5. 定期从develop分支合并到main/master分支发布
+
+## 最佳实践
+
+- 每次提交应该是独立的、完整的改动
+- 避免在一次提交中混合多个不相关的改动
+- 提交前进行代码格式化和测试
+- 定期同步远程分支，避免冲突
+- 重要改动添加详细的提交说明
+- 敏感信息（密码、密钥等）不要提交到仓库
