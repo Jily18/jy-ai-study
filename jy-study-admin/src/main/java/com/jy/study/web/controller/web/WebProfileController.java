@@ -1,4 +1,4 @@
-package com.jy.study.web.controller;
+package com.jy.study.web.controller.web;
 
 import com.jy.study.common.utils.DateUtils;
 import com.jy.study.common.utils.ShiroUtils;
@@ -11,8 +11,6 @@ import com.jy.study.common.core.domain.AjaxResult;
 import com.jy.study.common.core.domain.entity.SysUser;
 import com.jy.study.system.service.ISysUserService;
 import com.jy.study.framework.shiro.service.SysPasswordService;
-import com.jy.study.common.utils.ShiroUtils;
-import com.jy.study.common.utils.DateUtils;
 
 @Controller
 @RequestMapping("/web/user/profile")
