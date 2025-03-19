@@ -9,6 +9,7 @@
     <link th:href="@{/css/animate.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/style.min.css}" rel="stylesheet"/>
     <link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"/>
+    <link th:href="@{/css/web-common.css}" rel="stylesheet"/>
     <style>
         .lesson-header {
             background: linear-gradient(45deg, #6c757d, #343a40);
@@ -138,7 +139,7 @@
 <body>
     <!-- 基础JS依赖 -->
     <script th:src="@{/js/jquery.min.js}"></script>
-    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/js/common.js}"></script>
 
     <!-- 定义ctx变量 -->
@@ -153,8 +154,8 @@
     <script th:src="@{/ruoyi/js/common.js}"></script>
     <script th:src="@{/ruoyi/js/ry-ui.js}"></script>
 
-    <!-- 导航栏 -->
-    <div th:replace="~{web/fragments/navbar :: navbar}"></div>
+    <!-- 使用th:replace引入导航栏 -->
+    <div th:replace="web/fragments/navbar :: navbar"></div>
 
     <!-- 课程头部 -->
     <div class="lesson-header">

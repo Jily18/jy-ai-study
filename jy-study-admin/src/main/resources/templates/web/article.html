@@ -9,61 +9,64 @@
     <link th:href="@{/css/animate.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/style.min.css}" rel="stylesheet"/>
     <link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"/>
+    <link th:href="@{/css/web-common.css}" rel="stylesheet"/>
     <style>
-        .navbar {
-            box-shadow: 0 2px 4px rgba(0,0,0,.08);
-        }
         .article-header {
-            padding: 60px 0;
             background: linear-gradient(45deg, #6c757d, #343a40);
             color: white;
+            padding: 60px 0;
         }
-        .article-meta {
-            color: #adb5bd;
-            font-size: 0.9rem;
+        .article-cover {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,.2);
+        }
+        .article-title {
+            font-size: 2rem;
             margin: 20px 0;
         }
+        .article-meta {
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+        .article-meta span {
+            margin-right: 20px;
+        }
+        .article-tags .badge {
+            margin-right: 8px;
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
         .article-content {
+            padding: 40px 0;
+        }
+        .article-description {
             font-size: 1.1rem;
             line-height: 1.8;
-            color: #343a40;
-            padding: 20px;
+            color: #495057;
             background: #fff;
+            padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,.05);
         }
-        .article-content img {
-            max-width: 100%;
-            height: auto;
-            margin: 20px auto;
-            display: block;
+        .article-actions {
+            margin: 30px 0;
         }
-        .article-content p {
-            margin-bottom: 1.5rem;
-            text-align: justify;
+        .btn-action {
+            margin-right: 15px;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s;
         }
-        .article-content h1,
-        .article-content h2,
-        .article-content h3,
-        .article-content h4,
-        .article-content h5,
-        .article-content h6 {
-            margin: 1.5rem 0 1rem;
-            font-weight: 600;
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,.1);
         }
-        .article-nav {
-            margin: 50px 0;
-            padding: 20px 0;
-            border-top: 1px solid #dee2e6;
-            border-bottom: 1px solid #dee2e6;
-        }
-        .article-nav a {
-            color: #6c757d;
-            text-decoration: none;
-            transition: all .2s;
-        }
-        .article-nav a:hover {
-            color: #343a40;
+        .btn-action.active {
+            background-color: #007bff;
+            color: white;
         }
         .footer {
             background: #343a40;
@@ -71,27 +74,12 @@
             padding: 40px 0;
             margin-top: 50px;
         }
-        .btn-back {
-            background: #343a40;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            transition: all .2s;
-            text-decoration: none;
+        body {
+            background-color: #f8f9fa;
+            font-family: "Microsoft YaHei", sans-serif;
         }
-        .btn-back:hover {
-            background: #6c757d;
-            color: white;
-            text-decoration: none;
-        }
-        .category-tag .badge {
-            padding: 8px 15px;
-            font-size: 0.9rem;
-        }
-        .article-summary {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 10px;
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.08);
         }
         .btn-like, .btn-collect {
             padding: 10px 30px;
@@ -101,38 +89,47 @@
             background: transparent;
             font-weight: 500;
         }
+        
         .btn-like {
             color: #28a745;
             border-color: #28a745;
         }
+        
         .btn-like:hover {
             background: rgba(40, 167, 69, 0.1);
             color: #28a745;
         }
+        
         .btn-like.active {
             background: #28a745;
             color: white;
             border-color: #28a745;
         }
+        
         .btn-collect {
             color: #5b73e8;
             border-color: #5b73e8;
         }
+        
         .btn-collect:hover {
             background: rgba(91, 115, 232, 0.1);
             color: #5b73e8;
         }
+
         .btn-collect.active {
             background: #5b73e8;
             color: white;
             border-color: #5b73e8;
         }
+
         .btn-like i, .btn-collect i {
             margin-right: 5px;
         }
+
         .btn-like.active i, .btn-collect.active i {
             animation: bounce 0.5s;
         }
+
         @keyframes bounce {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.2); }
@@ -142,14 +139,13 @@
 <body>
     <!-- 基础JS依赖 -->
     <script th:src="@{/js/jquery.min.js}"></script>
-    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/js/common.js}"></script>
 
     <!-- 定义ctx变量 -->
     <script th:inline="javascript">
         var ctx = /*[[@{/}]]*/'';
         var prefix = ctx + "web/interaction";
-        var isUserLoggedIn = [[${session.webUser != null}]];
         window.isAuthenticated = [[${@shiroService.getPrincipal() != null}]];
     </script>
     
@@ -158,76 +154,58 @@
     <script th:src="@{/ruoyi/js/common.js}"></script>
     <script th:src="@{/ruoyi/js/ry-ui.js}"></script>
 
-    <!-- 导航栏 -->
-    <div th:replace="~{web/fragments/navbar :: navbar}"></div>
+    <!-- 使用th:replace引入导航栏 -->
+    <div th:replace="web/fragments/navbar :: navbar"></div>
 
     <!-- 文章头部 -->
-    <header class="article-header">
+    <div class="article-header">
         <div class="container">
-            <div class="category-tag mb-2">
-                <span class="badge badge-primary" th:text="${article.category == 'course' ? '课程文章' : '知识库文章'}">分类</span>
-                <span class="badge badge-secondary ml-2" th:each="tag : ${#strings.arraySplit(article.tags, ',')}" th:text="${tag}">标签</span>
-            </div>
-            <h1 class="display-4" th:text="${article.title}">文章标题</h1>
-            <div class="article-meta">
-                <span><i class="fa fa-user"></i> <span th:text="${article.createBy}">作者</span></span>
-                <span class="ml-3"><i class="fa fa-clock-o"></i> <span th:text="${#dates.format(article.createTime, 'yyyy-MM-dd HH:mm')}">发布时间</span></span>
-                <span class="ml-3"><i class="fa fa-eye"></i> <span th:text="${article.viewCount}">阅读量</span></span>
-                <span class="ml-3"><i class="fa fa-thumbs-up"></i> <span th:text="${article.likeCount}">点赞数</span></span>
-                <span class="ml-3"><i class="fa fa-star"></i> <span th:text="${article.collectCount}">收藏数</span></span>
-            </div>
-            <div class="article-summary mt-3" th:if="${article.summary}">
-                <p class="lead" th:text="${article.summary}">文章摘要</p>
-            </div>
-            <a th:href="@{/web}" class="btn-back"><i class="fa fa-arrow-left"></i> 返回首页</a>
-        </div>
-    </header>
-
-    <!-- 文章内容 -->
-    <div class="container my-5">
-        <div class="row">
-            <div class="col-lg-8 mx-auto">
-                <div class="article-actions text-center mb-4">
-                    <button class="btn btn-like mr-3" onclick="toggleLike()" id="likeBtn">
-                        <i class="fa fa-thumbs-up"></i> 点赞 <span id="likeCount" th:text="${article.likeCount}">0</span>
-                    </button>
-                    <button class="btn btn-collect" onclick="toggleCollect()" id="collectBtn">
-                        <i class="fa fa-star"></i> 收藏 <span id="collectCount" th:text="${article.collectCount}">0</span>
-                    </button>
+            <div class="row align-items-center">
+                <div class="col-md-4">
+                    <img th:if="${article.coverImg}" th:src="${article.coverImg}" class="article-cover" alt="文章封面">
+                    <img th:unless="${article.coverImg}" src="/img/default-article.jpg" class="article-cover" alt="默认封面">
                 </div>
-                <article class="article-content" th:utext="${article.content}">
-                    文章内容
-                </article>
-
-                <!-- 文章导航 -->
-                <div class="article-nav">
-                    <div class="row">
-                        <div class="col-6">
-                            <i class="fa fa-angle-left"></i> 上一篇
-                        </div>
-                        <div class="col-6 text-right">
-                            下一篇 <i class="fa fa-angle-right"></i>
-                        </div>
+                <div class="col-md-8">
+                    <h1 class="article-title" th:text="${article.title}">文章标题</h1>
+                    <div class="article-meta">
+                        <span><i class="fa fa-eye"></i> <span th:text="${article.viewCount}">0</span> 次浏览</span>
+                        <span><i class="fa fa-thumbs-up"></i> <span th:text="${article.likeCount}">0</span> 次点赞</span>
+                        <span><i class="fa fa-bookmark"></i> <span th:text="${article.collectCount}">0</span> 次收藏</span>
+                    </div>
+                    <div class="article-tags">
+                        <span class="badge badge-primary" th:text="${article.category == 'course' ? '课程文章' : '知识库文章'}">分类</span>
+                        <span class="badge badge-info" th:each="tag : ${#strings.arraySplit(article.tags, ',')}" th:text="${tag}">标签</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 文章内容 -->
+    <div class="article-content">
+        <div class="container">
+            <div class="article-description" th:utext="${article.content}">
+                文章内容...
+            </div>
+            <div class="article-actions text-center mb-4">
+                <button class="btn btn-like mr-3" onclick="toggleLike()" id="likeBtn">
+                    <i class="fa fa-thumbs-up"></i> 点赞 <span id="likeCount" th:text="${article.likeCount}">0</span>
+                </button>
+                <button class="btn btn-collect" onclick="toggleCollect()" id="collectBtn">
+                    <i class="fa fa-star"></i> 收藏 <span id="collectCount" th:text="${article.collectCount}">0</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- 页脚 -->
-    <footer class="footer">
+    <footer class="footer bg-dark text-white py-4">
         <div class="container text-center">
             <p>© 2024 课程学习平台. All rights reserved.</p>
-            <div class="mt-3">
-                <a href="#" class="text-white mx-2"><i class="fa fa-weixin fa-lg"></i></a>
-                <a href="#" class="text-white mx-2"><i class="fa fa-qq fa-lg"></i></a>
-                <a href="#" class="text-white mx-2"><i class="fa fa-weibo fa-lg"></i></a>
-            </div>
         </div>
     </footer>
 
     <script>
-
     var isLiked = false;
     var isCollected = false;
 
@@ -299,7 +277,6 @@
         } else {
             $("#collectBtn").removeClass("active");
             $("#collectBtn").html('<i class="fa fa-star"></i> 收藏 <span id="collectCount">' + $("#collectCount").text() + '</span>');
-
         }
     }
 
