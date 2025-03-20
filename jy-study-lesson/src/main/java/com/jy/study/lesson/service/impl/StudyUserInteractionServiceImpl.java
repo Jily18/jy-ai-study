@@ -10,12 +10,18 @@ import com.jy.study.lesson.domain.StudyUserView;
 import com.jy.study.lesson.domain.StudyUserLike;
 import com.jy.study.lesson.domain.StudyUserCollect;
 import com.jy.study.lesson.service.IStudyUserInteractionService;
+import com.jy.study.lesson.domain.dto.UserViewHistoryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
+/**
+ * 用户交互Service实现
+ */
 @Service
 public class StudyUserInteractionServiceImpl implements IStudyUserInteractionService {
     
@@ -159,5 +165,20 @@ public class StudyUserInteractionServiceImpl implements IStudyUserInteractionSer
         return collectMapper.checkCollected(userId, type, targetId);
     }
 
-    // ... 其他方法实现类似
-} 
+    @Override
+    public List<UserViewHistoryDTO> getUserViewHistory(Long userId, int limit) {
+        if (userId == null) {
+            return new ArrayList<>();
+        }
+        return viewMapper.selectUserViewHistory(userId, limit);
+    }
+
+    /**
+     * 获取用户浏览历史记录（包含详细信息）
+     */
+    @Override
+    public List<UserViewHistoryDTO> getUserViewHistoryWithDetails(Long userId, int limit) {
+        return viewMapper.selectUserViewHistoryWithDetails(userId, limit);
+    }
+
+}

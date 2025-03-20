@@ -39,4 +39,66 @@
         delete from study_user_view where view_id = #{viewId}
     </delete>
 
+    <select id="selectUserViewHistory" resultType="com.jy.study.lesson.domain.dto.UserViewHistoryDTO">
+        SELECT 
+            v.view_id, 
+            v.user_id, 
+            v.type, 
+            v.target_id, 
+            v.ip_addr, 
+            v.create_time,
+            CASE 
+                WHEN v.type = '1' THEN l.title
+                WHEN v.type = '2' THEN a.title
+                ELSE '未知'
+            END as title
+        FROM 
+            study_user_view v
+        LEFT JOIN
+            study_lesson l ON v.type = '1' AND v.target_id = l.lesson_id
+        LEFT JOIN
+            study_article a ON v.type = '2' AND v.target_id = a.article_id
+        WHERE 
+            v.user_id = #{userId}
+        ORDER BY 
+            v.create_time DESC
+        LIMIT #{limit}
+    </select>
+
+
+    <!-- 查询用户浏览历史记录（连表查询） -->
+    <select id="selectUserViewHistoryWithDetails" resultType="com.jy.study.lesson.domain.dto.UserViewHistoryDTO">
+        SELECT
+            v.view_id as id,
+            v.user_id as userId,
+            v.target_id as targetId,
+            v.type,
+            CASE
+                WHEN v.type = '1' THEN l.title
+                WHEN v.type = '2' THEN a.title
+                ELSE ''
+                END as title,
+            v.ip_addr as ipAddr,
+            v.create_time as createTime,
+            CASE
+                WHEN v.type = '2' THEN SUBSTRING(a.content, 1, 150)
+                ELSE ''
+                END as contentSummary,
+            CASE
+                WHEN v.type = '1' THEN SUBSTRING(l.description, 1, 150)
+                ELSE ''
+                END as descriptionSummary
+        FROM
+            study_user_view v
+                LEFT JOIN
+            study_lesson l ON v.type = '1' AND v.target_id = l.lesson_id
+                LEFT JOIN
+            study_article a ON v.type = '2' AND v.target_id = a.article_id
+        WHERE
+            v.user_id = #{userId}
+        ORDER BY
+            v.create_time DESC
+            LIMIT
+            #{limit}
+    </select>
 </mapper> 

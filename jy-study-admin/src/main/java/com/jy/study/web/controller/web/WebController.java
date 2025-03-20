@@ -1,6 +1,7 @@
 package com.jy.study.web.controller.web;
 
 import com.jy.study.common.core.controller.BaseController;
+import com.jy.study.common.core.domain.entity.SysUser;
 import com.jy.study.lesson.domain.StudyArticle;
 import com.jy.study.lesson.domain.StudyLesson;
 import com.jy.study.lesson.service.IStudyArticleService;
@@ -39,6 +40,11 @@ public class WebController extends BaseController {
      */
     @GetMapping("/index")
     public String index(ModelMap mmap) {
+        // 获取当前用户
+        SysUser user = getSysUser();
+        mmap.put("user", user);
+        
+        // 获取文章列表
         StudyArticle article = new StudyArticle();
         article.setStatus("0"); // 只查询正常状态的文章
         List<StudyArticle> articles = articleService.selectArticleList(article);
