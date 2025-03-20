@@ -1,16 +1,18 @@
 package com.jy.study.web.controller.web;
 
+import com.jy.study.common.annotation.Log;
+import com.jy.study.common.core.controller.BaseController;
+import com.jy.study.common.core.domain.AjaxResult;
+import com.jy.study.common.core.domain.entity.SysUser;
+import com.jy.study.common.enums.BusinessType;
 import com.jy.study.common.utils.DateUtils;
 import com.jy.study.common.utils.ShiroUtils;
+import com.jy.study.framework.shiro.service.SysPasswordService;
+import com.jy.study.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import com.jy.study.common.core.controller.BaseController;
-import com.jy.study.common.core.domain.AjaxResult;
-import com.jy.study.common.core.domain.entity.SysUser;
-import com.jy.study.system.service.ISysUserService;
-import com.jy.study.framework.shiro.service.SysPasswordService;
 
 @Controller
 @RequestMapping("/web/user/profile")
@@ -35,6 +37,7 @@ public class WebProfileController extends BaseController {
     /**
      * 修改用户信息
      */
+    @Log(title = "个人信息", businessType = BusinessType.UPDATE)
     @PostMapping("/update")
     @ResponseBody
     public AjaxResult updateProfile(SysUser user) {
@@ -53,6 +56,7 @@ public class WebProfileController extends BaseController {
     /**
      * 修改密码
      */
+    @Log(title = "修改密码", businessType = BusinessType.UPDATE)
     @PostMapping("/updatePwd")
     @ResponseBody
     public AjaxResult updatePwd(String oldPassword, String newPassword) {
