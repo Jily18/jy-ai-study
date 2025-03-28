@@ -292,6 +292,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/docs/**", "anon");
         filterChainDefinitionMap.put("/fonts/**", "anon");
         filterChainDefinitionMap.put("/img/**", "anon");
+        filterChainDefinitionMap.put("/image/**", "anon");
         filterChainDefinitionMap.put("/ajax/**", "anon");
         filterChainDefinitionMap.put("/js/**", "anon");
         filterChainDefinitionMap.put("/ruoyi/**", "anon");
