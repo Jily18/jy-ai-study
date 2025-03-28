@@ -324,7 +324,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/web/css/**", "anon");
         filterChainDefinitionMap.put("/web/js/**", "anon");
         filterChainDefinitionMap.put("/web/images/**", "anon");
-        // 需要登录才能访问的接口，要放在/web/**之前
+        // 需要登录才能访问的接口，要放在/web/user/**之前
         filterChainDefinitionMap.put("/web/user/**", "authc");
 
         // 其他web路径允许匿名访问
@@ -334,7 +334,7 @@ public class ShiroConfig
         // 首页和公共页面允许匿名访问
         filterChainDefinitionMap.put("/web/index", "anon");
         filterChainDefinitionMap.put("/web/public/**", "anon");
-        
+
         Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
         filters.put("onlineSession", onlineSessionFilter());
         filters.put("syncOnlineSession", syncOnlineSessionFilter());

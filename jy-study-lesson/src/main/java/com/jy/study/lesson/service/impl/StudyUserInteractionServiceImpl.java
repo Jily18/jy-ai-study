@@ -11,6 +11,8 @@ import com.jy.study.lesson.domain.StudyUserLike;
 import com.jy.study.lesson.domain.StudyUserCollect;
 import com.jy.study.lesson.service.IStudyUserInteractionService;
 import com.jy.study.lesson.domain.dto.UserViewHistoryDTO;
+import com.jy.study.lesson.domain.dto.UserCollectionDTO;
+import com.jy.study.lesson.domain.dto.UserLikeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -179,6 +181,16 @@ public class StudyUserInteractionServiceImpl implements IStudyUserInteractionSer
     @Override
     public List<UserViewHistoryDTO> getUserViewHistoryWithDetails(Long userId, int limit) {
         return viewMapper.selectUserViewHistoryWithDetails(userId, limit);
+    }
+
+    @Override
+    public List<UserCollectionDTO> getUserCollectionWithDetails(Long userId, int limit) {
+        return collectMapper.selectUserCollectionWithDetails(userId, limit);
+    }
+
+    @Override
+    public List<UserLikeDTO> getUserLikeWithDetails(Long userId, int limit) {
+        return likeMapper.selectUserLikeWithDetails(userId, limit);
     }
 
 }

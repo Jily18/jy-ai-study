@@ -308,13 +308,23 @@
                 </a>
 
                 <!-- 可以添加更多入口，如收藏记录、学习进度等 -->
-                <a th:href="@{/web/user/collect}" class="shortcut-item">
+                <a th:href="@{/web/user/collection}" class="shortcut-item">
                     <div class="shortcut-icon" style="background-color: #f1935c;">
                         <i class="fa fa-star"></i>
                     </div>
                     <div class="shortcut-content">
                         <div class="shortcut-title">我的收藏</div>
                         <div class="shortcut-desc">查看您收藏的课程和文章</div>
+                    </div>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                <a th:href="@{/web/user/like}" class="shortcut-item">
+                    <div class="shortcut-icon" style="background-color: #f07cb0;">
+                        <i class="fa fa-heart"></i>
+                    </div>
+                    <div class="shortcut-content">
+                        <div class="shortcut-title">我的点赞</div>
+                        <div class="shortcut-desc">查看您点赞的课程和文章</div>
                     </div>
                     <i class="fa fa-angle-right"></i>
                 </a>
