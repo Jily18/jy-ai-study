@@ -512,9 +512,9 @@
         
         var formData = new FormData();
         formData.append('file', file);
-        
+
         $.ajax({
-            url: ctx + 'image/upload',
+            url: ctx + 'web/user/profile/updateAvatar',
             type: 'POST',
             data: formData,
             processData: false,
@@ -522,36 +522,17 @@
             success: function(res) {
                 layer.close(loadingIndex);
                 if (res.code == 0) {
-                    // 更新头像显示
                     $('#avatarImage').attr('src', res.data);
-                    
-                    // 更新用户头像信息到数据库
-                    $.ajax({
-                        url: prefix + "/updateAvatar",
-                        type: "post",
-                        data: {
-                            avatar: res.data
-                        },
-                        success: function(updateRes) {
-                            if (updateRes.code == 0) {
-                                layer.msg('头像更新成功', {icon: 1});
-                                // 更新页面上所有显示用户头像的地方
-                                $('.user-avatar').attr('src', res.data);
-                            } else {
-                                layer.msg(updateRes.msg, {icon: 2});
-                            }
-                        },
-                        error: function() {
-                            layer.msg('头像信息更新失败，请重试', {icon: 2});
-                        }
-                    });
+                    layer.msg('上传成功', {icon: 1});
                 } else {
-                    layer.msg(res.msg, {icon: 2});
+                    layer.msg(res.msg || '上传失败', {icon: 2});
+                    console.error('上传失败:', res);
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
                 layer.close(loadingIndex);
-                layer.msg('上传失败，请重试', {icon: 2});
+                layer.msg('上传失败：' + (error || '未知错误'), {icon: 2});
+                console.error('上传错误:', {xhr: xhr, status: status, error: error});
             }
         });
     });

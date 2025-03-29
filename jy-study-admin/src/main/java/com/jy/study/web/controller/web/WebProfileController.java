@@ -1,23 +1,33 @@
 package com.jy.study.web.controller.web;
 
+import com.aliyun.oss.OSS;
+import com.aliyun.oss.model.PutObjectRequest;
 import com.jy.study.common.annotation.Log;
 import com.jy.study.common.core.controller.BaseController;
 import com.jy.study.common.core.domain.AjaxResult;
 import com.jy.study.common.core.domain.entity.SysUser;
 import com.jy.study.common.enums.BusinessType;
+import com.jy.study.common.ossfile.OssClientUtil;
 import com.jy.study.common.utils.DateUtils;
 import com.jy.study.common.utils.ShiroUtils;
+import com.jy.study.common.utils.StringUtils;
 import com.jy.study.framework.shiro.service.SysPasswordService;
 import com.jy.study.system.service.ISysUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/web/user/profile")
 public class WebProfileController extends BaseController {
-    
+    private static final Logger log = LoggerFactory.getLogger(WebProfileController.class);
+
     @Autowired
     private ISysUserService userService;
     
@@ -81,18 +91,32 @@ public class WebProfileController extends BaseController {
     }
 
     /**
-     * 更新用户头像
+     * 更新用户头像，包括上传和更新数据库
      */
     @Log(title = "个人头像", businessType = BusinessType.UPDATE)
     @PostMapping("/updateAvatar")
     @ResponseBody
-    public AjaxResult updateAvatar(String avatar) {
-        SysUser user = getSysUser();
-        user.setAvatar(avatar);
-        if (userService.updateUserInfo(user) > 0) {
-            setSysUser(userService.selectUserById(user.getUserId()));
-            return success();
+    public AjaxResult updateAvatar(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return AjaxResult.error("请选择要上传的图片");
         }
-        return error();
+        try {
+            String imageUrl = OssClientUtil.uploadImage(file,"avatar");
+            if(StringUtils.isBlank(imageUrl)){
+                return AjaxResult.error("上传失败");
+            }
+            SysUser user = getSysUser();
+            user.setAvatar(imageUrl);
+            if (userService.updateUserInfo(user) > 0) {
+                setSysUser(userService.selectUserById(user.getUserId()));
+                return AjaxResult.success("上传成功", imageUrl);
+            } else {
+                log.error("更新用户头像信息失败");
+                return error("更新数据库失败！");
+            }
+        } catch (Exception e) {
+            log.error("头像上传过程发生异常", e);
+            return AjaxResult.error("上传失败：" + e.getMessage());
+        }
     }
 } 

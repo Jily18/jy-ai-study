@@ -4,16 +4,21 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.CannedAccessControlList;
 import com.aliyun.oss.model.CreateBucketRequest;
+import com.aliyun.oss.model.PutObjectRequest;
 import com.aliyun.oss.model.StorageClass;
 import com.jy.study.common.config.OssProperties;
+import com.jy.study.common.core.domain.AjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class OssClientUtil {
@@ -74,6 +79,62 @@ public class OssClientUtil {
         return ossProperties.getEndpoint();
     }
 
+    public static String uploadImage(MultipartFile file, String prefix) {
+        if (file.isEmpty()) {
+            log.error("上传的文件为空");
+            return "";
+        }
+
+        OSS ossClient = null;
+        try {
+            String originalFilename = file.getOriginalFilename();
+            log.info("开始上传文件：{}", originalFilename);
+            
+            if (originalFilename == null) {
+                log.error("文件名为空");
+                return "";
+            }
+
+            String suffix = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String fileName = UUID.randomUUID().toString().replaceAll("-", "") + suffix;
+            String objectKey = prefix + "/" + fileName;
+            
+            log.info("生成的OSS对象键：{}", objectKey);
+
+            ossClient = getOSSClient();
+            if (ossClient == null) {
+                log.error("获取OSS客户端失败");
+                return "";
+            }
+
+            PutObjectRequest putObjectRequest = new PutObjectRequest(
+                    getBucketName(),
+                    objectKey,
+                    file.getInputStream()
+            );
+
+            log.info("开始上传文件到OSS");
+            ossClient.putObject(putObjectRequest);
+
+            String imageUrl = "https://" + getBucketName() + "." + getEndpoint() + "/" + objectKey;
+            log.info("文件上传成功，URL: {}", imageUrl);
+
+            return imageUrl;
+        } catch (Exception e) {
+            log.error("文件上传过程发生异常", e);
+            return "";
+        } finally {
+            if (ossClient != null) {
+                try {
+                    ossClient.shutdown();
+                    log.info("OSS客户端已关闭");
+                } catch (Exception e) {
+                    log.error("关闭OSS客户端时发生错误", e);
+                }
+            }
+        }
+    }
+
     public static void main(String[] args) {
         try {
             // 获取 OSS 客户端实例
@@ -95,6 +156,7 @@ public class OssClientUtil {
             OssClientUtil.closeOSSClient();
         }
     }
+
 }
 
 

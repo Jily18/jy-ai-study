@@ -166,7 +166,7 @@ public class SysProfileController extends BaseController
         try {
             if (!file.isEmpty()) {
                 String fileName = UUID.randomUUID().toString().replaceAll("-", "") + ".png";  // 直接使用.png后缀
-                String objectKey = "images/" + fileName;
+                String objectKey = "avatar/" + fileName;
 
                 OSS ossClient = OssClientUtil.getOSSClient();
                 try {
