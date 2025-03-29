@@ -85,7 +85,6 @@ public class OssClientUtil {
             return "";
         }
 
-        OSS ossClient = null;
         try {
             String originalFilename = file.getOriginalFilename();
             log.info("开始上传文件：{}", originalFilename);
@@ -123,15 +122,6 @@ public class OssClientUtil {
         } catch (Exception e) {
             log.error("文件上传过程发生异常", e);
             return "";
-        } finally {
-            if (ossClient != null) {
-                try {
-                    ossClient.shutdown();
-                    log.info("OSS客户端已关闭");
-                } catch (Exception e) {
-                    log.error("关闭OSS客户端时发生错误", e);
-                }
-            }
         }
     }
 
@@ -153,7 +143,7 @@ public class OssClientUtil {
             e.printStackTrace();
         } finally {
             // 关闭 OSS 客户端
-            OssClientUtil.closeOSSClient();
+            closeOSSClient();
         }
     }
 

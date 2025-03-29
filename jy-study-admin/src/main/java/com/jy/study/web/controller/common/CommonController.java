@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.jy.study.common.ossfile.OssClientUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.jy.study.common.config.RuoYiConfig;
 import com.jy.study.common.config.ServerConfig;
@@ -161,6 +160,21 @@ public class CommonController
         catch (Exception e)
         {
             log.error("下载文件失败", e);
+        }
+    }
+
+    @PostMapping("/upload/image/{prefix}")
+    @ResponseBody
+    public AjaxResult uploadImage(@RequestParam("file") MultipartFile file, @PathVariable("prefix") String prefix) {
+        try {
+            String imageUrl = OssClientUtil.uploadImage(file, prefix);
+            if(StringUtils.isBlank(imageUrl)){
+                return AjaxResult.error("上传失败");
+            }
+            return AjaxResult.success("上传成功", imageUrl);
+        } catch (Exception e) {
+            log.error("图片上传失败", e);
+            return AjaxResult.error(e.getMessage());
         }
     }
 }
