@@ -19,7 +19,13 @@
                 <div class="form-group">
                     <label class="col-sm-3 control-label">课程封面图片：</label>
                     <div class="col-sm-8">
-                        <input name="coverImg" th:field="*{coverImg}" class="form-control" type="text">
+                        <input name="coverImg" th:field="*{coverImg}" class="form-control" type="hidden">
+                        <div class="image-upload">
+                            <img id="previewImage" th:src="*{coverImg}" style="max-width: 200px; max-height: 200px;" th:style="*{coverImg != null && coverImg != ''} ? 'max-width: 200px; max-height: 200px;' : 'display: none;'">
+                            <input type="file" name="file" id="imageInput" accept="image/*" style="display: none;">
+                            <a class="btn btn-success btn-xs" onclick="$('#imageInput').click()"><i class="fa fa-upload"></i> 上传图片</a>
+                            <a class="btn btn-danger btn-xs" onclick="clearImage()" th:style="*{coverImg != null && coverImg != ''} ? '' : 'display: none;'" id="clearBtn"><i class="fa fa-trash"></i> 清除图片</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -68,9 +74,46 @@
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
         var prefix = ctx + "lesson";
-        $("#form-lesson-edit").validate({
-            focusCleanup: true
+        
+        $(function() {
+            $("#form-lesson-edit").validate({
+                focusCleanup: true
+            });
+
+            // 图片上传处理
+            $("#imageInput").change(function() {
+                var file = this.files[0];
+                if (!file) return;
+                
+                var formData = new FormData();
+                formData.append("file", file);
+                
+                $.ajax({
+                    url: ctx + "common/upload/image/lesson",
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.code == 0) {
+                            $("#previewImage").attr("src", response.data).show();
+                            $("input[name='coverImg']").val(response.data);
+                            $("#clearBtn").show();
+                            $.modal.msgSuccess("上传成功");
+                        } else {
+                            $.modal.msgError(response.msg);
+                        }
+                    }
+                });
+            });
         });
+
+        function clearImage() {
+            $("#previewImage").attr("src", "").hide();
+            $("input[name='coverImg']").val("");
+            $("#imageInput").val("");
+            $("#clearBtn").hide();
+        }
 
         function submitHandler() {
             if ($.validate.form()) {

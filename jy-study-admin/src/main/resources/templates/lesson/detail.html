@@ -58,7 +58,8 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">封面图片：</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext" th:text="*{coverImg}"></p>
+                            <img th:if="*{coverImg != null and coverImg != ''}" th:src="*{coverImg}" style="max-width: 200px; max-height: 200px;">
+                            <p th:if="*{coverImg == null or coverImg == ''}" class="form-control-plaintext">暂无图片</p>
                         </div>
                     </div>
                 </div>
