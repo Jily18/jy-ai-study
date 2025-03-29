@@ -269,7 +269,7 @@
                                     <div class="avatar-container">
                                         <img id="avatarImage" th:src="${user.avatar}" 
                                              onerror="this.src='/img/profile.jpg'" 
-                                             class="rounded-circle" 
+                                             class="rounded-circle user-avatar" 
                                              style="width: 100px; height: 100px; object-fit: cover;">
                                         <div class="mt-2">
                                             <input type="file" id="avatarFile" style="display: none;" 
@@ -525,9 +525,9 @@
                     // 更新头像显示
                     $('#avatarImage').attr('src', res.data);
                     
-                    // 更新用户头像信息
+                    // 更新用户头像信息到数据库
                     $.ajax({
-                        url: prefix + "/update",
+                        url: prefix + "/updateAvatar",
                         type: "post",
                         data: {
                             avatar: res.data
@@ -535,9 +535,14 @@
                         success: function(updateRes) {
                             if (updateRes.code == 0) {
                                 layer.msg('头像更新成功', {icon: 1});
+                                // 更新页面上所有显示用户头像的地方
+                                $('.user-avatar').attr('src', res.data);
                             } else {
                                 layer.msg(updateRes.msg, {icon: 2});
                             }
+                        },
+                        error: function() {
+                            layer.msg('头像信息更新失败，请重试', {icon: 2});
                         }
                     });
                 } else {

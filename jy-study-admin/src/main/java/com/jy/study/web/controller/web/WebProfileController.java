@@ -79,4 +79,20 @@ public class WebProfileController extends BaseController {
         }
         return error("修改密码异常，请联系管理员");
     }
+
+    /**
+     * 更新用户头像
+     */
+    @Log(title = "个人头像", businessType = BusinessType.UPDATE)
+    @PostMapping("/updateAvatar")
+    @ResponseBody
+    public AjaxResult updateAvatar(String avatar) {
+        SysUser user = getSysUser();
+        user.setAvatar(avatar);
+        if (userService.updateUserInfo(user) > 0) {
+            setSysUser(userService.selectUserById(user.getUserId()));
+            return success();
+        }
+        return error();
+    }
 } 

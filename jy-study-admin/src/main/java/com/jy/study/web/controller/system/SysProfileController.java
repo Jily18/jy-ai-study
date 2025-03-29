@@ -1,5 +1,6 @@
 package com.jy.study.web.controller.system;
 
+import com.jy.study.common.ossfile.OssClientUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,11 @@ import com.jy.study.common.utils.file.FileUploadUtils;
 import com.jy.study.common.utils.file.MimeTypeUtils;
 import com.jy.study.framework.shiro.service.SysPasswordService;
 import com.jy.study.system.service.ISysUserService;
+
+import com.aliyun.oss.OSS;
+import com.aliyun.oss.model.PutObjectRequest;
+
+import java.util.UUID;
 
 /**
  * 个人信息 业务处理
@@ -155,25 +161,39 @@ public class SysProfileController extends BaseController
     @Log(title = "个人信息", businessType = BusinessType.UPDATE)
     @PostMapping("/updateAvatar")
     @ResponseBody
-    public AjaxResult updateAvatar(@RequestParam("avatarfile") MultipartFile file)
-    {
+    public AjaxResult updateAvatar(@RequestParam("avatarfile") MultipartFile file) {
         SysUser currentUser = getSysUser();
-        try
-        {
-            if (!file.isEmpty())
-            {
-                String avatar = FileUploadUtils.upload(RuoYiConfig.getAvatarPath(), file, MimeTypeUtils.IMAGE_EXTENSION);
-                currentUser.setAvatar(avatar);
-                if (userService.updateUserInfo(currentUser) > 0)
-                {
-                    setSysUser(userService.selectUserById(currentUser.getUserId()));
-                    return success();
+        try {
+            if (!file.isEmpty()) {
+                String fileName = UUID.randomUUID().toString().replaceAll("-", "") + ".png";  // 直接使用.png后缀
+                String objectKey = "images/" + fileName;
+
+                OSS ossClient = OssClientUtil.getOSSClient();
+                try {
+                    PutObjectRequest putObjectRequest = new PutObjectRequest(
+                            OssClientUtil.getBucketName(),
+                            objectKey,
+                            file.getInputStream()
+                    );
+
+                    ossClient.putObject(putObjectRequest);
+
+                    String imageUrl = "https://" + OssClientUtil.getBucketName() + "." + OssClientUtil.getEndpoint() + "/" + objectKey;
+
+                    // 更新用户头像信息
+                    currentUser.setAvatar(imageUrl);
+                    if (userService.updateUserInfo(currentUser) > 0) {
+                        setSysUser(userService.selectUserById(currentUser.getUserId()));
+                        return success();
+                    } else {
+                        return error("更新数据库失败！");
+                    }
+                } finally {
+                    ossClient.shutdown();
                 }
             }
             return error();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             log.error("修改头像失败！", e);
             return error(e.getMessage());
         }
