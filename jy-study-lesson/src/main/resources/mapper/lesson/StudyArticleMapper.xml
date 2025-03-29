@@ -22,10 +22,12 @@
         <result property="likeCount"    column="like_count"    />
         <result property="collectCount" column="collect_count" />
         <result property="top"          column="top"           />
+        <result property="coverImg"     column="cover_img"     />
     </resultMap>
 
     <sql id="selectArticleVo">
         select article_id, title, content, status, sort, category, tags,
+               cover_img,
                summary, view_count, like_count, collect_count, top,
                create_by, create_time, update_by, update_time, remark
         from study_article
@@ -74,6 +76,7 @@
         insert into study_article(
         <if test="title != null and title != ''">title,</if>
         <if test="content != null and content != ''">content,</if>
+        <if test="coverImg != null">cover_img,</if>
         <if test="status != null and status != ''">status,</if>
         <if test="sort != null">sort,</if>
         <if test="remark != null and remark != ''">remark,</if>
@@ -86,6 +89,7 @@
         )values(
         <if test="title != null and title != ''">#{title},</if>
         <if test="content != null and content != ''">#{content},</if>
+        <if test="coverImg != null">#{coverImg},</if>
         <if test="status != null and status != ''">#{status},</if>
         <if test="sort != null">#{sort},</if>
         <if test="remark != null and remark != ''">#{remark},</if>
@@ -103,6 +107,7 @@
         <set>
             <if test="title != null and title != ''">title = #{title},</if>
             <if test="content != null and content != ''">content = #{content},</if>
+            <if test="coverImg != null">cover_img = #{coverImg},</if>
             <if test="status != null and status != ''">status = #{status},</if>
             <if test="sort != null">sort = #{sort},</if>
             <if test="remark != null">remark = #{remark},</if>

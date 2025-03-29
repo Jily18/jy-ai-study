@@ -34,6 +34,8 @@ public class StudyArticle extends BaseEntity {
     @Size(min = 0, max = 500, message = "文章摘要长度不能超过500个字符")
     private String summary;
     
+    private String coverImg;
+    
     private Long viewCount;
     
     private Long likeCount;
@@ -107,6 +109,14 @@ public class StudyArticle extends BaseEntity {
         this.summary = summary;
     }
 
+    public String getCoverImg() {
+        return coverImg;
+    }
+
+    public void setCoverImg(String coverImg) {
+        this.coverImg = coverImg;
+    }
+
     public Long getViewCount() {
         return viewCount;
     }
@@ -155,6 +165,7 @@ public class StudyArticle extends BaseEntity {
                 .append("category", getCategory())
                 .append("tags", getTags())
                 .append("summary", getSummary())
+                .append("coverImg", getCoverImg())
                 .append("viewCount", getViewCount())
                 .append("likeCount", getLikeCount())
                 .append("collectCount", getCollectCount())

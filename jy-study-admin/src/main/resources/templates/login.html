@@ -164,8 +164,8 @@
             <div class="login-form-side">
                 <div class="form-title">管理员登录</div>
                 <form id="signupForm" autocomplete="off">
-                    <input type="text" name="username" class="form-control uname" placeholder="用户名"/>
-                    <input type="password" name="password" class="form-control pword" placeholder="密码"/>
+                    <input type="text" name="username" class="form-control uname" value="admin" placeholder="用户名"/>
+                    <input type="password" name="password" class="form-control pword" value="123456" placeholder="密码"/>
                     <div class="captcha-group" th:if="${captchaEnabled==true}">
                         <input type="text" name="validateCode" class="form-control captcha-input code" placeholder="验证码" maxlength="5">
                         <a href="javascript:void(0);" title="点击更换验证码">
