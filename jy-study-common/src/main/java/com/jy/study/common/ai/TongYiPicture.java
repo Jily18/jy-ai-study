@@ -18,13 +18,14 @@ public class TongYiPicture {
     private String apiKey;
 
     public String generaPic(String title) throws ApiException, NoApiKeyException {
-        String basePrompt = "生成适合学习网站的封面图片，要求如下：比例：4:3，科技感：使用现代、未来感的设计元素。简洁：保持设计简洁，突出重点。色彩鲜明：使用明亮、对比强烈的色彩。图形化：使用图形、图标和插图来传达信息。用简约现代扁平风格绘制封面图。";
+        String basePrompt = "生成适合学习网站的封面图片，要求如下：比例：4:3，风格：科技感：使用现代、未来感的设计元素。简洁：保持设计简洁，突出重点。色彩鲜明：使用明亮、对比强烈的色彩。图形化：使用图形、图标和插图来传达信息。用简约现代扁平风格绘制封面图。";
         String prompt = basePrompt + " 文章主题是：" + title;
         
         ImageSynthesisParam param = ImageSynthesisParam.builder()
                 .apiKey(apiKey)
                 .model("wanx2.1-t2i-turbo")
                 .prompt(prompt)
+                .negativePrompt("**图片内不包含文字、中文、任何字符！**")
                 .n(1)
                 .size("800*600")
                 .build();
