@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -26,10 +27,9 @@ public class TTLController extends BaseController {
     @Autowired
     private TongYiPicture tongYiPicture;
     
-    @PostMapping("/generate/image")
+    @PostMapping("/generate/image/{prefix}")
     @ResponseBody
-    public AjaxResult generateImage(String title) {
-        OSS ossClient = null;
+    public AjaxResult generateImage(String title, @PathVariable("prefix") String prefix) {
         try {
             // 1. 调用通义千问生成图片，获取临时URL
             String tempImageUrl = tongYiPicture.generaPic(title);
@@ -41,10 +41,10 @@ public class TTLController extends BaseController {
             
             // 3. 生成在OSS中的存储路径
             String fileName = UUID.randomUUID().toString().replaceAll("-", "") + ".png";
-            String objectKey = "article/ai-generated/" + fileName;
+            String objectKey = prefix + "/" + fileName;
             
             // 4. 上传到OSS
-            ossClient = OssClientUtil.getOSSClient();
+            OSS ossClient = OssClientUtil.getOSSClient();
             PutObjectRequest putObjectRequest = new PutObjectRequest(
                     OssClientUtil.getBucketName(),
                     objectKey,
@@ -61,10 +61,6 @@ public class TTLController extends BaseController {
         } catch (Exception e) {
             log.error("生成图片过程发生异常", e);
             return AjaxResult.error("生成失败：" + e.getMessage());
-        } finally {
-            if (ossClient != null) {
-                ossClient.shutdown();
-            }
         }
     }
 }

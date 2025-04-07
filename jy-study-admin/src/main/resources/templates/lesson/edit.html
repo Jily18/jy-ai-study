@@ -24,6 +24,7 @@
                             <img id="previewImage" th:src="*{coverImg}" style="max-width: 200px; max-height: 200px;" th:style="*{coverImg != null && coverImg != ''} ? 'max-width: 200px; max-height: 200px;' : 'display: none;'">
                             <input type="file" name="file" id="imageInput" accept="image/*" style="display: none;">
                             <a class="btn btn-success btn-xs" onclick="$('#imageInput').click()"><i class="fa fa-upload"></i> 上传图片</a>
+                            <a class="btn btn-primary btn-xs" onclick="generateAIImage()"><i class="fa fa-magic"></i> AI生成图片</a>
                             <a class="btn btn-danger btn-xs" onclick="clearImage()" th:style="*{coverImg != null && coverImg != ''} ? '' : 'display: none;'" id="clearBtn"><i class="fa fa-trash"></i> 清除图片</a>
                         </div>
                     </div>
@@ -119,6 +120,39 @@
             if ($.validate.form()) {
                 $.operate.save(prefix + "/edit", $('#form-lesson-edit').serialize());
             }
+        }
+
+        function generateAIImage() {
+            var title = $("input[name='title']").val();
+            if (!title) {
+                $.modal.msgError("请先输入课程标题");
+                return;
+            }
+            
+            $.modal.loading("正在生成图片，请稍候...");
+            $.ajax({
+                url: ctx + "ttl/generate/image/lesson",
+                type: "POST",
+                data: {
+                    title: title
+                },
+                success: function(response) {
+                    if (response.code == 0 && response.data) {
+                        $("#previewImage").attr("src", response.data).show();
+                        $("input[name='coverImg']").val(response.data);
+                        $("#clearBtn").show();
+                        $.modal.msgSuccess("图片生成成功");
+                    } else {
+                        $.modal.msgError(response.msg || "图片生成失败");
+                    }
+                },
+                error: function() {
+                    $.modal.msgError("图片生成请求失败");
+                },
+                complete: function() {
+                    $.modal.closeLoading();
+                }
+            });
         }
     </script>
 </body>
