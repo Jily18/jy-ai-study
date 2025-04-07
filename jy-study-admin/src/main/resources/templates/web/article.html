@@ -163,6 +163,134 @@
             transform: translate(-50%, -50%);
             color: #6c757d;
         }
+
+        /* 添加新的布局样式 */
+        .content-wrapper {
+            display: flex;
+            position: relative;
+            min-height: calc(100vh - 400px); /* 减去header和footer的高度 */
+        }
+        
+        .article-content {
+            width: 75%;
+            transition: width 0.3s ease;
+            padding: 40px 20px 40px 40px;
+        }
+        
+        .article-content.expanded {
+            width: 95%;
+        }
+        
+        .ai-sidebar {
+            width: 25%;
+            position: fixed;
+            border-radius: 5px;
+            right: 0;
+            top: 100%;
+            transform: translateY(-50%);  /* 恢复垂直居中 */
+            height: 84vh;  /* 恢复原来的高度 */
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+        }
+        
+        .ai-sidebar.collapsed {
+            width: 40px;
+            right: 0;
+        }
+        
+        /* 保留美化后的折叠按钮样式 */
+        .ai-toggle {
+            position: absolute;
+            left: -32px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 80px;
+            background: linear-gradient(135deg, #71b2f9, #4b93e3);
+            border: none;
+            border-radius: 6px 0 0 6px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            font-size: 16px;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .ai-toggle:hover {
+            background: linear-gradient(135deg, #71b2f9, #4b93e3);
+            width: 36px;
+            left: -36px;
+        }
+        
+        .ai-toggle i {
+            transition: transform 0.3s ease;
+        }
+        
+        .ai-toggle:hover i {
+            transform: scale(1.2);
+        }
+
+        /* 调整内容区域样式 */
+        .ai-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        .ai-content.hidden {
+            display: none;
+        }
+        
+        /* 调整卡片样式以适应新的布局 */
+        .article-ai-analysis {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .article-ai-analysis .card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            border-radius: 8px;
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .article-ai-analysis .card-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .article-ai-analysis .card-header {
+            padding: 5px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-radius: 8px 8px 0 0;
+        }
+
+        /* 优化按钮样式 */
+        .article-ai-analysis .btn-primary {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .article-ai-analysis .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
@@ -210,36 +338,45 @@
         </div>
     </div>
 
-    <!-- 文章内容 -->
-    <div class="article-content">
-        <div class="container">
-            <div class="article-description" th:utext="${article.content}">
-                文章内容...
-            </div>
-            <div class="article-actions text-center mb-4">
-                <button class="btn btn-like mr-3" onclick="toggleLike()" id="likeBtn">
-                    <i class="fa fa-thumbs-up"></i> 点赞 <span id="likeCount" th:text="${article.likeCount}">0</span>
-                </button>
-                <button class="btn btn-collect" onclick="toggleCollect()" id="collectBtn">
-                    <i class="fa fa-star"></i> 收藏 <span id="collectCount" th:text="${article.collectCount}">0</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 在文章内容后添加AI分析部分 -->
-    <div class="container">
-        <div class="article-ai-analysis mt-4">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">AI文章解析</h5>
-                    <button class="btn btn-primary" onclick="analyzeArticle()" id="analyzeBtn">
-                        <i class="fa fa-robot"></i> 开始解析
+    <!-- 修改文章内容和AI分析的布局结构 -->
+    <!-- 将原来的文章内容和AI分析部分替换为以下结构 -->
+    <div class="content-wrapper">
+        <!-- 文章内容 -->
+        <div class="article-content">
+            <div class="container">
+                <div class="article-description" th:utext="${article.content}">
+                    文章内容...
+                </div>
+                <div class="article-actions text-center mb-4">
+                    <button class="btn btn-like mr-3" onclick="toggleLike()" id="likeBtn">
+                        <i class="fa fa-thumbs-up"></i> 点赞 <span id="likeCount" th:text="${article.likeCount}">0</span>
+                    </button>
+                    <button class="btn btn-collect" onclick="toggleCollect()" id="collectBtn">
+                        <i class="fa fa-star"></i> 收藏 <span id="collectCount" th:text="${article.collectCount}">0</span>
                     </button>
                 </div>
-                <div class="card-body">
-                    <div id="analysisResult" class="analysis-content">
-                        <!-- AI分析结果将在这里显示 -->
+            </div>
+        </div>
+
+        <!-- AI分析侧边栏 -->
+        <div class="ai-sidebar" id="aiSidebar">
+            <button class="ai-toggle" onclick="toggleAiSidebar()" id="aiToggle">
+                <i class="fa fa-angle-left"></i>
+            </button>
+            <div class="ai-content" id="aiContent">
+                <div class="article-ai-analysis">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">AI文章解析</h5>
+                            <button class="btn btn-primary btn-sm" onclick="analyzeArticle()" id="analyzeBtn">
+                                <i class="fa fa-robot"></i> 开始解析
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="analysisResult" class="analysis-content">
+                                <!-- AI分析结果将在这里显示 -->
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -399,6 +536,28 @@
                 analyzeBtn.html('<i class="fa fa-robot"></i> 重新解析');
             });
         };
+    }
+
+    // 添加侧边栏切换功能
+    function toggleAiSidebar() {
+        const sidebar = document.getElementById('aiSidebar');
+        const content = document.getElementById('aiContent');
+        const toggle = document.getElementById('aiToggle');
+        const mainContent = document.querySelector('.article-content');
+        
+        if (sidebar.classList.contains('collapsed')) {
+            // 展开
+            sidebar.classList.remove('collapsed');
+            content.classList.remove('hidden');
+            toggle.innerHTML = '<i class="fa fa-angle-left"></i>';
+            mainContent.classList.remove('expanded');
+        } else {
+            // 折叠
+            sidebar.classList.add('collapsed');
+            content.classList.add('hidden');
+            toggle.innerHTML = '<i class="fa fa-angle-right"></i>';
+            mainContent.classList.add('expanded');
+        }
     }
     </script>
 </body>
