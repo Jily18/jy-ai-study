@@ -43,13 +43,6 @@ public class LLMController extends BaseController {
         SseEmitter emitter = new SseEmitter(300000L);
         // 在主线程中获取用户信息
         final Long userId = getSysUser().getUserId();
-        
-        try{
-            // 设置响应头
-            emitter.send(SseEmitter.event().data("连接成功").build());
-        }catch (Exception e){
-             log.error("发送消息失败", e);
-        }
 
         try {
             // 验证用户是否登录
@@ -80,7 +73,7 @@ public class LLMController extends BaseController {
                             if("DONE".equals(msg)) {
                                 emitter.complete();
                             } else {
-                                emitter.send(SseEmitter.event().data(msg).build());
+                                emitter.send(msg);
                                 Thread.sleep(20);
                             }
                         }

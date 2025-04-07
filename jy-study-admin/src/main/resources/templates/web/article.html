@@ -135,6 +135,16 @@
             50% { transform: scale(1.2); }
         }
 
+        .analyzing {
+            font-family: monospace;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        
         .analysis-content {
             min-height: 100px;
             line-height: 1.6;
@@ -172,8 +182,6 @@
     <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
     <script th:src="@{/ruoyi/js/common.js}"></script>
     <script th:src="@{/ruoyi/js/ry-ui.js}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
     <!-- 使用th:replace引入导航栏 -->
     <div th:replace="web/fragments/navbar :: navbar"></div>
 
@@ -362,12 +370,11 @@
         
         // 监听消息
         source.onmessage = function(event) {
-            const data = event.data;
-            if (data === "连接成功") {
-                return;
-            }
-            content += data;
-            resultDiv.removeClass('loading').html(marked(content));
+            content += event.data;
+            
+            // 实时显示原始文本
+            resultDiv.removeClass('loading')
+                .html('<div class="analyzing">' + content + '</div>');
         };
         
         // 监听连接打开
@@ -382,6 +389,7 @@
             // 转换markdown为HTML
             $.get(ctx + "llm/markdownToHtml", {id: [[${article.articleId}]]}, function(result) {
                 if(result) {
+                    // 最终显示markdown转换后的HTML
                     resultDiv.removeClass('loading').html(result);
                 } else {
                     resultDiv.removeClass('loading').html('<div class="alert alert-danger">分析失败，请稍后重试</div>');
