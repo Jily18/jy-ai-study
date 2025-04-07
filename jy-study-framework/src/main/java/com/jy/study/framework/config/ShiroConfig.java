@@ -314,7 +314,7 @@ public class ShiroConfig
         // 注册相关
         filterChainDefinitionMap.put("/register", "anon,captchaValidate");
 
-        // 添加学生端相关配置，问题，实际上没有应该是没有起作用
+        // 添加学生端相关配置
         log.debug("ShiroConfig配置拦截web/login");
         filterChainDefinitionMap.put("/web/login", "anon,captchaValidate");
         filterChainDefinitionMap.put("/web/register", "anon,captchaValidate");
@@ -327,6 +327,7 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/web/images/**", "anon");
         // 需要登录才能访问的接口，要放在/web/user/**之前
         filterChainDefinitionMap.put("/web/user/**", "authc");
+        filterChainDefinitionMap.put("/llm/**", "authc");
 
         // 其他web路径允许匿名访问
         filterChainDefinitionMap.put("/web/**","anon");

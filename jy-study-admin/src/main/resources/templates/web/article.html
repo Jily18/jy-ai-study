@@ -134,6 +134,25 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.2); }
         }
+
+        .analysis-content {
+            min-height: 100px;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+        
+        .analysis-content.loading {
+            position: relative;
+        }
+        
+        .analysis-content.loading:after {
+            content: "正在分析中...";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #6c757d;
+        }
     </style>
 </head>
 <body>
@@ -153,6 +172,7 @@
     <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
     <script th:src="@{/ruoyi/js/common.js}"></script>
     <script th:src="@{/ruoyi/js/ry-ui.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
     <!-- 使用th:replace引入导航栏 -->
     <div th:replace="web/fragments/navbar :: navbar"></div>
@@ -195,6 +215,25 @@
                 <button class="btn btn-collect" onclick="toggleCollect()" id="collectBtn">
                     <i class="fa fa-star"></i> 收藏 <span id="collectCount" th:text="${article.collectCount}">0</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 在文章内容后添加AI分析部分 -->
+    <div class="container">
+        <div class="article-ai-analysis mt-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">AI文章解析</h5>
+                    <button class="btn btn-primary" onclick="analyzeArticle()" id="analyzeBtn">
+                        <i class="fa fa-robot"></i> 开始解析
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="analysisResult" class="analysis-content">
+                        <!-- AI分析结果将在这里显示 -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -300,6 +339,59 @@
             }
         });
     });
+
+    function analyzeArticle() {
+        // 如果需要登录，直接返回
+        if(handleLoginRequired()) {
+            return;
+        }
+        
+        const analyzeBtn = $("#analyzeBtn");
+        const resultDiv = $("#analysisResult");
+        
+        // 禁用按钮
+        analyzeBtn.prop('disabled', true);
+        analyzeBtn.html('<i class="fa fa-spinner fa-spin"></i> 分析中...');
+        
+        // 清空并显示加载状态
+        resultDiv.empty().addClass('loading');
+        
+        // 创建EventSource
+        const source = new EventSource(ctx + "llm/analyze/" + [[${article.articleId}]]);
+        let content = '';
+        
+        // 监听消息
+        source.onmessage = function(event) {
+            const data = event.data;
+            if (data === "连接成功") {
+                return;
+            }
+            content += data;
+            resultDiv.removeClass('loading').html(marked(content));
+        };
+        
+        // 监听连接打开
+        source.onopen = function(event) {
+            console.log("SSE连接已建立");
+        };
+        
+        // 监听错误
+        source.onerror = function(event) {
+            console.error("SSE错误:", event);
+            source.close();
+            // 转换markdown为HTML
+            $.get(ctx + "llm/markdownToHtml", {id: [[${article.articleId}]]}, function(result) {
+                if(result) {
+                    resultDiv.removeClass('loading').html(result);
+                } else {
+                    resultDiv.removeClass('loading').html('<div class="alert alert-danger">分析失败，请稍后重试</div>');
+                }
+                // 恢复按钮状态
+                analyzeBtn.prop('disabled', false);
+                analyzeBtn.html('<i class="fa fa-robot"></i> 重新解析');
+            });
+        };
+    }
     </script>
 </body>
 </html>

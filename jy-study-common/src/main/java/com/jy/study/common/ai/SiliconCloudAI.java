@@ -14,30 +14,31 @@ import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class SiliconCloudAI {
 
     @Value("${siliconCouldAI.apiKey}")
-    private static String apiKey;
+    private String apiKey;
     
-    public static String qwenCoder(String systemSay,String userSay) {
+    public String qwenCoder(String systemSay,String userSay) {
         return request("deepseek/deepseek-chat:free",systemSay,userSay);
     }
 
-    public static String deepseekR1Free(String systemSay,String userSay) {
+    public String deepseekR1Free(String systemSay,String userSay) {
         return request("deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",systemSay,userSay);
     }
 
-    public static String deepSeekV3(String systemSay,String userSay) {
+    public String deepSeekV3(String systemSay,String userSay) {
         return request("deepseek-ai/DeepSeek-V3",systemSay,userSay);
     }
 
-    public static String deepseek32B(String systemSay,String userSay) {
+    public String deepseek32B(String systemSay,String userSay) {
         return request("deepseek/deepseek-chat:free",systemSay,userSay);
     }
 
-    public static List<String> requestSSE(String model, String systemSay, String userSay) {
+    public List<String> requestSSE(String model, String systemSay, String userSay) {
         List<String> result = null;
         try {
             userSay = Jsoup.clean(userSay, Whitelist.none());
@@ -64,7 +65,7 @@ public class SiliconCloudAI {
         return result;
     }
 
-    public static String request(String model,String systemSay,String userSay) {
+    public String request(String model,String systemSay,String userSay) {
         String result = null;
         try {
             userSay = Jsoup.clean(userSay, Whitelist.none());
@@ -97,13 +98,13 @@ public class SiliconCloudAI {
         }
         return result;
     }
-    private static List<String> empty(){
+    private List<String> empty(){
         List<String> list = new ArrayList<String>();
         list.add("DONE");
         return list;
     }
 
-    private static List<String> getMsgs(String content) {
+    private List<String> getMsgs(String content) {
         String[] array = content.split("\n");
         List<String> list = new ArrayList<String>();
         for(String str:array) {
@@ -130,6 +131,6 @@ public class SiliconCloudAI {
 
 
     public static void main(String[] args) {
-        System.out.println(deepseekR1Free("写一篇关于春天的作文","主题i love you"));
+//        System.out.println(deepseekR1Free("写一篇关于春天的作文","主题i love you"));
     }
 }

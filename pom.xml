@@ -35,6 +35,12 @@
     <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
+            <!-- SSE请求所需-->
+            <dependency>
+                <groupId>com.jfinal</groupId>
+                <artifactId>jfinal</artifactId>
+                <version>5.2.3</version>
+            </dependency>
             <!--硅基流动所需sdk-->
             <dependency>
                 <groupId>org.commonmark</groupId>
