@@ -10,31 +10,36 @@ import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.NoApiKeyException;
 import com.alibaba.dashscope.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TongYiPicture {
     @Value("${modelTongyi.apiKey}")
-    private static String apiKey;
+    private String apiKey;
 
-    public static void basicCall() throws ApiException, NoApiKeyException {
-        String prompt = "生成适合学习网站的封面图片，要求如下：比例：4:3，科技感：使用现代、未来感的设计元素。简洁：保持设计简洁，突出重点。色彩鲜明：使用明亮、对比强烈的色彩。图形化：使用图形、图标和插图来传达信息。用简约现代扁平风格绘制企业并购主题封面图。画面中有两个代表不同企业的简约高楼图标，中间有商务人士握手，周围散落一些淡金色钱币符号，背景为浅灰色，隐约有一些折线图和柱状图轮廓。";
-        ImageSynthesisParam param =
-                ImageSynthesisParam.builder()
-                        .apiKey(apiKey)
-                        .model("wanx2.1-t2i-turbo")
-                        .prompt(prompt)
-                        .n(1)
-                        .size("800*600")
-                        .build();
+    public String generaPic(String title) throws ApiException, NoApiKeyException {
+        String basePrompt = "生成适合学习网站的封面图片，要求如下：比例：4:3，科技感：使用现代、未来感的设计元素。简洁：保持设计简洁，突出重点。色彩鲜明：使用明亮、对比强烈的色彩。图形化：使用图形、图标和插图来传达信息。用简约现代扁平风格绘制封面图。";
+        String prompt = basePrompt + " 文章主题是：" + title;
+        
+        ImageSynthesisParam param = ImageSynthesisParam.builder()
+                .apiKey(apiKey)
+                .model("wanx2.1-t2i-turbo")
+                .prompt(prompt)
+                .n(1)
+                .size("800*600")
+                .build();
 
         ImageSynthesis imageSynthesis = new ImageSynthesis();
-        ImageSynthesisResult result = null;
-        try {
-            System.out.println("---sync call, please wait a moment----");
-            result = imageSynthesis.call(param);
-        } catch (ApiException | NoApiKeyException e){
-            throw new RuntimeException(e.getMessage());
+        ImageSynthesisResult result = imageSynthesis.call(param);
+        
+        // 从返回结果中提取URL
+        if (result != null && result.getOutput() != null 
+            && result.getOutput().getResults() != null 
+            && !result.getOutput().getResults().isEmpty()) {
+            return result.getOutput().getResults().get(0).get("url");
         }
-        System.out.println(JsonUtils.toJson(result));
+        
+        throw new RuntimeException("图片生成失败");
     }
 
     public static void listTask() throws ApiException, NoApiKeyException {
@@ -54,11 +59,11 @@ public class TongYiPicture {
     }
 
     public static void main(String[] args){
-        try{
-            basicCall();
+//        try{
+            //generaPic();
             //listTask();
-        }catch(ApiException|NoApiKeyException e){
-            System.out.println(e.getMessage());
-        }
+//        }catch(ApiException|NoApiKeyException e){
+//            System.out.println(e.getMessage());
+//        }
     }
 }
