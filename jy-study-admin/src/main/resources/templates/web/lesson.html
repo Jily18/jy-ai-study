@@ -163,7 +163,7 @@
             <div class="row align-items-center">
                 <div class="col-md-4">
                     <img th:if="${lesson.coverImg}" th:src="${lesson.coverImg}" class="lesson-cover" alt="课程封面">
-                    <img th:unless="${lesson.coverImg}" src="/img/default-course.jpg" class="lesson-cover" alt="默认封面">
+                    <img th:if="${lesson.coverImg == null}" th:src="@{/img/default-article.png}" class="article-cover" alt="默认封面">
                 </div>
                 <div class="col-md-8">
                     <h1 class="lesson-title" th:text="${lesson.title}">课程标题</h1>
