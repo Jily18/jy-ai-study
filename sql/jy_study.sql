@@ -42,6 +42,7 @@ CREATE TABLE `study_lesson` (
     `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
     `update_time` datetime DEFAULT NULL COMMENT '更新时间',
     `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+    `video_url` varchar(255) DEFAULT NULL COMMENT '课程视频URL',
     PRIMARY KEY (`lesson_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='课程表';
 
