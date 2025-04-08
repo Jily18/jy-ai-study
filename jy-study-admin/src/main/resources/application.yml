@@ -66,9 +66,9 @@ spring:
   servlet:
     multipart:
       # 单个文件大小
-      max-file-size: 10MB
+      max-file-size: 500MB
       # 设置总上传的文件大小
-      max-request-size: 20MB
+      max-request-size: 500MB
   # 服务模块
   devtools:
     restart:
@@ -142,3 +142,21 @@ xss:
 swagger:
   # 是否开启swagger
   enabled: true
+
+# 阿里云oss，存图片
+aliyun:
+  oss:
+    endpoint: oss-cn-shenzhen.aliyuncs.com # 替换为你的OSS Endpoint
+    accessKeyId: joenivfeoo # 替换为你的AccessKeyId
+    accessKeySecret: joenivfeoo # 替换为你的AccessKeySecret
+    bucketName: xxx-xxx # 替换为你的Bucket名称
+
+
+# 通义的api
+modelTongyi:
+  apiKey: sk-joenivfeoo #你的key
+
+
+# 硅基流动的key
+siliconCouldAI:
+  apiKey: sk-lhlmkjoenivfeoojoenivfeoo
