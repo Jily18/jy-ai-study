@@ -4,6 +4,7 @@ CREATE TABLE `study_article` (
                                  `title` varchar(100) NOT NULL COMMENT '文章标题',
                                  `content` text NOT NULL COMMENT '文章内容',
                                  `cover_img` varchar(255) DEFAULT NULL COMMENT '封面图片URL',
+                                 `voice_url` varchar(255) DEFAULT NULL COMMENT 'ai朗读url',
                                  `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
                                  `sort` int(4) DEFAULT '0' COMMENT '排序',
                                  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
@@ -204,3 +205,6 @@ CREATE TABLE `study_user_view` (
     KEY `idx_target` (`type`,`target_id`),
     KEY `idx_user_time` (`user_id`,`create_time`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='用户浏览记录表';
+
+-- 在study_article表中添加voice_url字段
+ALTER TABLE study_article ADD COLUMN voice_url varchar(255) DEFAULT NULL COMMENT 'ai朗读url';

@@ -44,6 +44,8 @@ public class StudyArticle extends BaseEntity {
     
     private String top;
 
+    private String voiceUrl;
+
     // getter和setter方法
     public Long getArticleId() {
         return articleId;
@@ -149,6 +151,14 @@ public class StudyArticle extends BaseEntity {
         this.top = top;
     }
 
+    public String getVoiceUrl() {
+        return voiceUrl;
+    }
+
+    public void setVoiceUrl(String voiceUrl) {
+        this.voiceUrl = voiceUrl;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -170,6 +180,7 @@ public class StudyArticle extends BaseEntity {
                 .append("likeCount", getLikeCount())
                 .append("collectCount", getCollectCount())
                 .append("top", getTop())
+                .append("voiceUrl", getVoiceUrl())
                 .toString();
     }
 }

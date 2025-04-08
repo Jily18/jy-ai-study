@@ -23,11 +23,12 @@
         <result property="collectCount" column="collect_count" />
         <result property="top"          column="top"           />
         <result property="coverImg"     column="cover_img"     />
+        <result property="voiceUrl"     column="voice_url"     />
     </resultMap>
 
     <sql id="selectArticleVo">
         select article_id, title, content, status, sort, category, tags,
-               cover_img,
+               cover_img, voice_url,
                summary, view_count, like_count, collect_count, top,
                create_by, create_time, update_by, update_time, remark
         from study_article
@@ -85,6 +86,7 @@
         <if test="tags != null">tags,</if>
         <if test="summary != null">summary,</if>
         <if test="top != null">top,</if>
+        <if test="voiceUrl != null">voice_url,</if>
         create_time
         )values(
         <if test="title != null and title != ''">#{title},</if>
@@ -98,6 +100,7 @@
         <if test="tags != null">#{tags},</if>
         <if test="summary != null">#{summary},</if>
         <if test="top != null">#{top},</if>
+        <if test="voiceUrl != null">#{voiceUrl},</if>
         sysdate()
         )
     </insert>
@@ -119,6 +122,7 @@
             <if test="likeCount != null">like_count = #{likeCount},</if>
             <if test="collectCount != null">collect_count = #{collectCount},</if>
             <if test="top != null">top = #{top},</if>
+            <if test="voiceUrl != null">voice_url = #{voiceUrl},</if>
             update_time = sysdate()
         </set>
         where article_id = #{articleId}
