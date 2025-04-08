@@ -9,6 +9,8 @@ import com.jy.study.lesson.service.IStudyArticleService;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.model.PutObjectRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,28 @@ public class TTSController extends BaseController {
     @Autowired
     private IStudyArticleService articleService;
 
+    /**
+     * 清理HTML内容，只保留纯文本
+     */
+    private String cleanHtmlContent(String content) {
+        if (StringUtils.isEmpty(content)) {
+            return "";
+        }
+        try {
+            // 解析HTML
+            Document doc = Jsoup.parse(content);
+            // 获取纯文本内容
+            String text = doc.text();
+            // 移除多余的空白字符
+            text = text.replaceAll("\\s+", " ").trim();
+            return text;
+        } catch (Exception e) {
+            log.warn("清理HTML内容失败", e);
+            // 如果解析失败，返回原内容
+            return content;
+        }
+    }
+
     @PostMapping("/generate/voice")
     @ResponseBody
     public AjaxResult generateVoice(Long articleId) {
@@ -49,8 +73,11 @@ public class TTSController extends BaseController {
                 return AjaxResult.success("语音已存在", article.getVoiceUrl());
             }
 
-            // 3. 准备文本内容
-            String text = article.getTitle() + "。" + article.getContent();
+            // 3. 准备文本内容，清理HTML标签
+            String cleanTitle = cleanHtmlContent(article.getTitle());
+            String cleanContent = cleanHtmlContent(article.getContent());
+            String text = cleanTitle + "。" + cleanContent;
+            
             // 截取文本以符合API限制
             if (text.length() > MAX_TEXT_LENGTH) {
                 text = text.substring(0, MAX_TEXT_LENGTH);
