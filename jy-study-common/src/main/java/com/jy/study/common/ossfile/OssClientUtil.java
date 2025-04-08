@@ -80,6 +80,14 @@ public class OssClientUtil {
     }
 
     public static String uploadImage(MultipartFile file, String prefix) {
+        return uploadFile(file, prefix, "image");
+    }
+
+    public static String uploadVideo(MultipartFile file) {
+        return uploadFile(file, "video", "video");
+    }
+
+    private static String uploadFile(MultipartFile file, String prefix, String type) {
         if (file.isEmpty()) {
             log.error("上传的文件为空");
             return "";
@@ -87,7 +95,7 @@ public class OssClientUtil {
 
         try {
             String originalFilename = file.getOriginalFilename();
-            log.info("开始上传文件：{}", originalFilename);
+            log.info("开始上传{}：{}", type, originalFilename);
             
             if (originalFilename == null) {
                 log.error("文件名为空");
@@ -115,10 +123,10 @@ public class OssClientUtil {
             log.info("开始上传文件到OSS");
             ossClient.putObject(putObjectRequest);
 
-            String imageUrl = "https://" + getBucketName() + "." + getEndpoint() + "/" + objectKey;
-            log.info("文件上传成功，URL: {}", imageUrl);
+            String url = "https://" + getBucketName() + "." + getEndpoint() + "/" + objectKey;
+            log.info("文件上传成功，URL: {}", url);
 
-            return imageUrl;
+            return url;
         } catch (Exception e) {
             log.error("文件上传过程发生异常", e);
             return "";

@@ -177,4 +177,22 @@ public class CommonController
             return AjaxResult.error(e.getMessage());
         }
     }
+
+    /**
+     * 上传视频
+     */
+    @PostMapping("/upload/video/lesson")
+    @ResponseBody
+    public AjaxResult uploadVideo(@RequestParam("file") MultipartFile file) {
+        try {
+            String videoUrl = OssClientUtil.uploadVideo(file);
+            if(StringUtils.isBlank(videoUrl)){
+                return AjaxResult.error("上传失败");
+            }
+            return AjaxResult.success("上传成功", videoUrl);
+        } catch (Exception e) {
+            log.error("视频上传失败", e);
+            return AjaxResult.error(e.getMessage());
+        }
+    }
 }
