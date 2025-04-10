@@ -12,7 +12,8 @@ CREATE TABLE `study_article` (
                                  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
                                  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
                                  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-                                 `category` varchar(50) DEFAULT 'course' COMMENT '文章分类(course-课程文章,knowledge-知识库文章)',
+                                 `category_name` varchar(50) DEFAULT NULL COMMENT '分类名称',
+                                 `category_id` bigint(20) DEFAULT NULL COMMENT '分类ID',
                                  `tags` varchar(255) DEFAULT NULL COMMENT '文章标签(逗号分隔)',
                                  `summary` varchar(500) DEFAULT NULL COMMENT '文章摘要',
                                  `view_count` bigint(20) DEFAULT '0' COMMENT '阅读量',
@@ -230,3 +231,22 @@ CREATE TABLE `study_lesson_category` (
     `remark` varchar(500) DEFAULT NULL COMMENT '备注',
     PRIMARY KEY (`category_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='课程分类表';
+
+-- ----------------------------
+-- 文章分类表
+-- ----------------------------
+CREATE TABLE `study_article_category` (
+    `category_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '分类ID',
+    `name` varchar(50) NOT NULL COMMENT '分类名称',
+    `code` varchar(50) NOT NULL COMMENT '分类编码',
+    `parent_id` bigint(20) DEFAULT 0 COMMENT '父分类ID',
+    `ancestors` varchar(50) DEFAULT '' COMMENT '祖级列表',
+    `sort` int(4) DEFAULT 0 COMMENT '显示顺序',
+    `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
+    `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+    `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+    `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+    `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+    `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+    PRIMARY KEY (`category_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文章分类表';
