@@ -15,7 +15,8 @@
         <result property="updateBy"     column="update_by"     />
         <result property="updateTime"   column="update_time"   />
         <result property="remark"       column="remark"        />
-        <result property="category"      column="category"       />
+        <result property="categoryName" column="category_name" />
+        <result property="categoryId"   column="category_id"   />
         <result property="tags"         column="tags"          />
         <result property="summary"      column="summary"       />
         <result property="viewCount"    column="view_count"    />
@@ -27,7 +28,7 @@
     </resultMap>
 
     <sql id="selectArticleVo">
-        select article_id, title, content, status, sort, category, tags,
+        select article_id, title, content, status, sort, category_name, category_id, tags,
                cover_img, voice_url,
                summary, view_count, like_count, collect_count, top,
                create_by, create_time, update_by, update_time, remark
@@ -43,8 +44,11 @@
             <if test="status != null and status != ''">
                 AND status = #{status}
             </if>
-            <if test="category != null and category != ''">
-                AND category = #{category}
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="categoryName != null and categoryName != ''">
+                AND category_name like concat('%', #{categoryName}, '%')
             </if>
             <if test="tags != null and tags != ''">
                 AND tags like concat('%', #{tags}, '%')
@@ -82,7 +86,8 @@
         <if test="sort != null">sort,</if>
         <if test="remark != null and remark != ''">remark,</if>
         <if test="createBy != null and createBy != ''">create_by,</if>
-        <if test="category != null">category,</if>
+        <if test="categoryName != null">category_name,</if>
+        <if test="categoryId != null">category_id,</if>
         <if test="tags != null">tags,</if>
         <if test="summary != null">summary,</if>
         <if test="top != null">top,</if>
@@ -96,7 +101,8 @@
         <if test="sort != null">#{sort},</if>
         <if test="remark != null and remark != ''">#{remark},</if>
         <if test="createBy != null and createBy != ''">#{createBy},</if>
-        <if test="category != null">#{category},</if>
+        <if test="categoryName != null">#{categoryName},</if>
+        <if test="categoryId != null">#{categoryId},</if>
         <if test="tags != null">#{tags},</if>
         <if test="summary != null">#{summary},</if>
         <if test="top != null">#{top},</if>
@@ -115,7 +121,8 @@
             <if test="sort != null">sort = #{sort},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
-            <if test="category != null">category = #{category},</if>
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
             <if test="tags != null">tags = #{tags},</if>
             <if test="summary != null">summary = #{summary},</if>
             <if test="viewCount != null">view_count = #{viewCount},</if>

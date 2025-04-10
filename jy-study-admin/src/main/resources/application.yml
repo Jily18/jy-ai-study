@@ -147,16 +147,16 @@ swagger:
 aliyun:
   oss:
     endpoint: oss-cn-shenzhen.aliyuncs.com # 替换为你的OSS Endpoint
-    accessKeyId: joenivfeoo # 替换为你的AccessKeyId
-    accessKeySecret: joenivfeoo # 替换为你的AccessKeySecret
-    bucketName: xxx-xxx # 替换为你的Bucket名称
+    accessKeyId: LTAI5t86aZG4HCKB9kvbEUNu # 替换为你的AccessKeyId
+    accessKeySecret: 74R8Q4Q6hD9bC5i4ugc509aMtyoMuY # 替换为你的AccessKeySecret
+    bucketName: jy-study-2025 # 替换为你的Bucket名称
 
 
 # 通义的api
 modelTongyi:
-  apiKey: sk-joenivfeoo #你的key
+  apiKey: sk-2d85dba77ae0423f8e74549022f0d99b
 
 
 # 硅基流动的key
 siliconCouldAI:
-  apiKey: sk-lhlmkjoenivfeoojoenivfeoo
+  apiKey: sk-lhlmklwxusxdgwraqtggucjjnyyllixseethomtazsyeaixj

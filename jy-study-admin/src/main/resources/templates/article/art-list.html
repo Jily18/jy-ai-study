@@ -95,15 +95,13 @@
                     }
                 },
                 {
-                    field: 'category',
+                    field: 'categoryName',
                     title: '文章分类',
                     formatter: function(value, row, index) {
-                        if (value === 'course') {
-                            return '<span class="badge badge-primary">课程文章</span>';
-                        } else if (value === 'knowledge') {
-                            return '<span class="badge badge-success">知识库文章</span>';
+                        if (value) {
+                            return '<span class="badge badge-primary">' + value + '</span>';
                         }
-                        return value;
+                        return '';
                     }
                 },
                 {

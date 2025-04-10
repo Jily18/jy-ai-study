@@ -25,10 +25,7 @@ public class StudyArticle extends BaseEntity {
 
     private String remark;
 
-    @Size(min = 0, max = 50, message = "文章分类长度不能超过50个字符")
-    private String category;
-    
-    @Size(min = 0, max = 255, message = "文章标签长度不能超过255个字符")
+    @Size(min = 0, max = 50, message = "文章标签长度不能超过50个字符")
     private String tags;
     
     @Size(min = 0, max = 500, message = "文章摘要长度不能超过500个字符")
@@ -45,6 +42,11 @@ public class StudyArticle extends BaseEntity {
     private String top;
 
     private String voiceUrl;
+
+    @Size(min = 0, max = 50, message = "分类名称长度不能超过50个字符")
+    private String categoryName;
+    
+    private Long categoryId;
 
     // getter和setter方法
     public Long getArticleId() {
@@ -85,14 +87,6 @@ public class StudyArticle extends BaseEntity {
 
     public void setSort(Integer sort) {
         this.sort = sort;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public String getTags() {
@@ -159,6 +153,22 @@ public class StudyArticle extends BaseEntity {
         this.voiceUrl = voiceUrl;
     }
 
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -172,7 +182,6 @@ public class StudyArticle extends BaseEntity {
                 .append("updateBy", getUpdateBy())
                 .append("updateTime", getUpdateTime())
                 .append("remark", getRemark())
-                .append("category", getCategory())
                 .append("tags", getTags())
                 .append("summary", getSummary())
                 .append("coverImg", getCoverImg())
@@ -181,6 +190,8 @@ public class StudyArticle extends BaseEntity {
                 .append("collectCount", getCollectCount())
                 .append("top", getTop())
                 .append("voiceUrl", getVoiceUrl())
+                .append("categoryName", getCategoryName())
+                .append("categoryId", getCategoryId())
                 .toString();
     }
 }

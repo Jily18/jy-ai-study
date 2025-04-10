@@ -216,6 +216,7 @@
                         <div class="article-meta">
                             <i class="fa fa-user"></i> <span th:text="${article.createBy}">作者</span>
                             <i class="fa fa-clock-o ml-2"></i> <span th:text="${#dates.format(article.createTime, 'yyyy-MM-dd')}">日期</span>
+                            <span class="badge badge-primary" th:text="${article.categoryName}">分类</span>
                         </div>
                         <h5 class="article-title" th:text="${article.title}">文章标题</h5>
                         <p class="article-desc" th:text="${article.remark}">文章描述...</p>
