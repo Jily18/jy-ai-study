@@ -6,6 +6,9 @@ import com.jy.study.common.core.domain.AjaxResult;
 import com.jy.study.common.ossfile.OssClientUtil;
 import com.jy.study.lesson.domain.StudyArticle;
 import com.jy.study.lesson.service.IStudyArticleService;
+import com.jy.study.lesson.domain.StudyLesson;
+import com.jy.study.lesson.service.IStudyLessonService;
+import com.jy.study.common.ai.TongYiVoiceToText;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.model.PutObjectRequest;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +38,12 @@ public class TTSController extends BaseController {
 
     @Autowired
     private IStudyArticleService articleService;
+
+    @Autowired
+    private IStudyLessonService lessonService;
+
+    @Autowired
+    private TongYiVoiceToText voiceToText;
 
     /**
      * 清理HTML内容，只保留纯文本
@@ -117,6 +126,46 @@ public class TTSController extends BaseController {
         } catch (Exception e) {
             log.error("生成语音失败", e);
             return AjaxResult.error("生成语音失败：" + e.getMessage());
+        }
+    }
+
+    /**
+     * 识别视频字幕
+     */
+    @PostMapping("/recognize/subtitle")
+    @ResponseBody
+    public AjaxResult recognizeSubtitle(Long lessonId) {
+        try {
+            // 1. 查询课程
+            StudyLesson lesson = lessonService.selectStudyLessonByLessonId(lessonId);
+            if (lesson == null) {
+                return AjaxResult.error("课程不存在");
+            }
+
+            // 2. 检查是否已有字幕文本
+            if (StringUtils.isNotEmpty(lesson.getVideoSubtitleText())) {
+                return AjaxResult.success("字幕已存在", lesson.getVideoSubtitleText());
+            }
+
+            // 3. 检查是否有视频URL
+            if (StringUtils.isEmpty(lesson.getVideoUrl())) {
+                return AjaxResult.error("课程没有视频");
+            }
+
+            // 4. 调用识别服务
+            String subtitleText = voiceToText.videoToText(lesson.getVideoUrl());
+            if (StringUtils.isEmpty(subtitleText)) {
+                return AjaxResult.error("字幕识别失败");
+            }
+
+            // 5. 更新数据库
+            lesson.setVideoSubtitleText(subtitleText);
+            lessonService.updateStudyLesson(lesson);
+
+            return AjaxResult.success("识别成功", subtitleText);
+        } catch (Exception e) {
+            log.error("识别字幕失败", e);
+            return AjaxResult.error("识别字幕失败：" + e.getMessage());
         }
     }
 }
