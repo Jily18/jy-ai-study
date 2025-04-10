@@ -8,7 +8,8 @@
         <result property="title"        column="title"         />
         <result property="coverImg"     column="cover_img"     />
         <result property="description"  column="description"   />
-        <result property="category"     column="category"      />
+        <result property="categoryId"   column="category_id"   />
+        <result property="categoryName" column="category_name" />
         <result property="tags"         column="tags"          />
         <result property="status"       column="status"        />
         <result property="sort"         column="sort"          />
@@ -25,9 +26,9 @@
     </resultMap>
 
     <sql id="selectStudyLessonVo">
-        select lesson_id, title, cover_img, description, category, tags, status, sort, 
-               view_count, like_count, collect_count, create_by, create_time,
-               update_by, update_time, remark, video_url, video_subtitle_text
+        select lesson_id, title, cover_img, description, category_id, category_name,
+               tags, status, sort, view_count, like_count, collect_count, create_by,
+               create_time, update_by, update_time, remark, video_url, video_subtitle_text
         from study_lesson
     </sql>
 
@@ -61,8 +62,8 @@
             <if test="description != null and description != ''">
                 AND description like concat('%', #{description}, '%')
             </if>
-            <if test="category != null and category != ''">
-                AND category = #{category}
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
             </if>
         </where>
     </select>
@@ -78,7 +79,8 @@
             <if test="title != null and title != ''">title,</if>
             <if test="coverImg != null">cover_img,</if>
             <if test="description != null">description,</if>
-            <if test="category != null">category,</if>
+            <if test="categoryId != null">category_id,</if>
+            <if test="categoryName != null">category_name,</if>
             <if test="tags != null">tags,</if>
             <if test="status != null">status,</if>
             <if test="sort != null">sort,</if>
@@ -97,7 +99,8 @@
             <if test="title != null and title != ''">#{title},</if>
             <if test="coverImg != null">#{coverImg},</if>
             <if test="description != null">#{description},</if>
-            <if test="category != null">#{category},</if>
+            <if test="categoryId != null">#{categoryId},</if>
+            <if test="categoryName != null">#{categoryName},</if>
             <if test="tags != null">#{tags},</if>
             <if test="status != null">#{status},</if>
             <if test="sort != null">#{sort},</if>
@@ -120,7 +123,8 @@
             <if test="title != null and title != ''">title = #{title},</if>
             <if test="coverImg != null">cover_img = #{coverImg},</if>
             <if test="description != null">description = #{description},</if>
-            <if test="category != null">category = #{category},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="categoryName != null">category_name = #{categoryName},</if>
             <if test="tags != null">tags = #{tags},</if>
             <if test="status != null">status = #{status},</if>
             <if test="sort != null">sort = #{sort},</if>

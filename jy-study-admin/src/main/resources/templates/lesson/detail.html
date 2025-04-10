@@ -3,7 +3,7 @@
 <head>
     <th:block th:include="include :: header('课程详细')" />
 </head>
-<body>
+<body class="white-bg">
     <div class="main-content">
         <form class="form-horizontal" th:object="${studyLesson}">
             <h4 class="form-header h4">基本信息</h4>
@@ -20,7 +20,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">课程分类：</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext" th:text="*{category}"></p>
+                            <p class="form-control-plaintext" th:text="*{categoryName}"></p>
                         </div>
                     </div>
                 </div>

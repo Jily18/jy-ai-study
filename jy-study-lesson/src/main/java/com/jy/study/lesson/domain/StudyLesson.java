@@ -31,9 +31,13 @@ public class StudyLesson extends BaseEntity
     @Excel(name = "课程描述")
     private String description;
 
-    /** 课程分类 */
-    @Excel(name = "课程分类")
-    private String category;
+    /** 分类ID */
+    @Excel(name = "分类ID")
+    private Long categoryId;
+
+    /** 分类名称 */
+    @Excel(name = "分类名称")
+    private String categoryName;
 
     /** 课程标签(逗号分隔) */
     @Excel(name = "课程标签(逗号分隔)")
@@ -101,12 +105,20 @@ public class StudyLesson extends BaseEntity
         this.description = description;
     }
 
-    public String getCategory() {
-        return category;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getTags() {
@@ -181,7 +193,8 @@ public class StudyLesson extends BaseEntity
                 .append("title", getTitle())
                 .append("coverImg", getCoverImg())
                 .append("description", getDescription())
-                .append("category", getCategory())
+                .append("categoryId", getCategoryId())
+                .append("categoryName", getCategoryName())
                 .append("tags", getTags())
                 .append("status", getStatus())
                 .append("sort", getSort())

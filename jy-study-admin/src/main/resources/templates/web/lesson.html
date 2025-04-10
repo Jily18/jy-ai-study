@@ -342,7 +342,7 @@
                         <span><i class="fa fa-bookmark"></i> <span th:text="${lesson.collectCount}">0</span> 次收藏</span>
                     </div>
                     <div class="lesson-tags">
-                        <span class="badge badge-primary" th:text="${lesson.category}">分类</span>
+                        <span class="badge badge-primary" th:text="${lesson.categoryName}">分类</span>
                         <span class="badge badge-info" th:each="tag : ${#strings.arraySplit(lesson.tags, ',')}" th:text="${tag}">标签</span>
                     </div>
                 </div>
