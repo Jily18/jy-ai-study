@@ -21,12 +21,13 @@
         <result property="updateTime"   column="update_time"   />
         <result property="remark"       column="remark"        />
         <result property="videoUrl"     column="video_url"     />
+        <result property="videoSubtitleText" column="video_subtitle_text" />
     </resultMap>
 
     <sql id="selectStudyLessonVo">
         select lesson_id, title, cover_img, description, category, tags, status, sort, 
                view_count, like_count, collect_count, create_by, create_time,
-               update_by, update_time, remark, video_url
+               update_by, update_time, remark, video_url, video_subtitle_text
         from study_lesson
     </sql>
 
@@ -90,6 +91,7 @@
             <if test="updateTime != null">update_time,</if>
             <if test="remark != null">remark,</if>
             <if test="videoUrl != null">video_url,</if>
+            <if test="videoSubtitleText != null">video_subtitle_text,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="title != null and title != ''">#{title},</if>
@@ -108,6 +110,7 @@
             <if test="updateTime != null">#{updateTime},</if>
             <if test="remark != null">#{remark},</if>
             <if test="videoUrl != null">#{videoUrl},</if>
+            <if test="videoSubtitleText != null">#{videoSubtitleText},</if>
         </trim>
     </insert>
 
@@ -130,6 +133,7 @@
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="remark != null">remark = #{remark},</if>
             <if test="videoUrl != null">video_url = #{videoUrl},</if>
+            <if test="videoSubtitleText != null">video_subtitle_text = #{videoSubtitleText},</if>
         </trim>
         where lesson_id = #{lessonId}
     </update>

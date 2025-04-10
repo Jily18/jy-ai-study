@@ -64,6 +64,10 @@ public class StudyLesson extends BaseEntity
     @Excel(name = "课程视频URL")
     private String videoUrl;
 
+    /** 视频字幕识别文本 */
+    @Excel(name = "视频字幕识别文本")
+    private String videoSubtitleText;
+
     // getter和setter
     public Long getLessonId() {
         return lessonId;
@@ -162,6 +166,14 @@ public class StudyLesson extends BaseEntity
         this.videoUrl = videoUrl;
     }
 
+    public String getVideoSubtitleText() {
+        return videoSubtitleText;
+    }
+
+    public void setVideoSubtitleText(String videoSubtitleText) {
+        this.videoSubtitleText = videoSubtitleText;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -177,6 +189,7 @@ public class StudyLesson extends BaseEntity
                 .append("likeCount", getLikeCount())
                 .append("collectCount", getCollectCount())
                 .append("videoUrl", getVideoUrl())
+                .append("videoSubtitleText", getVideoSubtitleText())
                 .append("createBy", getCreateBy())
                 .append("createTime", getCreateTime())
                 .append("updateBy", getUpdateBy())
