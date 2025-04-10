@@ -555,8 +555,7 @@
                         .html('<div class="alert alert-danger">请求失败，请稍后重试</div>');
                 },
                 complete: function() {
-                    recognizeBtn.prop('disabled', false);
-                    recognizeBtn.html('<i class="fa fa-closed-captioning"></i> 重新识别');
+                    recognizeBtn.hide();  // 识别完成后隐藏按钮
                 }
             });
         }
