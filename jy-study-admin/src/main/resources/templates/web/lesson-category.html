@@ -279,7 +279,7 @@
                 $('.category-item').removeClass('active');
                 $(this).addClass('active');
                 currentCategoryId = $(this).data('id');
-                loadCourses(1);
+                loadLessonCourses(1);
             });
 
             // 搜索框输入事件
@@ -288,7 +288,7 @@
                 clearTimeout(searchTimer);
                 searchTimer = setTimeout(() => {
                     currentKeyword = $(this).val();
-                    loadCourses(1);
+                    loadLessonCourses(1);
                 }, 500);
             });
 
@@ -300,9 +300,9 @@
             });
         });
 
-        function loadCourses(pageNum) {
+        function loadLessonCourses(pageNum) {
             $.ajax({
-                url: ctx + 'category/list',
+                url: ctx + 'lessonList',
                 type: 'POST',
                 data: {
                     pageNum: pageNum,
@@ -311,14 +311,14 @@
                 },
                 success: function(res) {
                     if(res.code === 0) {
-                        updateCourseList(res.data.lessons);
-                        updatePagination(res.data.pageNum, res.data.totalPages);
+                        updateLessonCourseList(res.data.lessons);
+                        updateLessonPagination(res.data.pageNum, res.data.totalPages);
                     }
                 }
             });
         }
 
-        function updateCourseList(lessons) {
+        function updateLessonCourseList(lessons) {
             let html = '';
             lessons.forEach(lesson => {
                 html += `
@@ -337,7 +337,7 @@
                                 ${lesson.tags.split(',').map(tag => 
                                     `<span class="badge badge-info">${tag}</span>`).join('')}
                             </div>
-                            <a href="${ctx}web/lesson/${lesson.lessonId}" 
+                            <a href="/web/lesson/${lesson.lessonId}" 
                                class="btn btn-primary btn-sm btn-block">
                                 开始学习 <i class="fa fa-arrow-right ml-1"></i>
                             </a>
@@ -348,7 +348,7 @@
             $('.course-grid').html(html);
         }
 
-        function updatePagination(pageNum, totalPages) {
+        function updateLessonPagination(pageNum, totalPages) {
             let html = `
                 <li class="page-item ${pageNum <= 1 ? 'disabled' : ''}">
                     <a class="page-link" href="#" onclick="changePage(${pageNum - 1})">
@@ -377,12 +377,12 @@
         }
 
         function changePage(pageNum) {
-            loadCourses(pageNum);
+            loadLessonCourses(pageNum);
         }
 
         function searchCourses() {
             currentKeyword = $('#searchInput').val();
-            loadCourses(1);
+            loadLessonCourses(1);
         }
     </script>
 </body>

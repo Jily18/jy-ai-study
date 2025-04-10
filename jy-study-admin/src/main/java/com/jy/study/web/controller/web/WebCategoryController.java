@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 前台课程分类页面Controller
+ * 前台分类页面Controller
  */
 @Controller
 @RequestMapping("/web/category")
@@ -33,8 +33,8 @@ public class WebCategoryController extends BaseController {
     /**
      * 课程分类页面
      */
-    @GetMapping("")
-    public String category(ModelMap mmap) {
+    @GetMapping("/lesson")
+    public String lessonCategory(ModelMap mmap) {
         // 获取所有正常状态的分类
         StudyLessonCategory query = new StudyLessonCategory();
         query.setStatus("0"); // 正常状态
@@ -53,15 +53,15 @@ public class WebCategoryController extends BaseController {
         long totalPages = (tableData.getTotal() + 11) / 12; // 12是每页大小，11是(12-1)
         mmap.put("totalPages", totalPages);
 
-        return "web/category";
+        return "/web/lesson-category";
     }
 
     /**
      * 获取课程列表数据
      */
-    @PostMapping("/list")
+    @PostMapping("/lessonList")
     @ResponseBody
-    public AjaxResult list(@RequestParam(defaultValue = "1") Integer pageNum,
+    public AjaxResult lessonList(@RequestParam(defaultValue = "1") Integer pageNum,
                           @RequestParam(required = false) Long categoryId,
                           @RequestParam(required = false) String keyword) {
         
