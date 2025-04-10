@@ -192,7 +192,7 @@
                     <img th:if="${lesson.coverImg}" th:src="${lesson.coverImg}" class="card-img-top" alt="课程封面">
                     <div class="card-body">
                         <div class="lesson-meta">
-                            <span class="badge badge-primary" th:text="${lesson.category}">分类</span>
+                            <span class="badge badge-primary" th:text="${lesson.categoryName}">分类</span>
                             <span class="ml-2"><i class="fa fa-eye"></i> <span th:text="${lesson.viewCount}">0</span></span>
                         </div>
                         <h5 class="lesson-title" th:text="${lesson.title}">课程标题</h5>
