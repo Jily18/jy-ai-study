@@ -3,6 +3,7 @@ import com.jy.study.lesson.domain.StudyArticle;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface StudyArticleMapper {
@@ -33,4 +34,30 @@ public interface StudyArticleMapper {
     public int incrementCollectCount(Long articleId);
 
     public int decrementCollectCount(Long articleId);
+
+    /**
+     * 统计文章数量
+     * @param type 统计类型
+     * @return 文章数量
+     */
+    public Long selectArticleCount(String type);
+
+    /**
+     * 获取文章增长趋势
+     * @return 最近6个月的文章数量统计
+     */
+    public List<Map<String, Object>> selectArticleTrend();
+
+    /**
+     * 统计文章分类数据
+     * @return 分类及其数量
+     */
+    public List<Map<String, Object>> selectCategoryStats();
+
+    /**
+     * 获取热门文章
+     * @param limit 获取数量
+     * @return 文章列表
+     */
+    public List<Map<String, Object>> selectTopArticles(int limit);
 } 

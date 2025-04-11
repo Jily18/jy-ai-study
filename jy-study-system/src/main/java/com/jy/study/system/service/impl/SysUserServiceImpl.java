@@ -557,4 +557,9 @@ public class SysUserServiceImpl implements ISysUserService
     {
         return userMapper.updateUser(user);
     }
+
+    @Override
+    public Long selectUserCount(String type) {
+        return userMapper.selectUserCount(type);
+    }
 }

@@ -5,6 +5,7 @@ import com.jy.study.lesson.domain.dto.UserCollectionDTO;
 import com.jy.study.lesson.domain.dto.UserLikeDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IStudyUserInteractionService {
     /**
@@ -73,4 +74,7 @@ public interface IStudyUserInteractionService {
      * @return 点赞记录列表
      */
     List<UserLikeDTO> getUserLikeWithDetails(Long userId, int limit);
+
+
+    List<Map<String, Object>> selectRecentActiveUsers() ;
 } 

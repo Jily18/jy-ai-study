@@ -121,4 +121,11 @@ public interface SysUserMapper
      * @return 结果
      */
     public SysUser checkEmailUnique(String email);
+
+    /**
+     * 统计用户数量
+     * @param type 统计类型
+     * @return 用户数量
+     */
+    public Long selectUserCount(String type);
 }

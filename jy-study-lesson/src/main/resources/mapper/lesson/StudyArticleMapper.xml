@@ -166,4 +166,77 @@
         update study_article set collect_count = collect_count - 1 where article_id = #{articleId}
     </update>
 
-</mapper> 
+    <!-- 统计文章数量 -->
+    <select id="selectArticleCount" parameterType="String" resultType="Long">
+        SELECT COUNT(1) 
+        FROM study_article
+        WHERE status = '0'
+        <if test="type != null">
+            <choose>
+                <when test="type == 'month'">
+                    AND DATE_FORMAT(create_time,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+                </when>
+            </choose>
+        </if>
+    </select>
+
+    <!-- 获取文章增长趋势 -->
+    <select id="selectArticleTrend" resultType="java.util.Map">
+        SELECT 
+            months.month,
+            COALESCE(COUNT(a.article_id), 0) as count
+        FROM (
+            SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 MONTH), '%Y-%m') as month
+            UNION ALL
+            SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 4 MONTH), '%Y-%m') as month
+            UNION ALL 
+            SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 3 MONTH), '%Y-%m') as month
+            UNION ALL
+            SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 2 MONTH), '%Y-%m') as month
+            UNION ALL
+            SELECT DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 1 MONTH), '%Y-%m') as month
+            UNION ALL
+            SELECT DATE_FORMAT(CURDATE(), '%Y-%m') as month
+        ) months
+        LEFT JOIN study_article a ON DATE_FORMAT(a.create_time, '%Y-%m') = months.month
+            AND a.status = '0'
+        GROUP BY months.month
+        ORDER BY months.month ASC
+    </select>
+
+    <!-- 统计文章分类数据 -->
+    <select id="selectCategoryStats" resultType="java.util.Map">
+        SELECT 
+            CASE 
+                WHEN category_name IS NULL OR category_name = '' THEN '其他'
+                ELSE category_name
+            END as name,
+            COUNT(1) as value
+        FROM study_article
+        WHERE status = '0'
+        GROUP BY 
+            CASE 
+                WHEN category_name IS NULL OR category_name = '' THEN '其他'
+                ELSE category_name
+            END
+        ORDER BY 
+            CASE 
+                WHEN name = '其他' THEN 1 
+                ELSE 0 
+            END,
+            value DESC
+    </select>
+
+    <!-- 获取热门文章 -->
+    <select id="selectTopArticles" resultType="java.util.Map">
+        SELECT 
+            article_id as id,
+            title,
+            view_count as viewCount
+        FROM study_article
+        WHERE status = '0'
+        ORDER BY view_count DESC
+        LIMIT #{limit}
+    </select>
+
+</mapper>

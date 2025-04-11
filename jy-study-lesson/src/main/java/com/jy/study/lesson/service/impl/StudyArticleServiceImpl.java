@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class StudyArticleServiceImpl implements IStudyArticleService {
@@ -42,5 +43,25 @@ public class StudyArticleServiceImpl implements IStudyArticleService {
     @Override
     public int deleteArticleByIds(String ids) {
         return articleMapper.deleteArticleByIds(Convert.toStrArray(ids));
+    }
+
+    @Override
+    public Long selectArticleCount(String type) {
+        return articleMapper.selectArticleCount(type);
+    }
+
+    @Override
+    public List<Map<String, Object>> selectArticleTrend() {
+        return articleMapper.selectArticleTrend();
+    }
+
+    @Override
+    public List<Map<String, Object>> selectCategoryStats() {
+        return articleMapper.selectCategoryStats();
+    }
+
+    @Override
+    public List<Map<String, Object>> selectTopArticles(int limit) {
+        return articleMapper.selectTopArticles(limit);
     }
 }

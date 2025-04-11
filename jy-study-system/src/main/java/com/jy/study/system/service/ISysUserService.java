@@ -211,4 +211,14 @@ public interface ISysUserService
      * @return 结果
      */
     public int changeStatus(SysUser user);
+
+    /**
+     * 统计用户数量
+     * @param type 统计类型:
+     *            null-总数
+     *            today-今日活跃(根据login_date)
+     *            month-本月新增(根据create_time)
+     * @return 用户数量
+     */
+    public Long selectUserCount(String type);
 }

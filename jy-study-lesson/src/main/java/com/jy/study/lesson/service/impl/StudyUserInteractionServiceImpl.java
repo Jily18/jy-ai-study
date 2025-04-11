@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * 用户交互Service实现
@@ -41,6 +42,9 @@ public class StudyUserInteractionServiceImpl implements IStudyUserInteractionSer
 
     @Autowired
     private StudyLessonMapper lessonMapper;
+
+    @Autowired
+    private StudyUserViewMapper userViewMapper;
 
     @Override
     public void recordView(String type, Long targetId) {
@@ -193,4 +197,9 @@ public class StudyUserInteractionServiceImpl implements IStudyUserInteractionSer
         return likeMapper.selectUserLikeWithDetails(userId, limit);
     }
 
+
+    @Override
+    public List<Map<String, Object>> selectRecentActiveUsers() {
+        return userViewMapper.selectRecentActiveUsers();
+    }
 }
