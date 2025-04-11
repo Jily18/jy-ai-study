@@ -124,7 +124,9 @@
                         <h5>内容增长趋势</h5>
                     </div>
                     <div class="ibox-content">
-                        <div id="contentTrendChart" style="height:400px;"></div>
+                        <div class="chart-container">
+                            <div id="contentTrendChart" style="width: 100%; height: 100%;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -136,10 +138,14 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-sm-6">
-                                <div id="lessonCategoryChart" style="height:300px;"></div>
+                                <div class="pie-chart">
+                                    <div id="lessonCategoryChart" style="width: 100%; height: 100%;"></div>
+                                </div>
                             </div>
                             <div class="col-sm-6">
-                                <div id="articleCategoryChart" style="height:300px;"></div>
+                                <div class="pie-chart">
+                                    <div id="articleCategoryChart" style="width: 100%; height: 100%;"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -177,14 +183,6 @@
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
                         <h5>7天内活跃用户</h5>
-                        <div class="ibox-tools">
-                            <a class="collapse-link">
-                                <i class="fa fa-chevron-up"></i>
-                            </a>
-                            <a class="close-link">
-                                <i class="fa fa-times"></i>
-                            </a>
-                        </div>
                     </div>
                     <div class="ibox-content">
                         <div class="table-responsive">
@@ -352,39 +350,59 @@
                 if (res.code == 0) {
                     var data = res.data;
                     
+                    // 定义清新的颜色方案
+                    var colors = [
+                        '#36a2ef',  // 蓝色
+                        '#63daab', // 绿色
+                        '#ffd666', // 黄色
+                        '#ff85c0', // 粉色
+                        '#9d96ff', // 紫色
+                        '#ff9f7f'  // 橙色
+                    ];
+                    
                     // 课程分类图表配置
                     var lessonOption = {
+                        color: colors,
                         title: {
                             text: '课程分类占比',
                             left: 'center',
-                            top: 0
+                            top: 10
                         },
                         tooltip: {
                             trigger: 'item',
                             formatter: '{a} <br/>{b}: {c} ({d}%)'
                         },
                         legend: {
-                            orient: 'vertical',
-                            left: 'left',
-                            top: 'middle'
+                            orient: 'horizontal',
+                            bottom: 10,
+                            itemWidth: 10,
+                            itemHeight: 10,
+                            textStyle: {
+                                fontSize: 12
+                            }
                         },
                         series: [{
                             name: '课程分类',
                             type: 'pie',
-                            radius: ['50%', '70%'],
-                            avoidLabelOverlap: false,
-                            label: {
-                                show: false
+                            radius: ['45%', '60%'],
+                            center: ['50%', '50%'],
+                            avoidLabelOverlap: true,
+                            itemStyle: {
+                                borderRadius: 10,
+                                borderColor: '#fff',
+                                borderWidth: 2
                             },
-                            emphasis: {
-                                label: {
-                                    show: true,
-                                    fontSize: '20',
-                                    fontWeight: 'bold'
-                                }
+                            label: {
+                                show: true,
+                                position: 'outside',
+                                formatter: '{b}: {d}%',
+                                fontSize: 12,
+                                color: '#666'
                             },
                             labelLine: {
-                                show: false
+                                show: true,
+                                length: 12,
+                                length2: 5
                             },
                             data: data.lessonCategories
                         }]
@@ -392,37 +410,47 @@
                     
                     // 文章分类图表配置
                     var articleOption = {
+                        color: colors,
                         title: {
                             text: '文章分类占比',
                             left: 'center',
-                            top: 0
+                            top: 10
                         },
                         tooltip: {
                             trigger: 'item',
                             formatter: '{a} <br/>{b}: {c} ({d}%)'
                         },
                         legend: {
-                            orient: 'vertical',
-                            right: 'right',
-                            top: 'middle'
+                            orient: 'horizontal',
+                            bottom: 10,
+                            itemWidth: 10,
+                            itemHeight: 10,
+                            textStyle: {
+                                fontSize: 12
+                            }
                         },
                         series: [{
                             name: '文章分类',
                             type: 'pie',
-                            radius: ['50%', '70%'],
-                            avoidLabelOverlap: false,
-                            label: {
-                                show: false
+                            radius: ['45%', '60%'],
+                            center: ['50%', '50%'],
+                            avoidLabelOverlap: true,
+                            itemStyle: {
+                                borderRadius: 10,
+                                borderColor: '#fff',
+                                borderWidth: 2
                             },
-                            emphasis: {
-                                label: {
-                                    show: true,
-                                    fontSize: '20',
-                                    fontWeight: 'bold'
-                                }
+                            label: {
+                                show: true,
+                                position: 'outside',
+                                formatter: '{b}: {d}%',
+                                fontSize: 12,
+                                color: '#666'
                             },
                             labelLine: {
-                                show: false
+                                show: true,
+                                length: 12,
+                                length2: 5
                             },
                             data: data.articleCategories
                         }]
@@ -430,6 +458,12 @@
                     
                     lessonChart.setOption(lessonOption);
                     articleChart.setOption(articleOption);
+                    
+                    // 添加窗口大小改变时的自适应
+                    window.addEventListener('resize', function() {
+                        lessonChart.resize();
+                        articleChart.resize();
+                    });
                 }
             });
         }
@@ -443,10 +477,13 @@
                     var lessonHtml = '<div class="list-group">';
                     data.topLessons.forEach(function(item, index) {
                         lessonHtml += '<a href="javascript:void(0)" class="list-group-item">' + 
-                            '<span class="badge bg-info">' + item.viewCount + ' 浏览</span>' +
+                            '<div class="badges">' +
                             '<span class="badge bg-primary">' + (index + 1) + '</span>' +
-                            '<span class="text-truncate" style="max-width: 80%; display: inline-block;">' + 
-                            item.title + '</span></a>';
+                            '</div>' +
+                            '<div class="title">' + item.title + '</div>' +
+                            '<div class="badges">' +
+                            '<span class="badge bg-info"><i class="fa fa-eye"></i> ' + item.viewCount + '</span>' +
+                            '</div></a>';
                     });
                     lessonHtml += '</div>';
                     $("#topLessonsList").html(lessonHtml);
@@ -455,10 +492,13 @@
                     var articleHtml = '<div class="list-group">';
                     data.topArticles.forEach(function(item, index) {
                         articleHtml += '<a href="javascript:void(0)" class="list-group-item">' + 
-                            '<span class="badge bg-info">' + item.viewCount + ' 浏览</span>' +
+                            '<div class="badges">' +
                             '<span class="badge bg-primary">' + (index + 1) + '</span>' +
-                            '<span class="text-truncate" style="max-width: 80%; display: inline-block;">' + 
-                            item.title + '</span></a>';
+                            '</div>' +
+                            '<div class="title">' + item.title + '</div>' +
+                            '<div class="badges">' +
+                            '<span class="badge bg-info"><i class="fa fa-eye"></i> ' + item.viewCount + '</span>' +
+                            '</div></a>';
                     });
                     articleHtml += '</div>';
                     $("#topArticlesList").html(articleHtml);
@@ -510,20 +550,9 @@
         .badge.bg-primary {
             background-color: #1890ff;
         }
-        .badge.bg-info {
-            background-color: #36a2ef;
-        }
-        .badge.bg-success {
-            background-color: #52c41a;
-        }
-        .badge.bg-warning {
-            background-color: #faad14;
-        }
-        .badge.bg-danger {
-            background-color: #ff4d4f;
-        }
-        .badge.bg-purple {
-            background-color: #722ed1;
+        .table > tbody > tr > td {
+            padding: 12px 8px;
+            vertical-align: middle;
         }
         .list-group-item {
             border-left: none;
@@ -540,6 +569,108 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+        .ibox {
+            height: 100%;
+            margin-bottom: 25px;
+        }
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+        }
+        .pie-chart {
+            height: 400px;
+            width: 100%;
+        }
+        .label-success {
+            background-color: #52c41a;
+            opacity: 0.8;
+        }
+        .label-info {
+            background-color: #36a2ef;
+            opacity: 0.8;
+        }
+        .label-primary {
+            background-color: #1890ff;
+            opacity: 0.8;
+        }
+        .badge.bg-info {
+            background-color: #36a2ef;
+            color: #fff;
+            padding: 4px 8px;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+        .badge.bg-primary {
+            background-color: #1890ff;
+            color: #fff;
+            padding: 4px 8px;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+        .list-group-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+        }
+        .list-group-item .title {
+            flex: 1;
+            margin-left: 10px;
+            margin-right: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .list-group-item .badges {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        /* 修改活跃用户表格的徽章样式 */
+        .table .badge {
+            padding: 4px 8px;
+            font-weight: normal;
+            opacity: 0.75;  /* 降低透明度 */
+            color: #fff;    /* 确保文字为白色 */
+            text-shadow: 0 0 1px rgba(0,0,0,0.2); /* 添加轻微文字阴影提高可读性 */
+        }
+
+        .table .badge.bg-primary {
+            background-color: #1890ff;
+        }
+
+        .table .badge.bg-info {
+            background-color: #36a2ef;
+        }
+
+        .table .badge.bg-success {
+            background-color: #52c41a;
+        }
+
+        .table .badge.bg-warning {
+            background-color: #faad14;
+        }
+
+        .table .badge.bg-danger {
+            background-color: #ff4d4f;
+        }
+
+        .table .badge.bg-purple {
+            background-color: #722ed1;
+        }
+
+        /* 调整表格样式 */
+        .table > tbody > tr > td {
+            padding: 12px 8px;
+            vertical-align: middle;
+        }
+
+        /* 鼠标悬停效果 */
+        .table > tbody > tr:hover .badge {
+            opacity: 0.9; /* 悬停时提高透明度 */
         }
     </style>
 </body>
