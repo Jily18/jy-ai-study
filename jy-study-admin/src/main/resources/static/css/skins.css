@@ -14,12 +14,12 @@
 
 /** 蓝色主题 skin-blue **/
 .navbar, .skin-blue .navbar {
-	background-color: #3c8dbc
+	background-color: #007bff
 }
 
 .skin-blue .navbar-default .nav>li.selected>a,
 .skin-blue .navbar-default .nav>li.selected>a:focus {
-	background-color: #1890ff;
+	background-color: #007bff;
     color: rgba(255,255,255,1);
 }
 
@@ -68,7 +68,7 @@
 }
 
 .skin-blue .logo {
-	background-color: #367fa9;
+	background-color: #007bff;
 	color: #fff;
 	border-bottom: 0 solid transparent
 }
