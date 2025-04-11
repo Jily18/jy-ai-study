@@ -572,7 +572,7 @@
         }
         .ibox {
             height: 100%;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         .chart-container {
             display: flex;
@@ -671,6 +671,17 @@
         /* 鼠标悬停效果 */
         .table > tbody > tr:hover .badge {
             opacity: 0.9; /* 悬停时提高透明度 */
+        }
+
+        /* 调整列间距 */
+        .row {
+            margin-left: -10px;  /* 原来是 -15px */
+            margin-right: -10px; /* 原来是 -15px */
+        }
+
+        .col-sm-3, .col-sm-6, .col-sm-12 {
+            padding-left: 10px;  /* 原来是 15px */
+            padding-right: 10px; /* 原来是 15px */
         }
     </style>
 </body>
