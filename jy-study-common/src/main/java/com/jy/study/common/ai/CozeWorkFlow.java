@@ -32,7 +32,7 @@ public class CozeWorkFlow {
      * @param parameters 参数
      * @return 执行结果中的output字段
      */
-    public String runWorkflow(Map<String, Object> parameters) {
+    public CozeResponse runWorkflow(Map<String, Object> parameters) {
         try {
             // 构建请求体
             RequestBody requestBody = RequestBody.create(
@@ -56,12 +56,19 @@ public class CozeWorkFlow {
                 String responseBody = response.body().string();
                 log.info("Coze API响应: {}", responseBody);
                 
-                // 解析响应
                 JSONObject jsonResponse = JSON.parseObject(responseBody);
                 if (jsonResponse.getIntValue("code") == 0) {
-                    // 获取data字段中的output
+                    CozeResponse result = new CozeResponse();
+                    
+                    // 解析data中的内容
                     JSONObject data = JSON.parseObject(jsonResponse.getString("data"));
-                    return data.getString("output");
+                    result.setOutput(data.getString("output"));
+                    result.setFileUrl(data.getString("url"));
+                    
+                    // 设置debug_url
+                    result.setDebugUrl(jsonResponse.getString("debug_url"));
+                    
+                    return result;
                 } else {
                     log.error("Coze API返回错误: {}", jsonResponse.getString("msg"));
                     return null;
@@ -117,17 +124,16 @@ public class CozeWorkFlow {
                 "亚洲的经济发展呈现出显著的不平衡性，少数国家属于发达国家，而大多数国家仍为发展中国家。"); // 输入的课程内容
 
         // 执行工作流
-        String result = cozeWorkFlow.runWorkflow(parameters);
+        CozeResponse result = cozeWorkFlow.runWorkflow(parameters);
 
         // 打印结果
         System.out.println("工作流执行结果：");
-        System.out.println(result);
+        System.out.println(result.getOutput());
 
         // 如果需要，可以把结果解析成JSON对象查看具体内容
         try {
-            Object jsonResult = JSON.parse(result);
             System.out.println("解析后的JSON结果：");
-            System.out.println(JSON.toJSONString(jsonResult, true)); // 格式化输出
+            System.out.println(JSON.toJSONString(result, true)); // 格式化输出
         } catch (Exception e) {
             System.out.println("结果解析失败：" + e.getMessage());
         }
