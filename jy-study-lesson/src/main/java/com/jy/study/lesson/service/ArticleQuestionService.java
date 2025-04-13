@@ -19,6 +19,9 @@ public class ArticleQuestionService {
     @Autowired
     private IStudyAiCozeService aiCozeService;
     
+    @Autowired
+    private IStudyArticleService articleService;
+    
     public StudyAiCoze generateQuestions(Long articleId, Integer xuanze, Integer tiankong,
                                          Integer panduan, Integer jianda, String content) {
         // 1. 准备参数
@@ -41,7 +44,11 @@ public class ArticleQuestionService {
         aiCoze.setDebugUrl(response.getDebugUrl());
         aiCoze.setStatus("1"); // 1-已完成
         
+        // 保存AI试题记录
         aiCozeService.insertAiCoze(aiCoze);
+        
+        // 4. 更新文章的cozeId
+        articleService.updateArticleCozeId(articleId, aiCoze.getId());
         
         return aiCoze;
     }

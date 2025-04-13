@@ -48,6 +48,9 @@ public class StudyArticle extends BaseEntity {
     
     private Long categoryId;
 
+    /** AI试题ID */
+    private Long cozeId;
+
     // getter和setter方法
     public Long getArticleId() {
         return articleId;
@@ -169,6 +172,14 @@ public class StudyArticle extends BaseEntity {
         this.categoryId = categoryId;
     }
 
+    public Long getCozeId() {
+        return cozeId;
+    }
+
+    public void setCozeId(Long cozeId) {
+        this.cozeId = cozeId;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -192,6 +203,7 @@ public class StudyArticle extends BaseEntity {
                 .append("voiceUrl", getVoiceUrl())
                 .append("categoryName", getCategoryName())
                 .append("categoryId", getCategoryId())
+                .append("cozeId", getCozeId())
                 .toString();
     }
 }

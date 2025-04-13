@@ -25,11 +25,12 @@
         <result property="top"          column="top"           />
         <result property="coverImg"     column="cover_img"     />
         <result property="voiceUrl"     column="voice_url"     />
+        <result property="cozeId"       column="coze_id"       />
     </resultMap>
 
     <sql id="selectArticleVo">
         select article_id, title, content, status, sort, category_name, category_id, tags,
-               cover_img, voice_url,
+               cover_img, voice_url, coze_id,
                summary, view_count, like_count, collect_count, top,
                create_by, create_time, update_by, update_time, remark
         from study_article
@@ -92,6 +93,7 @@
         <if test="summary != null">summary,</if>
         <if test="top != null">top,</if>
         <if test="voiceUrl != null">voice_url,</if>
+        <if test="cozeId != null">coze_id,</if>
         create_time
         )values(
         <if test="title != null and title != ''">#{title},</if>
@@ -107,13 +109,14 @@
         <if test="summary != null">#{summary},</if>
         <if test="top != null">#{top},</if>
         <if test="voiceUrl != null">#{voiceUrl},</if>
+        <if test="cozeId != null">#{cozeId},</if>
         sysdate()
         )
     </insert>
 
     <update id="updateArticle" parameterType="StudyArticle">
         update study_article
-        <set>
+        <trim prefix="SET" suffixOverrides=",">
             <if test="title != null and title != ''">title = #{title},</if>
             <if test="content != null and content != ''">content = #{content},</if>
             <if test="coverImg != null">cover_img = #{coverImg},</if>
@@ -130,8 +133,9 @@
             <if test="collectCount != null">collect_count = #{collectCount},</if>
             <if test="top != null">top = #{top},</if>
             <if test="voiceUrl != null">voice_url = #{voiceUrl},</if>
+            <if test="cozeId != null">coze_id = #{cozeId},</if>
             update_time = sysdate()
-        </set>
+        </trim>
         where article_id = #{articleId}
     </update>
 

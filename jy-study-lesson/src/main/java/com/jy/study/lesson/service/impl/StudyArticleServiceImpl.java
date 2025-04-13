@@ -64,4 +64,9 @@ public class StudyArticleServiceImpl implements IStudyArticleService {
     public List<Map<String, Object>> selectTopArticles(int limit) {
         return articleMapper.selectTopArticles(limit);
     }
+
+    @Override
+    public int updateArticleCozeId(Long articleId, Long cozeId) {
+        return articleMapper.updateArticleCozeId(articleId, cozeId);
+    }
 }

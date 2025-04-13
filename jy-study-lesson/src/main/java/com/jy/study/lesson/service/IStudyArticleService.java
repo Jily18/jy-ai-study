@@ -43,4 +43,13 @@ public interface IStudyArticleService {
      * @return 文章列表
      */
     public List<Map<String, Object>> selectTopArticles(int limit);
+
+    /**
+     * 更新文章的AI试题ID
+     * 
+     * @param articleId 文章ID
+     * @param cozeId AI试题ID
+     * @return 结果
+     */
+    public int updateArticleCozeId(Long articleId, Long cozeId);
 }

@@ -45,7 +45,8 @@
         where article_id = #{articleId}
         order by create_time desc limit 1
     </select>
-        
+
+<!--    这里是有主键回填的功能的useGeneratedKeys="true" : 告诉MyBatis使用JDBC的getGeneratedKeys方法来取出数据库内部生成的主键 keyProperty="id" : 指定把获取到的主键值赋给参数对象的哪个属性-->
     <insert id="insertAiCoze" parameterType="StudyAiCoze" useGeneratedKeys="true" keyProperty="id">
         insert into study_ai_coze
         <trim prefix="(" suffix=")" suffixOverrides=",">

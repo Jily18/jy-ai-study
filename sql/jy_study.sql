@@ -20,6 +20,7 @@ CREATE TABLE `study_article` (
                                  `like_count` bigint(20) DEFAULT '0' COMMENT '点赞数',
                                  `collect_count` bigint(20) DEFAULT '0' COMMENT '收藏数',
                                  `top` char(1) DEFAULT '0' COMMENT '是否置顶(0-否,1-是)',
+                                 `coze_id` bigint(20) DEFAULT NULL COMMENT 'AI试题ID',
                                  PRIMARY KEY (`article_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='课程文章表';
 

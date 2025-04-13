@@ -1,6 +1,7 @@
 package com.jy.study.lesson.mapper;
 import com.jy.study.lesson.domain.StudyArticle;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -60,4 +61,13 @@ public interface StudyArticleMapper {
      * @return 文章列表
      */
     public List<Map<String, Object>> selectTopArticles(int limit);
+
+    /**
+     * 更新文章的AI试题ID
+     * 
+     * @param articleId 文章ID
+     * @param cozeId AI试题ID
+     * @return 结果
+     */
+    public int updateArticleCozeId(@Param("articleId") Long articleId, @Param("cozeId") Long cozeId);
 } 
