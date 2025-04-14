@@ -1,0 +1,231 @@
+<!-- AI助手组件 -->
+
+<div th:fragment="ai-chat">
+    <!-- 悬浮按钮 -->
+    <div id="ai-chat-button" class="ai-chat-button">
+        <i class="fa fa-comments"></i>
+    </div>
+
+    <!-- 聊天窗口 -->
+    <div id="ai-chat-window" class="ai-chat-window">
+        <div class="chat-header">
+            <span>AI助手</span>
+            <button class="close-btn"><i class="fa fa-times"></i></button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- 消息将在这里动态添加 -->
+            <div class="message assistant">
+                <div class="message-content">
+                    你好！我是你的AI学习助手，有什么我可以帮你的吗？
+                </div>
+            </div>
+        </div>
+        <div class="chat-input">
+            <textarea id="chat-input-text" placeholder="输入你的问题..."></textarea>
+            <button id="send-message"><i class="fa fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <style>
+        .ai-chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #2196F3;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            color: white;
+            font-size: 24px;
+        }
+
+        .ai-chat-window {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .chat-header {
+            padding: 15px;
+            background: #2196F3;
+            color: white;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message.user {
+            align-items: flex-end;
+        }
+
+        .message.assistant {
+            align-items: flex-start;
+        }
+
+        .message-content {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .user .message-content {
+            background: #2196F3;
+            color: white;
+        }
+
+        .assistant .message-content {
+            background: #f1f1f1;
+            color: #333;
+        }
+
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input textarea {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 15px;
+            resize: none;
+            height: 40px;
+            font-size: 14px;
+        }
+
+        .chat-input button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: #2196F3;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-input button:hover {
+            background: #1976D2;
+        }
+    </style>
+
+    <script th:inline="javascript"> var ctx = [[@{/}]]; var lockscreen = [[${session.lockscreen}]]; if(lockscreen){window.top.location=ctx+"lockscreen";} </script>
+
+    <script>
+        $(function() {
+            const chatButton = $('#ai-chat-button');
+            const chatWindow = $('#ai-chat-window');
+            const closeBtn = $('.close-btn');
+            const sendBtn = $('#send-message');
+            const inputText = $('#chat-input-text');
+            const messagesContainer = $('#chat-messages');
+            let conversationId = null;
+
+            // 显示/隐藏聊天窗口
+            chatButton.click(function() {
+                chatWindow.css('display', 'flex');
+                chatButton.hide();
+            });
+
+            closeBtn.click(function() {
+                chatWindow.hide();
+                chatButton.show();
+            });
+
+            // 发送消息
+            function sendMessage() {
+                const message = inputText.val().trim();
+                if (!message) return;
+
+                // 添加用户消息到界面
+                appendMessage('user', message);
+                inputText.val('');
+
+                // 发送到服务器
+                $.ajax({
+                    url: ctx + 'llm/chat',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        message: message,
+                        conversationId: conversationId
+                    }),
+                    success: function(response) {
+                        if (response.code === 0) {
+                            appendMessage('assistant', response.data.content);
+                            conversationId = response.data.conversationId;
+                        } else {
+                            appendMessage('assistant', response.msg || '抱歉，我遇到了一些问题，请稍后再试。');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        appendMessage('assistant', '抱歉，服务器出现错误，请稍后再试。');
+                        console.error('AI对话请求失败:', status, error);
+                    }
+                });
+            }
+
+            // 添加消息到界面
+            function appendMessage(role, content) {
+                const messageHtml = `
+                    <div class="message ${role}">
+                        <div class="message-content">${content}</div>
+                    </div>
+                `;
+                messagesContainer.append(messageHtml);
+                messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+            }
+
+            // 发送按钮点击事件
+            sendBtn.click(sendMessage);
+
+            // 输入框回车发送
+            inputText.keypress(function(e) {
+                if (e.which === 13 && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</div>

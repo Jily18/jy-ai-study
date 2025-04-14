@@ -1,7 +1,11 @@
 package com.jy.study.web.controller.common;
 
+import com.alibaba.dashscope.aigc.generation.GenerationParam;
+import com.alibaba.dashscope.aigc.generation.GenerationResult;
 import com.jy.study.common.ai.SiliconCloudAI;
+import com.jy.study.common.ai.TongYiMultiRound;
 import com.jy.study.common.core.controller.BaseController;
+import com.jy.study.common.core.domain.AjaxResult;
 import com.jy.study.lesson.domain.StudyArticle;
 import com.jy.study.lesson.service.IStudyArticleService;
 import org.commonmark.node.Node;
@@ -10,16 +14,23 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-
+import com.alibaba.dashscope.common.Message;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
@@ -34,7 +45,12 @@ public class LLMController extends BaseController {
     @Autowired
     private SiliconCloudAI siliconCloudAI;
 
+    @Autowired
+    private TongYiMultiRound tongYiMultiRound;
+
     public static Map<Long,List<String>> cacheData = new ConcurrentHashMap<>();
+
+    private Map<String, List<Message>> conversations = new ConcurrentHashMap<>();
 
     @GetMapping("/analyze/{articleId}")
     @ResponseBody
@@ -124,4 +140,61 @@ public class LLMController extends BaseController {
         HtmlRenderer renderer = HtmlRenderer.builder().build();
         return renderer.render(document);
     }
+
+    @PostMapping("/chat")
+    @ResponseBody
+    public AjaxResult chat(@RequestBody Map<String, String> params) {
+        String message = params.get("message");
+        String conversationId = params.get("conversationId");
+        
+        try {
+            // 获取或创建会话历史
+            List<Message> messages = conversations.computeIfAbsent(
+                conversationId == null ? UUID.randomUUID().toString() : conversationId,
+                k -> {
+                    List<Message> newMessages = new ArrayList<>();
+                    newMessages.add(tongYiMultiRound.createSystemMessage());
+                    return newMessages;
+                }
+            );
+            
+            // 添加用户消息
+            messages.add(tongYiMultiRound.createUserMessage(message));
+                
+            // 创建生成参数
+            GenerationParam param = tongYiMultiRound.createGenerationParam(messages);
+            
+            // 调用模型获取响应
+            GenerationResult result = tongYiMultiRound.callGenerationWithMessages(param);
+            
+            if (result == null || result.getOutput() == null || result.getOutput().getChoices() == null 
+                || result.getOutput().getChoices().isEmpty()) {
+                return AjaxResult.error("AI响应异常");
+            }
+            
+            // 获取助手回复
+            Message assistantMessage = result.getOutput().getChoices().get(0).getMessage();
+            messages.add(assistantMessage);
+            
+            // 返回结果
+            Map<String, Object> data = new HashMap<>();
+            data.put("content", assistantMessage.getContent());
+            data.put("conversationId", conversationId == null ? UUID.randomUUID().toString() : conversationId);
+            
+            return AjaxResult.success(data);
+            
+        } catch (Exception e) {
+            log.error("AI对话出错", e);
+            return AjaxResult.error("AI对话服务出现错误: " + e.getMessage());
+        }
+    }
+
+    // 可选：添加清理超时会话的方法
+//    @Scheduled(fixedRate = 3600000) // 每小时执行一次
+//    public void cleanupOldConversations() {
+//        // 清理3小时前的会话
+//        long cutoffTime = System.currentTimeMillis() - 3 * 3600000;
+//        conversations.entrySet().removeIf(entry ->
+//            entry.getValue().get(entry.getValue().size() - 1).getTimestamp() < cutoffTime);
+//    }
 }
