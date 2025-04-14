@@ -39,7 +39,7 @@ public class TongYiMultiRound {
      */
     public GenerationParam createGenerationParam(List<Message> messages) {
         return GenerationParam.builder()
-                .model(Generation.Models.QWEN_TURBO) // 使用枚举常量替代字符串
+                .model(Generation.Models.QWEN_PLUS) // 使用枚举常量替代字符串
                 .messages(messages)
                 .resultFormat(GenerationParam.ResultFormat.MESSAGE)
                 .topP(0.8)
