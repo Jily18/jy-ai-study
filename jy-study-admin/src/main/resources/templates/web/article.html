@@ -321,6 +321,69 @@
         .btn-voice.loading {
             cursor: wait;
         }
+
+        /* 试题预览样式 */
+        .questions-preview {
+            margin-top: 40px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        }
+        .questions-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .questions-preview-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #343a40;
+        }
+        .questions-preview-content {
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .preview-text {
+            color: #495057;
+            line-height: 1.6;
+            font-size: 1rem;
+            white-space: pre-wrap;
+            position: relative;
+        }
+        .preview-text::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(transparent, #f8f9fa);
+            pointer-events: none;
+        }
+        .view-all-questions {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-view-all {
+            padding: 10px 30px;
+            border-radius: 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            transition: all 0.3s;
+        }
+        .btn-view-all:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,.1);
+        }
     </style>
 </head>
 <body>
@@ -377,6 +440,27 @@
             <div class="container">
                 <div class="article-description" th:utext="${article.content}">
                     文章内容...
+                </div>
+                <!-- 试题预览 -->
+                <div class="questions-preview" th:if="${aiCoze != null}">
+                    <div class="questions-preview-header">
+                        <div class="questions-preview-title">
+                            <i class="fa fa-question-circle"></i> 相关试题
+                        </div>
+                        <div class="questions-count">
+                            共 <span th:text="${aiCoze.questionNum}">0</span> 道题目
+                        </div>
+                    </div>
+                    <div class="questions-preview-content">
+                        <div class="preview-text" th:text="${previewContent}">
+                            题目预览内容...
+                        </div>
+                    </div>
+                    <div class="view-all-questions">
+                        <button class="btn btn-view-all" onclick="viewAllQuestions()">
+                            <i class="fa fa-list-alt"></i> 查看全部试题
+                        </button>
+                    </div>
                 </div>
                 <div class="article-actions text-center mb-4">
                     <button class="btn btn-like mr-3" onclick="toggleLike()" id="likeBtn">
@@ -662,6 +746,11 @@
             voiceBtn.removeClass("active");
             voiceBtn.html('<i class="fa fa-volume-up"></i> AI朗读');
         };
+    }
+
+    function viewAllQuestions() {
+        var url = ctx + "web/questions/" + [[${article.articleId}]];
+        window.location.href = url;
     }
     </script>
 </body>
