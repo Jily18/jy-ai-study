@@ -1,5 +1,6 @@
 package com.jy.study.web.controller.web;
 
+import com.github.pagehelper.PageHelper;
 import com.jy.study.common.core.controller.BaseController;
 import com.jy.study.common.core.domain.entity.SysUser;
 import com.jy.study.lesson.domain.StudyArticle;
@@ -44,16 +45,20 @@ public class WebController extends BaseController {
         SysUser user = getSysUser();
         mmap.put("user", user);
         
-        // 获取文章列表
+        // 获取最热文章(前12名)
         StudyArticle article = new StudyArticle();
         article.setStatus("0"); // 只查询正常状态的文章
+        PageHelper.startPage(1, 12, "view_count desc"); // 设置分页和排序
         List<StudyArticle> articles = articleService.selectArticleList(article);
         mmap.put("articles", articles);
         
+        // 获取最热课程(前6名)
         StudyLesson lesson = new StudyLesson();
         lesson.setStatus("0"); // 只查询正常状态的课程
+        PageHelper.startPage(1, 6, "view_count desc"); // 设置分页和排序
         List<StudyLesson> lessons = lessonService.selectStudyLessonList(lesson);
         mmap.put("lessons", lessons);
+        
         return "web/index";
     }
 }

@@ -14,10 +14,25 @@
             box-shadow: 0 2px 4px rgba(0,0,0,.08);
         }
         .jumbotron {
-            background: linear-gradient(45deg, #6c757d, #343a40);
+            background: linear-gradient(135deg, #0396FF 0%, #ABDCFF 100%);
+            background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z" fill="rgba(255,255,255,.1)" fill-rule="evenodd"/%3E%3C/svg%3E'),
+            linear-gradient(135deg, #0396FF 0%, #ABDCFF 100%);
             color: white;
             padding: 100px 0;
             margin-bottom: 0;
+        }
+        .article-card {
+            height: 250px; /* 统一文章卡片高度 */
+            display: flex;
+            flex-direction: column;
+        }
+        .article-card .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .article-card .btn-read {
+            margin-top: auto; /* 按钮固定在底部 */
         }
         .article-card {
             border: none;
@@ -80,14 +95,17 @@
             box-shadow: 0 2px 10px rgba(0,0,0,.1);
         }
         .lesson-card {
-            border: none;
-            transition: transform .2s;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+            height: 450px; /* 统一卡片高度 */
+            display: flex;
+            flex-direction: column;
         }
-        .lesson-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0,0,0,.1);
+        .lesson-card .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .lesson-card .btn {
+            margin-top: auto; /* 按钮固定在底部 */
         }
         .lesson-card .card-img-top {
             height: 200px;
@@ -193,7 +211,7 @@
     <div class="jumbotron text-center">
         <div class="container">
             <h1 class="display-4">开启你的学习之旅</h1>
-            <p class="lead">海量优质课程，助你成长</p>
+            <p class="lead">AI辅助教学，助你成长</p>
             <div class="search-box">
                 <input type="text" class="form-control search-input" placeholder="搜索课程或文章...">
             </div>
@@ -203,7 +221,12 @@
     <!-- 文章列表 -->
     <div class="container mt-5">
         <!-- 课程板块 -->
-        <h3 class="mb-4">精选课程</h3>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>精选课程</h3>
+            <a th:href="@{/web/category/lesson}" class="text-primary">
+                全部课程 <i class="fa fa-angle-right"></i>
+            </a>
+        </div>
         <div class="row">
             <div class="col-md-4" th:each="lesson : ${lessons}">
                 <div class="card lesson-card">
@@ -226,7 +249,12 @@
             </div>
         </div>
         
-        <h3 class="mb-4 mt-5">最新文章</h3>
+        <div class="d-flex justify-content-between align-items-center mb-4 mt-5">
+            <h3>最新文章</h3>
+            <a th:href="@{/web/category/article}" class="text-primary">
+                全部文章 <i class="fa fa-angle-right"></i>
+            </a>
+        </div>
         <div class="row">
             <div class="col-md-4" th:each="article : ${articles}">
                 <div class="card article-card">
@@ -245,21 +273,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- 分页 -->
-        <nav class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item">
-                    <a class="page-link" href="#"><i class="fa fa-angle-left"></i></a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#"><i class="fa fa-angle-right"></i></a>
-                </li>
-            </ul>
-        </nav>
     </div>
 
     <!-- 页脚 -->
