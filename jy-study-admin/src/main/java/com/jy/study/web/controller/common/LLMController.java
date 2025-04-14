@@ -35,6 +35,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import org.springframework.util.StringUtils;
+import com.jy.study.lesson.domain.StudyAiChat;
+import com.jy.study.lesson.service.IStudyAiChatService;
+import com.alibaba.dashscope.aigc.generation.Generation;
 
 @Controller
 @RequestMapping("/llm")
@@ -50,6 +53,9 @@ public class LLMController extends BaseController {
 
     @Autowired
     private TongYiMultiRound tongYiMultiRound;
+
+    @Autowired
+    private IStudyAiChatService studyAiChatService;
 
     public static Map<Long,List<String>> cacheData = new ConcurrentHashMap<>();
 
@@ -124,21 +130,56 @@ public class LLMController extends BaseController {
 
     @GetMapping("/chat/stream")
     public SseEmitter chatStream(String message, String conversationId) {
-        SseEmitter emitter = new SseEmitter(300000L); // 5分钟超时
+        SseEmitter emitter = new SseEmitter(300000L);
         
         try {
+            // 获取当前用户ID
+            final Long userId = getSysUser().getUserId();
+            if (userId == null) {
+                emitter.send(SseEmitter.event().data("请先登录后再使用此功能").build());
+                emitter.complete();
+                return emitter;
+            }
+            
+            // 生成新的会话ID - 使用final
+            final String finalConversationId = StringUtils.isEmpty(conversationId) ? 
+                UUID.randomUUID().toString() : conversationId;
+            
             // 获取或创建会话历史
             List<Message> messages = conversations.computeIfAbsent(
-                conversationId == null ? UUID.randomUUID().toString() : conversationId,
+                finalConversationId,
                 k -> {
                     List<Message> newMessages = new ArrayList<>();
-                    newMessages.add(tongYiMultiRound.createSystemMessage());
+                    Message systemMessage = tongYiMultiRound.createSystemMessage();
+                    newMessages.add(systemMessage);
+                    
+                    // 保存系统角色消息到数据库
+                    StudyAiChat systemChat = new StudyAiChat();
+                    systemChat.setConversationId(finalConversationId);
+                    systemChat.setUserId(userId);
+                    systemChat.setRole("system");
+                    systemChat.setContent(systemMessage.getContent());
+                    systemChat.setModel(Generation.Models.QWEN_PLUS);
+                    systemChat.setStatus("0");
+                    studyAiChatService.insertStudyAiChat(systemChat);
+                    
                     return newMessages;
                 }
             );
             
             // 添加用户消息
-            messages.add(tongYiMultiRound.createUserMessage(message));
+            Message userMessage = tongYiMultiRound.createUserMessage(message);
+            messages.add(userMessage);
+            
+            // 保存用户消息到数据库
+            StudyAiChat userChat = new StudyAiChat();
+            userChat.setConversationId(finalConversationId);
+            userChat.setUserId(userId);
+            userChat.setRole("user");
+            userChat.setContent(message);
+            userChat.setModel(Generation.Models.QWEN_PLUS);
+            userChat.setStatus("0");
+            studyAiChatService.insertStudyAiChat(userChat);
             
             // 创建生成参数
             GenerationParam param = tongYiMultiRound.createStreamGenerationParam(messages);
@@ -146,11 +187,9 @@ public class LLMController extends BaseController {
             // 异步处理流式响应
             new Thread(() -> {
                 try {
-                    // 使用信号量控制流程
                     Semaphore semaphore = new Semaphore(0);
                     StringBuilder fullContent = new StringBuilder();
                     
-                    // 调用流式API
                     tongYiMultiRound.streamCall(param, new ResultCallback<GenerationResult>() {
                         @Override
                         public void onEvent(GenerationResult message) {
@@ -173,7 +212,19 @@ public class LLMController extends BaseController {
                         public void onComplete() {
                             try {
                                 // 保存助手回复到会话历史
-                                messages.add(tongYiMultiRound.createAssistantMessage(fullContent.toString()));
+                                Message assistantMessage = tongYiMultiRound.createAssistantMessage(fullContent.toString());
+                                messages.add(assistantMessage);
+                                
+                                // 保存助手回复到数据库
+                                StudyAiChat assistantChat = new StudyAiChat();
+                                assistantChat.setConversationId(finalConversationId);
+                                assistantChat.setUserId(userId);
+                                assistantChat.setRole("assistant");
+                                assistantChat.setContent(fullContent.toString());
+                                assistantChat.setModel(Generation.Models.QWEN_PLUS);
+                                assistantChat.setStatus("0");
+                                studyAiChatService.insertStudyAiChat(assistantChat);
+                                
                                 emitter.complete();
                             } catch (Exception e) {
                                 log.error("完成流式对话失败", e);
@@ -182,7 +233,6 @@ public class LLMController extends BaseController {
                         }
                     });
                     
-                    // 等待完成
                     semaphore.acquire();
                     
                 } catch (Exception e) {
@@ -287,7 +337,7 @@ public class LLMController extends BaseController {
         }
     }
 
-    // 可选：添加清理超时会话的方法
+//    // 可选：添加清理超时会话的方法
 //    @Scheduled(fixedRate = 3600000) // 每小时执行一次
 //    public void cleanupOldConversations() {
 //        // 清理3小时前的会话

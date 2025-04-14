@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <insert id="insertStudyAiChat" parameterType="StudyAiChat" useGeneratedKeys="true" keyProperty="chatId">
         insert into study_ai_chat
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="conversationId != null">conversation_id,</if>
+            <if test="conversationId != null and conversationId != ''">conversation_id,</if>
             <if test="userId != null">user_id,</if>
             <if test="role != null">role,</if>
             <if test="content != null">content,</if>
@@ -51,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateTime != null">update_time,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="conversationId != null">#{conversationId},</if>
+            <if test="conversationId != null and conversationId != ''">#{conversationId},</if>
             <if test="userId != null">#{userId},</if>
             <if test="role != null">#{role},</if>
             <if test="content != null">#{content},</if>
