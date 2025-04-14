@@ -56,4 +56,22 @@ public class WebController extends BaseController {
         mmap.put("lessons", lessons);
         return "web/index";
     }
+    @GetMapping("/indexCopy")
+    public String indexCopy(ModelMap mmap) {
+        // 获取当前用户
+        SysUser user = getSysUser();
+        mmap.put("user", user);
+
+        // 获取文章列表
+        StudyArticle article = new StudyArticle();
+        article.setStatus("0"); // 只查询正常状态的文章
+        List<StudyArticle> articles = articleService.selectArticleList(article);
+        mmap.put("articles", articles);
+
+        StudyLesson lesson = new StudyLesson();
+        lesson.setStatus("0"); // 只查询正常状态的课程
+        List<StudyLesson> lessons = lessonService.selectStudyLessonList(lesson);
+        mmap.put("lessons", lessons);
+        return "web/index-copy";
+    }
 }

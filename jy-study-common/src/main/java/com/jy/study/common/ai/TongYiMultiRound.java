@@ -4,6 +4,7 @@ import com.alibaba.dashscope.aigc.generation.Generation;
 import com.alibaba.dashscope.aigc.generation.GenerationParam;
 import com.alibaba.dashscope.aigc.generation.GenerationResult;
 import com.alibaba.dashscope.common.Message;
+import com.alibaba.dashscope.common.ResultCallback;
 import com.alibaba.dashscope.common.Role;
 import com.alibaba.dashscope.exception.ApiException;
 import com.alibaba.dashscope.exception.InputRequiredException;
@@ -104,6 +105,54 @@ public class TongYiMultiRound {
         } catch (Exception e) {
             log.error("API连接测试失败", e);
             return false;
+        }
+    }
+
+    /**
+     * 创建流式生成参数
+     */
+    public GenerationParam createStreamGenerationParam(List<Message> messages) {
+        return GenerationParam.builder()
+                .model(Generation.Models.QWEN_TURBO)
+                .messages(messages)
+                .resultFormat(GenerationParam.ResultFormat.MESSAGE)
+                .topP(0.8)
+                .incrementalOutput(true) // 启用增量输出
+                .build();
+    }
+
+    /**
+     * 执行流式调用
+     */
+    public void streamCall(GenerationParam param, ResultCallback<GenerationResult> callback) 
+            throws NoApiKeyException, ApiException, InputRequiredException {
+        try {
+            Generation gen = new Generation();
+            // 使用 Flowable 方式进行流式调用
+            gen.streamCall(param)
+               .subscribe(
+                   // onNext
+                   message -> {
+                       if (callback != null) {
+                           callback.onEvent(message);
+                       }
+                   },
+                   // onError
+                   error -> {
+                       if (callback != null) {
+                           callback.onError(error instanceof Exception ? (Exception) error : new Exception(error));
+                       }
+                   },
+                   // onComplete
+                   () -> {
+                       if (callback != null) {
+                           callback.onComplete();
+                       }
+                   }
+               );
+        } catch (Exception e) {
+            log.error("流式调用出错", e);
+            throw e;
         }
     }
 }

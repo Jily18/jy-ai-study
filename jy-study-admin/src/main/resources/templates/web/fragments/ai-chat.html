@@ -147,6 +147,142 @@
         .chat-input button:hover {
             background: #1976D2;
         }
+
+        /* 添加流式输出和markdown渲染相关样式 */
+        .message-content.analyzing {
+            font-family: monospace;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .message-content.markdown {
+            line-height: 1.6;
+        }
+        
+        .message-content.markdown h1,
+        .message-content.markdown h2,
+        .message-content.markdown h3 {
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+        }
+        
+        .message-content.markdown ul,
+        .message-content.markdown ol {
+            padding-left: 20px;
+        }
+        
+        .message-content.markdown code {
+            background: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .message-content.markdown pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        
+        .message-content.markdown blockquote {
+            border-left: 4px solid #e9ecef;
+            padding-left: 15px;
+            color: #6c757d;
+            margin: 0;
+        }
+
+        /* 增强 markdown 样式 */
+        .message-content.markdown {
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        
+        .message-content.markdown h1,
+        .message-content.markdown h2,
+        .message-content.markdown h3 {
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        
+        .message-content.markdown h1 { font-size: 1.5em; }
+        .message-content.markdown h2 { font-size: 1.3em; }
+        .message-content.markdown h3 { font-size: 1.1em; }
+        
+        .message-content.markdown ul,
+        .message-content.markdown ol {
+            padding-left: 1.5em;
+            margin: 0.5em 0;
+        }
+        
+        .message-content.markdown li {
+            margin: 0.3em 0;
+        }
+        
+        .message-content.markdown code {
+            background: #f6f8fa;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace;
+            font-size: 85%;
+        }
+        
+        .message-content.markdown pre {
+            background: #f6f8fa;
+            padding: 1em;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 0.5em 0;
+        }
+        
+        .message-content.markdown pre code {
+            background: none;
+            padding: 0;
+            font-size: 90%;
+            color: #24292e;
+        }
+        
+        .message-content.markdown blockquote {
+            margin: 0.5em 0;
+            padding: 0.5em 1em;
+            color: #6a737d;
+            border-left: 0.25em solid #dfe2e5;
+            background: #f6f8fa;
+        }
+        
+        .message-content.markdown p {
+            margin: 0.5em 0;
+        }
+        
+        .message-content.markdown hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #e1e4e8;
+            border: 0;
+        }
+        
+        .message-content.markdown table {
+            border-spacing: 0;
+            border-collapse: collapse;
+            margin: 1em 0;
+            width: 100%;
+        }
+        
+        .message-content.markdown table th,
+        .message-content.markdown table td {
+            padding: 6px 13px;
+            border: 1px solid #dfe2e5;
+        }
+        
+        .message-content.markdown table th {
+            background-color: #f6f8fa;
+            font-weight: 600;
+        }
     </style>
 
     <script th:inline="javascript"> var ctx = [[@{/}]]; var lockscreen = [[${session.lockscreen}]]; if(lockscreen){window.top.location=ctx+"lockscreen";} </script>
@@ -181,28 +317,78 @@
                 appendMessage('user', message);
                 inputText.val('');
 
-                // 发送到服务器
-                $.ajax({
-                    url: ctx + 'llm/chat',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        message: message,
-                        conversationId: conversationId
-                    }),
-                    success: function(response) {
-                        if (response.code === 0) {
-                            appendMessage('assistant', response.data.content);
-                            conversationId = response.data.conversationId;
-                        } else {
-                            appendMessage('assistant', response.msg || '抱歉，我遇到了一些问题，请稍后再试。');
+                // 创建新的消息元素用于显示AI回复
+                const messageElement = appendMessage('assistant', '');
+                const contentElement = messageElement.find('.message-content');
+                
+                // 创建EventSource进行流式接收
+                const source = new EventSource(ctx + 'llm/chat/stream?' + 
+                    'message=' + encodeURIComponent(message) + 
+                    '&conversationId=' + (conversationId || ''));
+
+                let content = '';
+                
+                source.onmessage = function(event) {
+                    content += event.data;
+                    // 显示实时内容
+                    contentElement.addClass('analyzing').text(content);
+                };
+
+                source.onerror = function(event) {
+                    source.close();
+                    // 转换markdown为HTML
+                    $.ajax({
+                        url: ctx + 'llm/markdownToHtml2',
+                        type: 'GET',
+                        data: {
+                            content: content
+                        },
+                        success: function(html) {
+                            // 创建一个临时的div来解析HTML
+                            const tempDiv = document.createElement('div');
+                            tempDiv.innerHTML = html;
+                            
+                            // 处理代码块
+                            $(tempDiv).find('pre code').each(function(i, block) {
+                                // 添加代码高亮样式
+                                $(block).addClass('hljs');
+                                // 如果使用了highlight.js，可以在这里调用高亮
+                                if (window.hljs) {
+                                    hljs.highlightBlock(block);
+                                }
+                            });
+                            
+                            // 处理列表
+                            $(tempDiv).find('ul, ol').each(function() {
+                                $(this).addClass('markdown-list');
+                            });
+                            
+                            // 处理标题
+                            $(tempDiv).find('h1, h2, h3, h4, h5, h6').each(function() {
+                                $(this).addClass('markdown-heading');
+                            });
+                            
+                            // 处理引用
+                            $(tempDiv).find('blockquote').each(function() {
+                                $(this).addClass('markdown-quote');
+                            });
+                            
+                            contentElement
+                                .removeClass('analyzing')
+                                .addClass('markdown')
+                                .html(tempDiv.innerHTML);
+                            
+                            // 滚动到底部
+                            messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+                        },
+                        error: function() {
+                            contentElement
+                                .removeClass('analyzing')
+                                .addClass('markdown')
+                                .html(content);
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        appendMessage('assistant', '抱歉，服务器出现错误，请稍后再试。');
-                        console.error('AI对话请求失败:', status, error);
-                    }
-                });
+                    });
+                };
             }
 
             // 添加消息到界面
@@ -212,8 +398,10 @@
                         <div class="message-content">${content}</div>
                     </div>
                 `;
-                messagesContainer.append(messageHtml);
+                const messageElement = $(messageHtml);
+                messagesContainer.append(messageElement);
                 messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+                return messageElement;
             }
 
             // 发送按钮点击事件

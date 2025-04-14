@@ -2,6 +2,7 @@ package com.jy.study.web.controller.common;
 
 import com.alibaba.dashscope.aigc.generation.GenerationParam;
 import com.alibaba.dashscope.aigc.generation.GenerationResult;
+import com.alibaba.dashscope.common.ResultCallback;
 import com.jy.study.common.ai.SiliconCloudAI;
 import com.jy.study.common.ai.TongYiMultiRound;
 import com.jy.study.common.core.controller.BaseController;
@@ -32,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
+import org.springframework.util.StringUtils;
 
 @Controller
 @RequestMapping("/llm")
@@ -117,6 +120,101 @@ public class LLMController extends BaseController {
         }
         
         return emitter;
+    }
+
+    @GetMapping("/chat/stream")
+    public SseEmitter chatStream(String message, String conversationId) {
+        SseEmitter emitter = new SseEmitter(300000L); // 5分钟超时
+        
+        try {
+            // 获取或创建会话历史
+            List<Message> messages = conversations.computeIfAbsent(
+                conversationId == null ? UUID.randomUUID().toString() : conversationId,
+                k -> {
+                    List<Message> newMessages = new ArrayList<>();
+                    newMessages.add(tongYiMultiRound.createSystemMessage());
+                    return newMessages;
+                }
+            );
+            
+            // 添加用户消息
+            messages.add(tongYiMultiRound.createUserMessage(message));
+            
+            // 创建生成参数
+            GenerationParam param = tongYiMultiRound.createStreamGenerationParam(messages);
+            
+            // 异步处理流式响应
+            new Thread(() -> {
+                try {
+                    // 使用信号量控制流程
+                    Semaphore semaphore = new Semaphore(0);
+                    StringBuilder fullContent = new StringBuilder();
+                    
+                    // 调用流式API
+                    tongYiMultiRound.streamCall(param, new ResultCallback<GenerationResult>() {
+                        @Override
+                        public void onEvent(GenerationResult message) {
+                            try {
+                                String content = message.getOutput().getChoices().get(0).getMessage().getContent();
+                                fullContent.append(content);
+                                emitter.send(content);
+                            } catch (IOException e) {
+                                log.error("发送流式消息失败", e);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            log.error("流式对话出错", e);
+                            semaphore.release();
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            try {
+                                // 保存助手回复到会话历史
+                                messages.add(tongYiMultiRound.createAssistantMessage(fullContent.toString()));
+                                emitter.complete();
+                            } catch (Exception e) {
+                                log.error("完成流式对话失败", e);
+                            }
+                            semaphore.release();
+                        }
+                    });
+                    
+                    // 等待完成
+                    semaphore.acquire();
+                    
+                } catch (Exception e) {
+                    log.error("处理流式对话失败", e);
+                    try {
+                        emitter.send(SseEmitter.event().data("处理失败，请稍后重试").build());
+                        emitter.complete();
+                    } catch (IOException ex) {
+                        log.error("发送错误消息失败", ex);
+                    }
+                }
+            }).start();
+            
+        } catch (Exception e) {
+            log.error("创建流式对话失败", e);
+            emitter.complete();
+        }
+        
+        return emitter;
+    }
+
+    @GetMapping("/markdownToHtml2")
+    @ResponseBody
+    public String markdownToHtml2(String content) {
+        if (StringUtils.isEmpty(content)) {
+            return "";
+        }
+
+        Parser parser = Parser.builder().build();
+        Node document = parser.parse(content);
+        HtmlRenderer renderer = HtmlRenderer.builder().build();
+        return renderer.render(document);
     }
 
     @GetMapping("/markdownToHtml")
