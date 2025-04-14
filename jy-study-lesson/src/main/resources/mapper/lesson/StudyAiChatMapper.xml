@@ -29,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="role != null  and role != ''"> and role = #{role}</if>
             <if test="model != null  and model != ''"> and model = #{model}</if>
             <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="content != null and content != ''"> and content like concat('%', #{content}, '%')</if>
         </where>
         order by create_time desc
     </select>
