@@ -38,6 +38,7 @@ import org.springframework.util.StringUtils;
 import com.jy.study.lesson.domain.StudyAiChat;
 import com.jy.study.lesson.service.IStudyAiChatService;
 import com.alibaba.dashscope.aigc.generation.Generation;
+import java.util.Date;
 
 @Controller
 @RequestMapping("/llm")
@@ -133,7 +134,6 @@ public class LLMController extends BaseController {
         SseEmitter emitter = new SseEmitter(300000L);
         
         try {
-            // 获取当前用户ID
             final Long userId = getSysUser().getUserId();
             if (userId == null) {
                 emitter.send(SseEmitter.event().data("请先登录后再使用此功能").build());
@@ -141,7 +141,6 @@ public class LLMController extends BaseController {
                 return emitter;
             }
             
-            // 生成新的会话ID - 使用final
             final String finalConversationId = StringUtils.isEmpty(conversationId) ? 
                 UUID.randomUUID().toString() : conversationId;
             
@@ -161,6 +160,7 @@ public class LLMController extends BaseController {
                     systemChat.setContent(systemMessage.getContent());
                     systemChat.setModel(Generation.Models.QWEN_PLUS);
                     systemChat.setStatus("0");
+                    systemChat.setCreateTime(new Date());
                     studyAiChatService.insertStudyAiChat(systemChat);
                     
                     return newMessages;
@@ -179,6 +179,7 @@ public class LLMController extends BaseController {
             userChat.setContent(message);
             userChat.setModel(Generation.Models.QWEN_PLUS);
             userChat.setStatus("0");
+            userChat.setCreateTime(new Date());
             studyAiChatService.insertStudyAiChat(userChat);
             
             // 创建生成参数
@@ -211,7 +212,6 @@ public class LLMController extends BaseController {
                         @Override
                         public void onComplete() {
                             try {
-                                // 保存助手回复到会话历史
                                 Message assistantMessage = tongYiMultiRound.createAssistantMessage(fullContent.toString());
                                 messages.add(assistantMessage);
                                 
@@ -223,6 +223,7 @@ public class LLMController extends BaseController {
                                 assistantChat.setContent(fullContent.toString());
                                 assistantChat.setModel(Generation.Models.QWEN_PLUS);
                                 assistantChat.setStatus("0");
+                                assistantChat.setCreateTime(new Date());
                                 studyAiChatService.insertStudyAiChat(assistantChat);
                                 
                                 emitter.complete();
