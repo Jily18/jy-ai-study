@@ -8,6 +8,7 @@
     <link href="/css/font-awesome.min.css" rel="stylesheet">
     <link href="/css/web-common.css" rel="stylesheet"/>
     <link href="/css/web-index.css" rel="stylesheet"/>
+    <link rel="stylesheet" crossorigin href="https://g.alicdn.com/aliyun-documentation/web-chatbot-ui/0.0.24/index.css" />
     <style>
         .navbar {
             box-shadow: 0 2px 4px rgba(0,0,0,.08);
@@ -165,6 +166,23 @@
             width: 16px;
             text-align: center;
         }
+
+        /* AI助手相关样式 */
+        :root {
+            --webchat-toolbar-background-color: #2196F3;
+            --webchat-toolbar-text-color: #ffffff;
+        }
+        .webchat-container {
+            z-index: 100;
+            bottom: 10px;
+            right: 10px;
+        }
+        .webchat-bubble-tip {
+            z-index: 99;
+            bottom: 20px;
+            right: 20px;
+        }
+
     </style>
 </head>
 <body>
@@ -271,6 +289,46 @@
                 }
             });
         });
+    </script>
+    <script type="module" crossorigin src="https://g.alicdn.com/aliyun-documentation/web-chatbot-ui/0.0.24/index.js"></script>
+    <script>
+        window.CHATBOT_CONFIG = {
+            endpoint: "https://webchatjy-study-mrwilnkacs.cn-hangzhou.fcapp.run/chat",
+            displayByDefault: false,
+            title: 'AI 助手',
+            draggable: true,
+            aiChatOptions: {
+                conversationOptions: {
+                    conversationStarters: [
+                        {prompt: '你好我是jy学习助手，有什么需要向我提问的吗'},
+                    ]
+                },
+                displayOptions: {
+                    height: 600,
+                },
+                personaOptions: {
+                    assistant: {
+                        name: '你好，我是你的 jy学习助手',
+                        avatar: 'https://img.alicdn.com/imgextra/i2/O1CN01Pda9nq1YDV0mnZ31H_!!6000000003025-54-tps-120-120.apng',
+                        tagline: '您可以尝试点击下方的快捷入口开启体验！',
+                    }
+                },
+                messageOptions: {
+                    waitTimeBeforeStreamCompletion: 'never'
+                }
+            },
+            dataProcessor: {
+                    /**
+                     * 在向后端大模型应用发起请求前改写 Prompt。
+                     * 比如可以用于总结网页场景，在发送前将网页内容包含在内，同时避免在前端显示这些内容。
+                     * @param {string} prompt - 用户输入的 Prompt
+                     * @param {string}  - 改写后的 Prompt
+                     */
+                rewritePrompt(prompt) {
+                    return prompt;
+                }
+            }
+        };
     </script>
 </body>
 </html>
