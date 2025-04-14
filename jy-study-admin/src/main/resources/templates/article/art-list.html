@@ -64,6 +64,41 @@
 	    </div>
 	</div>
     <th:block th:include="include :: footer" />
+    <div class="modal fade" id="generateModal" tabindex="-1" role="dialog" aria-labelledby="generateModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="generateModalLabel">生成AI试题</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <form id="generateForm">
+                        <input type="hidden" id="articleId" name="articleId">
+                        <div class="form-group">
+                            <label for="xuanze">选择题数量</label>
+                            <input type="number" class="form-control" id="xuanze" name="xuanze" value="5" min="0" max="20">
+                        </div>
+                        <div class="form-group">
+                            <label for="tiankong">填空题数量</label>
+                            <input type="number" class="form-control" id="tiankong" name="tiankong" value="3" min="0" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="panduan">判断题数量</label>
+                            <input type="number" class="form-control" id="panduan" name="panduan" value="5" min="0" max="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="jianda">简答题数量</label>
+                            <input type="number" class="form-control" id="jianda" name="jianda" value="2" min="0" max="5">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="submitGenerate()">生成</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script th:inline="javascript">
         var editFlag = [[${@permission.hasPermi('article:edit')}]];
         var removeFlag = [[${@permission.hasPermi('article:remove')}]];
@@ -77,7 +112,25 @@
                 updateUrl: prefix + "/edit/{id}",
                 removeUrl: prefix + "/remove",
                 exportUrl: prefix + "/export",
+                sortName: "createTime",
+                sortOrder: "desc",
                 modalName: "文章",
+                escape: true,
+                showPageGo: true,
+                rememberSelected: true,
+                responseHandler: function(res) {
+                    if (res.code == 0) {
+                        return { rows: res.rows, total: res.total };
+                    } else {
+                        $.modal.alertError(res.msg);
+                        return { rows: [], total: 0 };
+                    }
+                },
+                onLoadError: function(status, xhr) {
+                    if (xhr.statusText !== "abort") {
+                        $.modal.alertError("数据加载失败，请刷新页面重试");
+                    }
+                },
                 columns: [{
                     checkbox: true
                 },
@@ -185,6 +238,18 @@
                     visible: false
                 },
                 {
+                    field: 'cozeId',
+                    title: 'AI试题',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        if (value) {
+                            return '<a class="btn btn-info btn-xs" onclick="viewAiQuestions(\'' + row.articleId + '\')"><i class="fa fa-file-text"></i> 试题详情</a>';
+                        } else {
+                            return '<a class="btn btn-primary btn-xs" onclick="generateAiQuestions(\'' + row.articleId + '\')"><i class="fa fa-magic"></i> 生成试题</a>';
+                        }
+                    }
+                },
+                {
                     title: '操作',
                     align: 'center',
                     formatter: function(value, row, index) {
@@ -204,6 +269,61 @@
         function detail(id) {
             var url = prefix + '/detail/' + id;
             $.modal.open("查看文章", url);
+        }
+
+        function generateAiQuestions(articleId) {
+            $("#articleId").val(articleId);
+            $("#generateModal").modal('show');
+        }
+
+        function submitGenerate() {
+            var articleId = $("#articleId").val();
+            var data = {
+                xuanze: $("#xuanze").val(),
+                tiankong: $("#tiankong").val(),
+                panduan: $("#panduan").val(),
+                jianda: $("#jianda").val()
+            };
+            
+            $("#generateModal").modal('hide');
+            $.modal.loading("正在生成，请稍候...");
+            
+            $.ajax({
+                url: ctx + "coze/generate/questions/" + articleId,
+                type: "POST",
+                data: data,
+                timeout: 360000,
+                success: function(result) {
+                    if (result.code == 0) {
+                        $.modal.closeLoading();
+                        $.modal.msgSuccess("生成成功");
+                        setTimeout(function() {
+                            $.table.refresh();
+                        }, 1000);
+                    } else {
+                        $.modal.closeLoading();
+                        $.modal.alertError("生成失败：" + result.msg);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $.modal.closeLoading();
+                    if (status === 'timeout') {
+                        $.modal.alertError("请求超时，请稍后重试");
+                    } else {
+                        $.modal.alertError("系统错误：" + error);
+                    }
+                },
+                complete: function() {
+                    setTimeout(function() {
+                        $.table.refresh();
+                    }, 1000);
+                }
+            });
+        }
+
+        function viewAiQuestions(articleId) {
+            var url = ctx + "article/ai-questions/" + articleId;
+            $.modal.open("查看AI试题", url);
         }
     </script>
 </body>

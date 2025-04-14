@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Coze工作流执行类
@@ -25,6 +26,11 @@ public class CozeWorkFlow {
     
     @Value("${cozeAI.token}")
     private String token;
+    
+    // 添加超时时间配置
+    private static final int CONNECT_TIMEOUT = 30; // 连接超时30秒
+    private static final int READ_TIMEOUT = 360;    // 读取超时360秒
+    private static final int WRITE_TIMEOUT = 300;   // 写入超时300秒
 
     /**
      * 执行工作流
@@ -34,10 +40,17 @@ public class CozeWorkFlow {
      */
     public CozeResponse runWorkflow(Map<String, Object> parameters) {
         try {
+            // 构建OkHttpClient，设置超时
+            OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
+                .build();
+
             // 构建请求体
             RequestBody requestBody = RequestBody.create(
                     MediaType.parse("application/json"),
-                    JSON.toJSONString(new WorkflowRequest( parameters))
+                    JSON.toJSONString(new WorkflowRequest(parameters))
             );
 
             // 构建请求
@@ -49,7 +62,6 @@ public class CozeWorkFlow {
                     .build();
 
             // 执行请求
-            OkHttpClient client = new OkHttpClient();
             Response response = client.newCall(request).execute();
             
             if (response.isSuccessful() && response.body() != null) {
@@ -70,16 +82,18 @@ public class CozeWorkFlow {
                     
                     return result;
                 } else {
-                    log.error("Coze API返回错误: {}", jsonResponse.getString("msg"));
-                    return null;
+                    String errorMsg = jsonResponse.getString("msg");
+                    log.error("Coze API返回错误: {}", errorMsg);
+                    throw new RuntimeException("API调用失败: " + errorMsg);
                 }
             } else {
-                log.error("执行工作流失败: {}", response.code());
-                return null;
+                String errorBody = response.body() != null ? response.body().string() : "未知错误";
+                log.error("执行工作流失败: {}, {}", response.code(), errorBody);
+                throw new RuntimeException("API调用失败: " + response.code());
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.error("执行工作流异常", e);
-            return null;
+            throw new RuntimeException("API调用异常: " + e.getMessage());
         }
     }
 
