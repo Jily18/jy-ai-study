@@ -22,6 +22,28 @@ public class ArticleQuestionService {
     @Autowired
     private IStudyArticleService articleService;
     
+    /**
+     * 处理AI生成的试题内容，去除转义字符
+     */
+    private String formatQuestionContent(String content) {
+        if (content == null) {
+            return null;
+        }
+        return content.replace("\\[", "[")
+                     .replace("\\]", "]")
+                     .replace("\\.", ".")
+                     .replace("\\、", "、")
+                     .replace("\\(", "(")
+                     .replace("\\)", ")")
+                     .replace("\\；", "；")
+                     .replace("\\：", "：")
+                     .replace("\\，", "，")
+                     .replace("\\。", "。")
+                     .replace("\\？", "？")
+                     .replace("\\！", "！")
+                     .replace("\\、", "、");
+    }
+
     public StudyAiCoze generateQuestions(Long articleId, Integer xuanze, Integer tiankong,
                                          Integer panduan, Integer jianda, String content) {
         // 1. 创建AI试题记录
@@ -46,7 +68,9 @@ public class ArticleQuestionService {
             CozeResponse response = cozeWorkFlow.runWorkflow(parameters);
             
             // 4. 更新AI试题记录
-            aiCoze.setContent(response.getOutput());
+            // 处理content中的转义字符
+            String formattedContent = formatQuestionContent(response.getOutput());
+            aiCoze.setContent(formattedContent);
             aiCoze.setFileUrl(response.getFileUrl());
             aiCoze.setDebugUrl(response.getDebugUrl());
             aiCoze.setStatus("1"); // 1-已完成
@@ -62,7 +86,7 @@ public class ArticleQuestionService {
             aiCoze.setContent("生成失败：" + e.getMessage());
             aiCozeService.updateAiCoze(aiCoze);
             
-            throw e; // 继续抛出异常，让上层处理
+            throw e;
         }
     }
 } 
