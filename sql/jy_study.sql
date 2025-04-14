@@ -134,15 +134,20 @@ CREATE TABLE `study_user_like` (
 -- ----------------------------
 -- 7、AI对话记录表
 -- ----------------------------
+DROP TABLE IF EXISTS `study_ai_chat`;
 CREATE TABLE `study_ai_chat` (
     `chat_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '对话ID',
+    `conversation_id` varchar(64) NOT NULL COMMENT '会话ID',
     `user_id` bigint(20) NOT NULL COMMENT '用户ID',
-    `chat_type` varchar(20) NOT NULL COMMENT '对话类型(digital_human-数字人,ai_model-AI模型)',
-    `question` text NOT NULL COMMENT '用户问题',
-    `answer` text NOT NULL COMMENT 'AI回答',
+    `role` varchar(20) NOT NULL COMMENT '角色(system-系统,user-用户,assistant-助手)',
+    `content` text NOT NULL COMMENT '消息内容',
+    `model` varchar(50) NOT NULL COMMENT '使用的模型',
+    `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1删除）',
     `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+    `update_time` datetime DEFAULT NULL COMMENT '更新时间',
     PRIMARY KEY (`chat_id`),
-    KEY `idx_user_time` (`user_id`,`create_time`)
+    KEY `idx_conversation` (`conversation_id`),
+    KEY `idx_user_time` (`user_id`, `create_time`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='AI对话记录表';
 
 -- ----------------------------
