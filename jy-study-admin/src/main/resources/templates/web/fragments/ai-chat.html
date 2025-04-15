@@ -298,7 +298,10 @@
             const inputText = $('#chat-input-text');
             const messagesContainer = $('#chat-messages');
             let conversationId = null;
-
+            
+            // 获取当前页面的文章ID
+            const articleId = $('meta[name="article-id"]').attr('content');
+            
             // 显示/隐藏聊天窗口
             chatButton.click(function() {
                 chatWindow.css('display', 'flex');
@@ -312,23 +315,24 @@
 
             // 发送消息
             function sendMessage() {
-                // 如果需要登录，直接返回
                 if(handleLoginRequired()) {
                     return;
                 }
                 const message = inputText.val().trim();
                 if (!message) return;
 
-                // 添加用户消息到界面
                 appendMessage('user', message);
                 inputText.val('');
 
-                // 创建新的消息元素用于显示AI回复
                 const messageElement = appendMessage('assistant', '');
                 const contentElement = messageElement.find('.message-content');
                 
-                // 创建EventSource进行流式接收
-                const source = new EventSource(ctx + 'llm/chat/stream?' + 
+                // 根据是否在文章页面选择不同的接口
+                const apiUrl = articleId ? 
+                    (ctx + 'llm/article/chat/' + articleId) : 
+                    (ctx + 'llm/chat/stream');
+                    
+                const source = new EventSource(apiUrl + '?' + 
                     'message=' + encodeURIComponent(message) + 
                     '&conversationId=' + (conversationId || ''));
 
@@ -428,13 +432,13 @@
                 chatButton.hide();
                 
                 // 添加用户消息到界面
-                appendMessage('user', '请帮我分析这篇文章');
+                appendMessage('user', '请帮我分析这篇文章的主要内容、写作特点和核心观点，并给出你的评价。');
                 
                 // 创建新的消息元素用于显示AI回复
                 const messageElement = appendMessage('assistant', '');
                 const contentElement = messageElement.find('.message-content');
                 
-                // 创建EventSource进行流式接收
+                // 使用analyze接口
                 const source = new EventSource(ctx + 'llm/analyze/' + articleId);
                 
                 let content = '';

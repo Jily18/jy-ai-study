@@ -39,6 +39,7 @@ import com.jy.study.lesson.domain.StudyAiChat;
 import com.jy.study.lesson.service.IStudyAiChatService;
 import com.alibaba.dashscope.aigc.generation.Generation;
 import java.util.Date;
+import com.alibaba.dashscope.common.Role;
 
 @Controller
 @RequestMapping("/llm")
@@ -87,10 +88,19 @@ public class LLMController extends BaseController {
             
             // 创建消息列表
             List<Message> messages = new ArrayList<>();
-            Message systemMessage = tongYiMultiRound.createSystemMessage();
+            
+            // 创建带有文章上下文的system消息
+            Message systemMessage = Message.builder()
+                .role(Role.SYSTEM.getValue())
+                .content("你是一个专业的学习助手,现在正在帮助用户分析一篇文章。" +
+                        "文章内容如下:\n\n" +
+                        "标题：" + article.getTitle() + "\n\n" + 
+                        article.getContent() + "\n\n" +
+                        "请分析这篇文章的主要内容、写作特点和核心观点，并给出你的评价。")
+                .build();
             messages.add(systemMessage);
             
-            // 保存系统消息
+            // 保存system消息
             StudyAiChat systemChat = new StudyAiChat();
             systemChat.setConversationId(conversationId);
             systemChat.setUserId(userId);
@@ -102,9 +112,7 @@ public class LLMController extends BaseController {
             studyAiChatService.insertStudyAiChat(systemChat);
             
             // 添加用户消息
-            String userContent = "请分析这篇文章的主要内容、写作特点和核心观点，并给出你的评价。\n\n" + 
-                               "文章标题：" + article.getTitle() + "\n\n" + article.getContent();
-            Message userMessage = tongYiMultiRound.createUserMessage(userContent);
+            Message userMessage = tongYiMultiRound.createUserMessage("请开始分析。");
             messages.add(userMessage);
             
             // 保存用户消息
@@ -112,7 +120,7 @@ public class LLMController extends BaseController {
             userChat.setConversationId(conversationId);
             userChat.setUserId(userId);
             userChat.setRole("user");
-            userChat.setContent(userContent);
+            userChat.setContent(userMessage.getContent());
             userChat.setModel(Generation.Models.QWEN_PLUS);
             userChat.setStatus("0");
             userChat.setCreateTime(new Date());
@@ -400,6 +408,151 @@ public class LLMController extends BaseController {
             log.error("AI对话出错", e);
             return AjaxResult.error("AI对话服务出现错误: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/article/chat/{articleId}")
+    public SseEmitter articleChatStream(@PathVariable("articleId") Long articleId, String message, String conversationId) {
+        SseEmitter emitter = new SseEmitter(300000L);
+        final Long userId = getSysUser().getUserId();
+
+        try {
+            if (userId == null) {
+                emitter.send(SseEmitter.event().data("请先登录后再使用此功能").build());
+                emitter.complete();
+                return emitter;
+            }
+            
+            // 获取文章内容
+            StudyArticle article = articleService.selectArticleById(articleId);
+            if(article == null) {
+                emitter.send(SseEmitter.event().data("文章不存在").build());
+                emitter.complete();
+                return emitter;
+            }
+
+            final String finalConversationId = StringUtils.isEmpty(conversationId) ? 
+                UUID.randomUUID().toString() : conversationId;
+            
+            // 获取或创建会话历史
+            List<Message> messages = conversations.computeIfAbsent(
+                finalConversationId,
+                k -> {
+                    List<Message> newMessages = new ArrayList<>();
+                    
+                    // 创建带有文章上下文的system消息
+                    Message systemMessage = Message.builder()
+                        .role(Role.SYSTEM.getValue())
+                        .content("你是一个专业的学习助手,现在正在帮助用户理解一篇文章。" +
+                                "文章内容如下:\n\n" +
+                                "标题：" + article.getTitle() + "\n\n" + 
+                                article.getContent() + "\n\n" +
+                                "请基于这篇文章的内容回答用户的问题。如果用户的问题与文章无关,也可以回答其他问题。")
+                        .build();
+                    newMessages.add(systemMessage);
+                    
+                    // 保存system消息到数据库
+                    StudyAiChat systemChat = new StudyAiChat();
+                    systemChat.setConversationId(finalConversationId);
+                    systemChat.setUserId(userId);
+                    systemChat.setRole("system");
+                    systemChat.setContent(systemMessage.getContent());
+                    systemChat.setModel(Generation.Models.QWEN_PLUS);
+                    systemChat.setStatus("0");
+                    systemChat.setCreateTime(new Date());
+                    studyAiChatService.insertStudyAiChat(systemChat);
+                    
+                    return newMessages;
+                }
+            );
+            
+            // 添加用户消息
+            Message userMessage = tongYiMultiRound.createUserMessage(message);
+            messages.add(userMessage);
+            
+            // 保存用户消息
+            StudyAiChat userChat = new StudyAiChat();
+            userChat.setConversationId(finalConversationId);
+            userChat.setUserId(userId);
+            userChat.setRole("user");
+            userChat.setContent(message);
+            userChat.setModel(Generation.Models.QWEN_PLUS);
+            userChat.setStatus("0");
+            userChat.setCreateTime(new Date());
+            studyAiChatService.insertStudyAiChat(userChat);
+
+            // 创建生成参数
+            GenerationParam param = tongYiMultiRound.createStreamGenerationParam(messages);
+            
+            // 异步处理流式响应
+            new Thread(() -> {
+                try {
+                    Semaphore semaphore = new Semaphore(0);
+                    StringBuilder fullContent = new StringBuilder();
+                    
+                    tongYiMultiRound.streamCall(param, new ResultCallback<GenerationResult>() {
+                        @Override
+                        public void onEvent(GenerationResult message) {
+                            try {
+                                String content = message.getOutput().getChoices().get(0).getMessage().getContent();
+                                fullContent.append(content);
+                                emitter.send(content);
+                            } catch (IOException e) {
+                                log.error("发送流式消息失败", e);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Exception e) {
+                            log.error("流式对话出错", e);
+                            semaphore.release();
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            try {
+                                // 保存助手回复
+                                StudyAiChat assistantChat = new StudyAiChat();
+                                assistantChat.setConversationId(finalConversationId);
+                                assistantChat.setUserId(userId);
+                                assistantChat.setRole("assistant");
+                                assistantChat.setContent(fullContent.toString());
+                                assistantChat.setModel(Generation.Models.QWEN_PLUS);
+                                assistantChat.setStatus("0");
+                                assistantChat.setCreateTime(new Date());
+                                studyAiChatService.insertStudyAiChat(assistantChat);
+                                
+                                emitter.complete();
+                            } catch (Exception e) {
+                                log.error("完成流式对话失败", e);
+                            }
+                            semaphore.release();
+                        }
+                    });
+                    
+                    semaphore.acquire();
+                    
+                } catch (Exception e) {
+                    log.error("处理流式对话失败", e);
+                    try {
+                        emitter.send(SseEmitter.event().data("处理失败，请稍后重试").build());
+                        emitter.complete();
+                    } catch (IOException ex) {
+                        log.error("发送错误消息失败", ex);
+                    }
+                }
+            }).start();
+            
+        } catch (Exception e) {
+            log.error("创建流式对话失败", e);
+            try {
+                emitter.send(SseEmitter.event().data("系统错误").build());
+                emitter.complete();
+            } catch (IOException ex) {
+                log.error("发送错误消息失败", ex);
+            }
+        }
+        
+        return emitter;
     }
 
 //    // 可选：添加清理超时会话的方法
