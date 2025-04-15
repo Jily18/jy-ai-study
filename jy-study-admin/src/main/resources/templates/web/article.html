@@ -181,115 +181,26 @@
             width: 95%;
         }
         
-        .ai-sidebar {
-            width: 25%;
-            position: fixed;
-            border-radius: 5px;
-            right: 0;
-            top: 60%;
-            transform: translateY(-50%);  /* 恢复垂直居中 */
-            height: 84vh;  /* 恢复原来的高度 */
-            transition: all 0.3s ease;
-            background: white;
-            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
-            z-index: 1000;
-            display: flex;
-        }
-        
-        .ai-sidebar.collapsed {
-            width: 40px;
-            right: 0;
-        }
-        
-        /* 保留美化后的折叠按钮样式 */
-        .ai-toggle {
-            position: absolute;
-            left: -32px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 32px;
-            height: 80px;
-            background: linear-gradient(135deg, #71b2f9, #4b93e3);
-            border: none;
-            border-radius: 6px 0 0 6px;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            font-size: 16px;
-            box-shadow: -2px 0 8px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .ai-toggle:hover {
-            background: linear-gradient(135deg, #71b2f9, #4b93e3);
-            width: 36px;
-            left: -36px;
-        }
-        
-        .ai-toggle i {
-            transition: transform 0.3s ease;
-        }
-        
-        .ai-toggle:hover i {
-            transform: scale(1.2);
-        }
-
-        /* 调整内容区域样式 */
-        .ai-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            width: 100%;
-        }
-        
-        .ai-content.hidden {
-            display: none;
-        }
-        
-        /* 调整卡片样式以适应新的布局 */
-        .article-ai-analysis {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .article-ai-analysis .card {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            margin: 0;
-            border-radius: 8px;
-            background: #fff;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-
-        .article-ai-analysis .card-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .article-ai-analysis .card-header {
-            padding: 5px 20px;
-            background: #f8f9fa;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-            border-radius: 8px 8px 0 0;
-        }
-
-        /* 优化按钮样式 */
-        .article-ai-analysis .btn-primary {
-            padding: 8px 16px;
-            border-radius: 20px;
+        .btn-analyze {
+            padding: 10px 30px;
+            border-radius: 25px;
+            transition: all .3s ease;
+            border: 2px solid;
+            background: transparent;
             font-weight: 500;
-            transition: all 0.3s ease;
+            color: #6f42c1;
+            border-color: #6f42c1;
         }
-
-        .article-ai-analysis .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        
+        .btn-analyze:hover {
+            background: rgba(111, 66, 193, 0.1);
+            color: #6f42c1;
+        }
+        
+        .btn-analyze.active {
+            background: #6f42c1;
+            color: white;
+            border-color: #6f42c1;
         }
 
         .btn-voice {
@@ -302,87 +213,24 @@
             color: #17a2b8;
             border-color: #17a2b8;
         }
-        
+
         .btn-voice:hover {
             background: rgba(23, 162, 184, 0.1);
             color: #17a2b8;
         }
-        
+
         .btn-voice.active {
             background: #17a2b8;
             color: white;
             border-color: #17a2b8;
         }
-        
+
         .btn-voice i {
             margin-right: 5px;
         }
-        
+
         .btn-voice.loading {
             cursor: wait;
-        }
-
-        /* 试题预览样式 */
-        .questions-preview {
-            margin-top: 40px;
-            padding: 30px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.05);
-        }
-        .questions-preview-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e9ecef;
-        }
-        .questions-preview-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #343a40;
-        }
-        .questions-preview-content {
-            margin-bottom: 20px;
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            position: relative;
-        }
-        .preview-text {
-            color: #495057;
-            line-height: 1.6;
-            font-size: 1rem;
-            white-space: pre-wrap;
-            position: relative;
-        }
-        .preview-text::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 40px;
-            background: linear-gradient(transparent, #f8f9fa);
-            pointer-events: none;
-        }
-        .view-all-questions {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .btn-view-all {
-            padding: 10px 30px;
-            border-radius: 25px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            transition: all 0.3s;
-        }
-        .btn-view-all:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,.1);
         }
     </style>
 </head>
@@ -469,33 +317,12 @@
                     <button class="btn btn-collect mr-3" onclick="toggleCollect()" id="collectBtn">
                         <i class="fa fa-star"></i> 收藏 <span id="collectCount" th:text="${article.collectCount}">0</span>
                     </button>
-                    <button class="btn btn-voice" id="voiceBtn" onclick="toggleVoice()">
+                    <button class="btn btn-voice mr-3" id="voiceBtn" onclick="toggleVoice()">
                         <i class="fa fa-volume-up"></i> AI朗读
                     </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- AI分析侧边栏 -->
-        <div class="ai-sidebar" id="aiSidebar">
-            <button class="ai-toggle" onclick="toggleAiSidebar()" id="aiToggle">
-                <i class="fa fa-angle-left"></i>
-            </button>
-            <div class="ai-content" id="aiContent">
-                <div class="article-ai-analysis">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">AI文章解析</h5>
-                            <button class="btn btn-primary btn-sm" onclick="analyzeArticle()" id="analyzeBtn">
-                                <i class="fa fa-robot"></i> 开始解析
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <div id="analysisResult" class="analysis-content">
-                                <!-- AI分析结果将在这里显示 -->
-                            </div>
-                        </div>
-                    </div>
+                    <button class="btn btn-analyze" onclick="analyzeArticle()" id="analyzeBtn">
+                        <i class="fa fa-robot"></i> AI解析
+                    </button>
                 </div>
             </div>
         </div>
@@ -507,6 +334,8 @@
             <p>© 2024 课程学习平台. All rights reserved.</p>
         </div>
     </footer>
+
+    <div th:replace="~{web/fragments/ai-chat :: ai-chat}"></div>
 
     <audio id="voicePlayer" style="display: none;"></audio>
 
@@ -607,78 +436,32 @@
     });
 
     function analyzeArticle() {
-        // 如果需要登录，直接返回
+        // 如果需要登录,直接返回
         if(handleLoginRequired()) {
             return;
         }
         
         const analyzeBtn = $("#analyzeBtn");
-        const resultDiv = $("#analysisResult");
         
         // 禁用按钮
         analyzeBtn.prop('disabled', true);
         analyzeBtn.html('<i class="fa fa-spinner fa-spin"></i> 分析中...');
         
-        // 清空并显示加载状态
-        resultDiv.empty().addClass('loading');
-        
-        // 创建EventSource
-        const source = new EventSource(ctx + "llm/analyze/" + [[${article.articleId}]]);
-        let content = '';
-        
-        // 监听消息
-        source.onmessage = function(event) {
-            content += event.data;
-            
-            // 实时显示原始文本
-            resultDiv.removeClass('loading')
-                .html('<div class="analyzing">' + content + '</div>');
-        };
-        
-        // 监听连接打开
-        source.onopen = function(event) {
-            console.log("SSE连接已建立");
-        };
-        
-        // 监听错误
-        source.onerror = function(event) {
-            console.error("SSE错误:", event);
-            source.close();
-            // 转换markdown为HTML
-            $.get(ctx + "llm/markdownToHtml", {id: [[${article.articleId}]]}, function(result) {
-                if(result) {
-                    // 最终显示markdown转换后的HTML
-                    resultDiv.removeClass('loading').html(result);
-                } else {
-                    resultDiv.removeClass('loading').html('<div class="alert alert-danger">分析失败，请稍后重试</div>');
-                }
-                // 恢复按钮状态
-                analyzeBtn.prop('disabled', false);
-                analyzeBtn.html('<i class="fa fa-robot"></i> 重新解析');
-            });
-        };
-    }
-
-    // 添加侧边栏切换功能
-    function toggleAiSidebar() {
-        const sidebar = document.getElementById('aiSidebar');
-        const content = document.getElementById('aiContent');
-        const toggle = document.getElementById('aiToggle');
-        const mainContent = document.querySelector('.article-content');
-        
-        if (sidebar.classList.contains('collapsed')) {
-            // 展开
-            sidebar.classList.remove('collapsed');
-            content.classList.remove('hidden');
-            toggle.innerHTML = '<i class="fa fa-angle-left"></i>';
-            mainContent.classList.remove('expanded');
-        } else {
-            // 折叠
-            sidebar.classList.add('collapsed');
-            content.classList.add('hidden');
-            toggle.innerHTML = '<i class="fa fa-angle-right"></i>';
-            mainContent.classList.add('expanded');
+        // 检查函数是否存在
+        if (typeof window.triggerArticleAnalysis !== 'function') {
+            console.error('triggerArticleAnalysis function not found');
+            analyzeBtn.prop('disabled', false);
+            analyzeBtn.html('<i class="fa fa-robot"></i> AI解析');
+            $.modal.alertError("系统错误，请刷新页面后重试");
+            return;
         }
+        
+        // 触发AI聊天框的文章分析
+        window.triggerArticleAnalysis([[${article.articleId}]], function() {
+            // 分析完成后恢复按钮状态
+            analyzeBtn.prop('disabled', false);
+            analyzeBtn.html('<i class="fa fa-robot"></i> AI解析');
+        });
     }
 
     function toggleVoice() {

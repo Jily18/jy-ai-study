@@ -420,6 +420,64 @@
                     sendMessage();
                 }
             });
+
+            // 定义全局函数
+            window.triggerArticleAnalysis = function(articleId, callback) {
+                // 打开聊天窗口
+                chatWindow.css('display', 'flex');
+                chatButton.hide();
+                
+                // 添加用户消息到界面
+                appendMessage('user', '请帮我分析这篇文章');
+                
+                // 创建新的消息元素用于显示AI回复
+                const messageElement = appendMessage('assistant', '');
+                const contentElement = messageElement.find('.message-content');
+                
+                // 创建EventSource进行流式接收
+                const source = new EventSource(ctx + 'llm/analyze/' + articleId);
+                
+                let content = '';
+                
+                source.onmessage = function(event) {
+                    content += event.data;
+                    // 显示实时内容
+                    contentElement.addClass('analyzing').text(content);
+                    // 滚动到底部
+                    messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+                };
+                
+                source.onerror = function(event) {
+                    source.close();
+                    // 转换markdown为HTML
+                    $.ajax({
+                        url: ctx + 'llm/markdownToHtml2',
+                        type: 'GET',
+                        data: {
+                            content: content
+                        },
+                        success: function(html) {
+                            contentElement
+                                .removeClass('analyzing')
+                                .addClass('markdown')
+                                .html(html);
+                            
+                            // 滚动到底部
+                            messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+                            
+                            if(callback) callback();
+                        },
+                        error: function() {
+                            contentElement
+                                .removeClass('analyzing')
+                                .addClass('markdown')
+                                .html(content);
+                            
+                            if(callback) callback();
+                        }
+                    });
+                };
+            };
         });
     </script>
 </div>
