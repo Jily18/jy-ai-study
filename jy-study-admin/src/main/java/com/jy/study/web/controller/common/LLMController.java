@@ -76,38 +76,20 @@ public class LLMController extends BaseController {
                 emitter.complete();
                 return emitter;
             }
-            
+
             final String finalConversationId = StringUtils.isEmpty(conversationId) ? 
                 UUID.randomUUID().toString() : conversationId;
             
             // 获取或创建会话历史
-            List<Message> messages = conversations.computeIfAbsent(
-                finalConversationId,
-                k -> {
-                    List<Message> newMessages = new ArrayList<>();
-                    Message systemMessage = tongYiMultiRound.createSystemMessage();
-                    newMessages.add(systemMessage);
-                    
-                    // 保存系统角色消息到数据库
-                    StudyAiChat systemChat = new StudyAiChat();
-                    systemChat.setConversationId(finalConversationId);
-                    systemChat.setUserId(userId);
-                    systemChat.setRole("system");
-                    systemChat.setContent(systemMessage.getContent());
-                    systemChat.setModel(Generation.Models.QWEN_PLUS);
-                    systemChat.setStatus("0");
-                    systemChat.setCreateTime(new Date());
-                    studyAiChatService.insertStudyAiChat(systemChat);
-                    
-                    return newMessages;
-                }
+            List<Message> messages = conversations.computeIfAbsent(finalConversationId,
+                k -> Collections.synchronizedList(new ArrayList<>())
             );
             
             // 添加用户消息
             Message userMessage = tongYiMultiRound.createUserMessage(message);
             messages.add(userMessage);
             
-            // 保存用户消息到数据库
+            // 保存用户消息
             StudyAiChat userChat = new StudyAiChat();
             userChat.setConversationId(finalConversationId);
             userChat.setUserId(userId);
@@ -117,7 +99,7 @@ public class LLMController extends BaseController {
             userChat.setStatus("0");
             userChat.setCreateTime(new Date());
             studyAiChatService.insertStudyAiChat(userChat);
-            
+
             // 创建生成参数
             GenerationParam param = tongYiMultiRound.createStreamGenerationParam(messages);
             
@@ -126,6 +108,8 @@ public class LLMController extends BaseController {
                 try {
                     Semaphore semaphore = new Semaphore(0);
                     StringBuilder fullContent = new StringBuilder();
+                    Long cacheId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+                    List<String> contentList = new ArrayList<>();
                     
                     tongYiMultiRound.streamCall(param, new ResultCallback<GenerationResult>() {
                         @Override
@@ -133,6 +117,7 @@ public class LLMController extends BaseController {
                             try {
                                 String content = message.getOutput().getChoices().get(0).getMessage().getContent();
                                 fullContent.append(content);
+                                contentList.add(content);
                                 emitter.send(content);
                             } catch (IOException e) {
                                 log.error("发送流式消息失败", e);
@@ -148,6 +133,8 @@ public class LLMController extends BaseController {
                         @Override
                         public void onComplete() {
                             try {
+                                cacheData.put(cacheId, contentList);
+                                
                                 Message assistantMessage = tongYiMultiRound.createAssistantMessage(fullContent.toString());
                                 messages.add(assistantMessage);
                                 
@@ -161,6 +148,9 @@ public class LLMController extends BaseController {
                                 assistantChat.setStatus("0");
                                 assistantChat.setCreateTime(new Date());
                                 studyAiChatService.insertStudyAiChat(assistantChat);
+                                
+                                // 发送缓存ID事件
+                                emitter.send("event: cache-id\ndata: " + cacheId + "\n\n");
                                 
                                 emitter.complete();
                             } catch (Exception e) {
@@ -185,7 +175,12 @@ public class LLMController extends BaseController {
             
         } catch (Exception e) {
             log.error("创建流式对话失败", e);
-            emitter.complete();
+            try {
+                emitter.send(SseEmitter.event().data("系统错误").build());
+                emitter.complete();
+            } catch (IOException ex) {
+                log.error("发送错误消息失败", ex);
+            }
         }
         
         return emitter;
