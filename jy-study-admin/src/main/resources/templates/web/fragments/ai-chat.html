@@ -438,8 +438,10 @@
                 const messageElement = appendMessage('assistant', '');
                 const contentElement = messageElement.find('.message-content');
                 
-                // 使用analyze接口
-                const source = new EventSource(ctx + 'llm/analyze/' + articleId);
+                // 使用article/chat接口
+                const source = new EventSource(ctx + 'llm/article/chat/' + articleId + '?' +
+                    'message=' + encodeURIComponent('请帮我分析这篇文章的主要内容、写作特点和核心观点，并给出你的评价。') +
+                    '&conversationId=' + (conversationId || ''));
                 
                 let content = '';
                 
