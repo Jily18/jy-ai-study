@@ -337,67 +337,55 @@
                     '&conversationId=' + (conversationId || ''));
 
                 let content = '';
+                let cacheId = null;
                 
                 source.onmessage = function(event) {
-                    content += event.data;
-                    // 显示实时内容
-                    contentElement.addClass('analyzing').text(content);
+                    // 检查是否是缓存ID事件
+                    if(event.data.startsWith('event: cache-id')) {
+                        const cacheId = event.data.split('\n')[1].replace('data: ', '');
+                        // 获取转换后的HTML
+                        $.ajax({
+                            url: ctx + 'llm/markdownToHtml2',
+                            type: 'GET',
+                            data: {
+                                id: cacheId
+                            },
+                            success: function(html) {
+                                contentElement
+                                    .removeClass('analyzing')
+                                    .addClass('markdown')
+                                    .html(html);
+                                
+                                // 滚动到底部
+                                messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+                                
+                                if(callback) callback();
+                            },
+                            error: function() {
+                                contentElement
+                                    .removeClass('analyzing')
+                                    .addClass('markdown')
+                                    .html(content);
+                                
+                                if(callback) callback();
+                            }
+                        });
+                    } else {
+                        content += event.data;
+                        // 显示实时内容
+                        contentElement.addClass('analyzing').text(content);
+                        // 滚动到底部
+                        messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+                    }
                 };
 
                 source.onerror = function(event) {
                     source.close();
-                    // 转换markdown为HTML
-                    $.ajax({
-                        url: ctx + 'llm/markdownToHtml2',
-                        type: 'GET',
-                        data: {
-                            content: content
-                        },
-                        success: function(html) {
-                            // 创建一个临时的div来解析HTML
-                            const tempDiv = document.createElement('div');
-                            tempDiv.innerHTML = html;
-                            
-                            // 处理代码块
-                            $(tempDiv).find('pre code').each(function(i, block) {
-                                // 添加代码高亮样式
-                                $(block).addClass('hljs');
-                                // 如果使用了highlight.js，可以在这里调用高亮
-                                if (window.hljs) {
-                                    hljs.highlightBlock(block);
-                                }
-                            });
-                            
-                            // 处理列表
-                            $(tempDiv).find('ul, ol').each(function() {
-                                $(this).addClass('markdown-list');
-                            });
-                            
-                            // 处理标题
-                            $(tempDiv).find('h1, h2, h3, h4, h5, h6').each(function() {
-                                $(this).addClass('markdown-heading');
-                            });
-                            
-                            // 处理引用
-                            $(tempDiv).find('blockquote').each(function() {
-                                $(this).addClass('markdown-quote');
-                            });
-                            
-                            contentElement
-                                .removeClass('analyzing')
-                                .addClass('markdown')
-                                .html(tempDiv.innerHTML);
-                            
-                            // 滚动到底部
-                            messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
-                        },
-                        error: function() {
-                            contentElement
-                                .removeClass('analyzing')
-                                .addClass('markdown')
-                                .html(content);
-                        }
-                    });
+                    contentElement
+                        .removeClass('analyzing')
+                        .addClass('markdown')
+                        .html(content);
+                    if(callback) callback();
                 };
             }
 
@@ -444,44 +432,55 @@
                     '&conversationId=' + (conversationId || ''));
                 
                 let content = '';
+                let cacheId = null;
                 
                 source.onmessage = function(event) {
-                    content += event.data;
-                    // 显示实时内容
-                    contentElement.addClass('analyzing').text(content);
-                    // 滚动到底部
-                    messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+                    // 检查是否是缓存ID事件
+                    if(event.data.startsWith('event: cache-id')) {
+                        const cacheId = event.data.split('\n')[1].replace('data: ', '');
+                        // 获取转换后的HTML
+                        $.ajax({
+                            url: ctx + 'llm/markdownToHtml2',
+                            type: 'GET',
+                            data: {
+                                id: cacheId
+                            },
+                            success: function(html) {
+                                contentElement
+                                    .removeClass('analyzing')
+                                    .addClass('markdown')
+                                    .html(html);
+                                
+                                // 滚动到底部
+                                messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+                                
+                                if(callback) callback();
+                            },
+                            error: function() {
+                                contentElement
+                                    .removeClass('analyzing')
+                                    .addClass('markdown')
+                                    .html(content);
+                                
+                                if(callback) callback();
+                            }
+                        });
+                    } else {
+                        content += event.data;
+                        // 显示实时内容
+                        contentElement.addClass('analyzing').text(content);
+                        // 滚动到底部
+                        messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
+                    }
                 };
                 
                 source.onerror = function(event) {
                     source.close();
-                    // 转换markdown为HTML
-                    $.ajax({
-                        url: ctx + 'llm/markdownToHtml2',
-                        type: 'GET',
-                        data: {
-                            content: content
-                        },
-                        success: function(html) {
-                            contentElement
-                                .removeClass('analyzing')
-                                .addClass('markdown')
-                                .html(html);
-                            
-                            // 滚动到底部
-                            messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
-                            
-                            if(callback) callback();
-                        },
-                        error: function() {
-                            contentElement
-                                .removeClass('analyzing')
-                                .addClass('markdown')
-                                .html(content);
-                            
-                            if(callback) callback();
-                        }
-                    });
+                    contentElement
+                        .removeClass('analyzing')
+                        .addClass('markdown')
+                        .html(content);
+                    if(callback) callback();
                 };
             };
         });

@@ -193,13 +193,21 @@ public class LLMController extends BaseController {
 
     @GetMapping("/markdownToHtml2")
     @ResponseBody
-    public String markdownToHtml2(String content) {
-        if (StringUtils.isEmpty(content)) {
+    public String markdownToHtml2(Long id) {
+        List<String> list = cacheData.get(id);
+        if(list == null) {
             return "";
         }
-
+        
+        // 直接拼接所有内容,不需要检查DONE
+        StringBuilder markdown = new StringBuilder();
+        for(String str : list) {
+            markdown.append(str);
+        }
+        cacheData.remove(id);
+        
         Parser parser = Parser.builder().build();
-        Node document = parser.parse(content);
+        Node document = parser.parse(markdown.toString());
         HtmlRenderer renderer = HtmlRenderer.builder().build();
         return renderer.render(document);
     }
@@ -356,6 +364,8 @@ public class LLMController extends BaseController {
                 try {
                     Semaphore semaphore = new Semaphore(0);
                     StringBuilder fullContent = new StringBuilder();
+                    Long cacheId = UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE;
+                    List<String> contentList = new ArrayList<>();
                     
                     tongYiMultiRound.streamCall(param, new ResultCallback<GenerationResult>() {
                         @Override
@@ -363,6 +373,7 @@ public class LLMController extends BaseController {
                             try {
                                 String content = message.getOutput().getChoices().get(0).getMessage().getContent();
                                 fullContent.append(content);
+                                contentList.add(content);
                                 emitter.send(content);
                             } catch (IOException e) {
                                 log.error("发送流式消息失败", e);
@@ -378,6 +389,8 @@ public class LLMController extends BaseController {
                         @Override
                         public void onComplete() {
                             try {
+                                cacheData.put(cacheId, contentList);
+                                
                                 // 保存助手回复
                                 StudyAiChat assistantChat = new StudyAiChat();
                                 assistantChat.setConversationId(finalConversationId);
@@ -388,6 +401,9 @@ public class LLMController extends BaseController {
                                 assistantChat.setStatus("0");
                                 assistantChat.setCreateTime(new Date());
                                 studyAiChatService.insertStudyAiChat(assistantChat);
+                                
+                                // 发送缓存ID事件
+                                emitter.send("event: cache-id\ndata: " + cacheId + "\n\n");
                                 
                                 emitter.complete();
                             } catch (Exception e) {
