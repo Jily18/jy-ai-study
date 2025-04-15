@@ -40,6 +40,8 @@ import com.jy.study.lesson.service.IStudyAiChatService;
 import com.alibaba.dashscope.aigc.generation.Generation;
 import java.util.Date;
 import com.alibaba.dashscope.common.Role;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 @Controller
 @RequestMapping("/llm")
@@ -292,6 +294,10 @@ public class LLMController extends BaseController {
                 return emitter;
             }
 
+            // 清理文章内容中的HTML标签
+            String cleanTitle = cleanHtmlContent(article.getTitle());
+            String cleanContent = cleanHtmlContent(article.getContent());
+
             final String finalConversationId = StringUtils.isEmpty(conversationId) ? 
                 UUID.randomUUID().toString() : conversationId;
             
@@ -306,8 +312,8 @@ public class LLMController extends BaseController {
                         .role(Role.SYSTEM.getValue())
                         .content("你是一个专业的学习助手,现在正在帮助用户理解一篇文章。" +
                                 "文章内容如下:\n\n" +
-                                "标题：" + article.getTitle() + "\n\n" + 
-                                article.getContent() + "\n\n" +
+                                "标题：" + cleanTitle + "\n\n" + 
+                                cleanContent + "\n\n" +
                                 "请基于这篇文章的内容回答用户的问题。如果用户的问题与文章无关,也可以回答其他问题。")
                         .build();
                     newMessages.add(systemMessage);
@@ -415,6 +421,33 @@ public class LLMController extends BaseController {
         }
         
         return emitter;
+    }
+
+    private String cleanHtmlContent(String htmlContent) {
+        if (StringUtils.isEmpty(htmlContent)) {
+            return "";
+        }
+        
+        try {
+            // 使用jsoup解析HTML
+            Document doc = Jsoup.parse(htmlContent);
+            
+            // 获取纯文本内容
+            String text = doc.text();
+            
+            // 替换多个空格为单个空格
+            text = text.replaceAll("\\s+", " ");
+            
+            // 处理特殊字符
+            text = text.replace("&nbsp;", " ")
+                      .replace("\u00A0", " ")  // 处理不间断空格
+                      .trim();
+            
+            return text;
+        } catch (Exception e) {
+            log.error("清理HTML内容失败", e);
+            return htmlContent;
+        }
     }
 
 //    // 可选：添加清理超时会话的方法
