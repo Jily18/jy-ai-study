@@ -53,7 +53,7 @@ public class TongYiVideoRetalk {
 
             // 2. 轮询检查任务状态，直到完成
             String videoUrl = null;
-            int maxAttempts = 30;
+            int maxAttempts = 60;
             int intervalSeconds = 10;
             
             for (int i = 0; i < maxAttempts; i++) {
@@ -74,7 +74,7 @@ public class TongYiVideoRetalk {
             }
             
             if (videoUrl == null) {
-                throw new Exception("视频生成超时");
+                throw new Exception("音频生成成功，视频生成超时，请稍后在列表中点击【重新生成】按钮重试");
             }
 
             // 3. 将视频从临时URL转存到OSS
