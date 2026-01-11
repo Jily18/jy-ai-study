@@ -303,6 +303,28 @@
             content: "正在识别中...";
             color: #6c757d;
         }
+
+        .btn-analyze {
+            padding: 10px 30px;
+            border-radius: 25px;
+            transition: all .3s ease;
+            border: 2px solid;
+            background: transparent;
+            font-weight: 500;
+            color: #6f42c1;
+            border-color: #6f42c1;
+        }
+        
+        .btn-analyze:hover {
+            background: rgba(111, 66, 193, 0.1);
+            color: #6f42c1;
+        }
+        
+        .btn-analyze.active {
+            background: #6f42c1;
+            color: white;
+            border-color: #6f42c1;
+        }
     </style>
 </head>
 <body>
@@ -386,8 +408,11 @@
                              <button class="btn btn-like mr-3" onclick="toggleLike()" id="likeBtn">
                                  <i class="fa fa-thumbs-up"></i> 点赞 <span id="likeCount" th:text="${lesson.likeCount}">0</span>
                              </button>
-                             <button class="btn btn-collect" onclick="toggleCollect()" id="collectBtn">
+                             <button class="btn btn-collect mr-3" onclick="toggleCollect()" id="collectBtn">
                                  <i class="fa fa-star"></i> 收藏 <span id="collectCount" th:text="${lesson.collectCount}">0</span>
+                             </button>
+                             <button class="btn btn-analyze" onclick="analyzeLesson()" id="analyzeBtn">
+                                 <i class="fa fa-robot"></i> AI解析
                              </button>
                          </div>
                     </div>
@@ -419,6 +444,7 @@
             </div>
         </div>
     </div>
+    <div th:replace="~{web/fragments/ai-chat :: ai-chat}"></div>
 
     <!-- 页脚 -->
     <footer class="footer bg-dark text-white py-4">
@@ -580,6 +606,35 @@
                 toggle.innerHTML = '<i class="fa fa-angle-right"></i>';
                 mainContent.classList.add('expanded');
             }
+        }
+
+        function analyzeLesson() {
+            // 如果需要登录，直接返回
+            if(handleLoginRequired()) {
+                return;
+            }
+            
+            const analyzeBtn = $("#analyzeBtn");
+            
+            // 禁用按钮
+            analyzeBtn.prop('disabled', true);
+            analyzeBtn.html('<i class="fa fa-spinner fa-spin"></i> 分析中...');
+            
+            // 检查函数是否存在
+            if (typeof window.triggerLessonAnalysis !== 'function') {
+                console.error('triggerLessonAnalysis function not found');
+                analyzeBtn.prop('disabled', false);
+                analyzeBtn.html('<i class="fa fa-robot"></i> AI解析');
+                $.modal.alertError("系统错误，请刷新页面后重试");
+                return;
+            }
+            
+            // 触发AI聊天框的课程分析
+            window.triggerLessonAnalysis([[${lesson.lessonId}]], function() {
+                // 分析完成后恢复按钮状态
+                analyzeBtn.prop('disabled', false);
+                analyzeBtn.html('<i class="fa fa-robot"></i> AI解析');
+            });
         }
     </script>
 </body>

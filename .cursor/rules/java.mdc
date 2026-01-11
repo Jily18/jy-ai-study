@@ -19,6 +19,11 @@ alwaysApply: true
 4. 指导性能优化和安全加固
 5. 数据库和字段相关请读取 [数据库分析.md](mdc:sql/数据库分析.md) [plan.sql][jy_study.sql](mdc:sql/jy_study.sql)
 
+
+技术栈：
+ Spring Boot v2.5.15, Spring v5.3.33
+ Hibernate Validator 6.2.5.Final
+
 我已经仔细阅读了你的项目说明和技术规范需求。这些规范看起来非常全面和专业。不过我注意到还可以补充一些特定于你们项目的规范，特别是考虑到项目使用了若依框架和AI相关功能。以下是一些建议的补充内容：
 
 ### 8. 若依框架特定规范
