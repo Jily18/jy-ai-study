@@ -37,7 +37,14 @@ JY-Study 是一个基于多模态交互的教育辅导系统，融合了人工�
 - 🔒 **安全可靠**：基于Shiro安全框架，完善的权限管理和安全防护
 
 ## 系统功能
-
+截图预览
+![](https://ob-jily-pic.oss-cn-shenzhen.aliyuncs.com/20260111174446912.png)
+![](https://ob-jily-pic.oss-cn-shenzhen.aliyuncs.com/20260111174511016.png)
+![](https://ob-jily-pic.oss-cn-shenzhen.aliyuncs.com/20260111174532934.png)
+![](https://ob-jily-pic.oss-cn-shenzhen.aliyuncs.com/20260111174553332.png)
+![](https://ob-jily-pic.oss-cn-shenzhen.aliyuncs.com/20260111174604512.png)
+![](https://ob-jily-pic.oss-cn-shenzhen.aliyuncs.com/20260111174622836.png)
+![](https://ob-jily-pic.oss-cn-shenzhen.aliyuncs.com/20260111174630941.png)
 ### 用户端
 
 #### 1. 课程学习
@@ -227,6 +234,9 @@ jy-study
 - `论文.txt` - 论文文本版本
 - `多模态交互的教育辅导系统设计与实现.docx` - 论文Word版本
 
+论文章节截图：
+![](https://ob-jily-pic.oss-cn-shenzhen.aliyuncs.com/20260111172653240.png)
+![](https://ob-jily-pic.oss-cn-shenzhen.aliyuncs.com/20260111174402364.png)
 ## 特别说明
 
 ### 关于AI服务配置
