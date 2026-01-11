@@ -22,7 +22,7 @@ public class RuoYiConfig
     private static String copyrightYear;
 
     /** 实例演示开关 */
-    private static boolean demoEnabled;
+    private static boolean demoEnabled = false;
 
     /** 上传路径 */
     private static String profile;
