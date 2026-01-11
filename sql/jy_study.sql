@@ -51,44 +51,6 @@ CREATE TABLE `study_lesson` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='课程表';
 
 -- ----------------------------
--- 2、课程章节表
--- ----------------------------
-CREATE TABLE `study_lesson_chapter` (
-    `chapter_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '章节ID',
-    `lesson_id` bigint(20) NOT NULL COMMENT '课程ID',
-    `title` varchar(100) NOT NULL COMMENT '章节标题',
-    `description` varchar(500) DEFAULT NULL COMMENT '章节描述',
-    `sort` int(4) DEFAULT '0' COMMENT '排序',
-    `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
-    `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-    `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-    `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-    `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-    PRIMARY KEY (`chapter_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='课程章节表';
-
--- ----------------------------
--- 3、课程资源表(视频、音频、文档等)
--- ----------------------------
-CREATE TABLE `study_lesson_resource` (
-    `resource_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '资源ID',
-    `lesson_id` bigint(20) NOT NULL COMMENT '课程ID',
-    `chapter_id` bigint(20) DEFAULT NULL COMMENT '章节ID',
-    `title` varchar(100) NOT NULL COMMENT '资源标题',
-    `type` varchar(20) NOT NULL COMMENT '资源类型(video-视频,audio-音频,doc-文档)',
-    `url` varchar(500) NOT NULL COMMENT '资源URL',
-    `duration` int(11) DEFAULT '0' COMMENT '时长(秒)',
-    `size` bigint(20) DEFAULT '0' COMMENT '文件大小(字节)',
-    `sort` int(4) DEFAULT '0' COMMENT '排序',
-    `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
-    `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-    `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-    `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-    `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-    PRIMARY KEY (`resource_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='课程资源表';
-
--- ----------------------------
 -- 4、用户学习记录表
 -- ----------------------------
 CREATE TABLE `study_user_learn` (
@@ -151,23 +113,6 @@ CREATE TABLE `study_ai_chat` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='AI对话记录表';
 
 -- ----------------------------
--- 8、AI知识库表
--- ----------------------------
-CREATE TABLE `study_ai_knowledge` (
-    `knowledge_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '知识ID',
-    `title` varchar(100) NOT NULL COMMENT '知识标题',
-    `content` text NOT NULL COMMENT '知识内容',
-    `category` varchar(50) DEFAULT NULL COMMENT '知识分类',
-    `tags` varchar(255) DEFAULT NULL COMMENT '知识标签',
-    `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
-    `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
-    `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-    `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
-    `update_time` datetime DEFAULT NULL COMMENT '更新时间',
-    PRIMARY KEY (`knowledge_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='AI知识库表';
-
--- ----------------------------
 -- 9、用户学习统计表
 -- ----------------------------
 CREATE TABLE `study_user_stats` (
@@ -184,22 +129,6 @@ CREATE TABLE `study_user_stats` (
     PRIMARY KEY (`stats_id`),
     UNIQUE KEY `idx_user_id` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='用户学习统计表';
-
--- ----------------------------
--- 10、系统通知表
--- ----------------------------
-CREATE TABLE `study_notification` (
-    `notification_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '通知ID',
-    `user_id` bigint(20) NOT NULL COMMENT '用户ID',
-    `title` varchar(100) NOT NULL COMMENT '通知标题',
-    `content` text NOT NULL COMMENT '通知内容',
-    `type` varchar(20) NOT NULL COMMENT '通知类型(system-系统通知,course-课程通知)',
-    `status` char(1) DEFAULT '0' COMMENT '状态（0未读 1已读）',
-    `create_time` datetime DEFAULT NULL COMMENT '创建时间',
-    `read_time` datetime DEFAULT NULL COMMENT '阅读时间',
-    PRIMARY KEY (`notification_id`),
-    KEY `idx_user_status` (`user_id`,`status`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='系统通知表';
 
 -- ----------------------------
 -- 用户浏览记录表
