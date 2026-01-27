@@ -5,7 +5,9 @@ import com.jy.study.common.core.controller.BaseController;
 import com.jy.study.common.core.domain.AjaxResult;
 import com.jy.study.common.core.page.TableDataInfo;
 import com.jy.study.common.enums.BusinessType;
+import com.jy.study.lesson.domain.StudyAiCoze;
 import com.jy.study.lesson.domain.StudyArticle;
+import com.jy.study.lesson.service.IStudyAiCozeService;
 import com.jy.study.lesson.service.IStudyArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,10 @@ public class ArtController extends BaseController {
     
     @Autowired
     private IStudyArticleService articleService;
+
+    @Autowired
+    private IStudyAiCozeService aiCozeService;
+
 
     @GetMapping("/list")
     public String list() {
@@ -75,5 +81,16 @@ public class ArtController extends BaseController {
     public String detail(@PathVariable("articleId") Long articleId, ModelMap mmap) {
         mmap.put("article", articleService.selectArticleById(articleId));
         return prefix + "/detail";
+    }
+
+
+    @GetMapping("/ai-questions/{articleId}")
+    public String aiQuestions(@PathVariable("articleId") Long articleId, ModelMap mmap) {
+        StudyArticle article = articleService.selectArticleById(articleId);
+        if (article != null && article.getCozeId() != null) {
+            StudyAiCoze aiCoze = aiCozeService.selectAiCozeById(article.getCozeId());
+            mmap.put("aiCoze", aiCoze);
+        }
+        return prefix + "/ai-questions";
     }
 }

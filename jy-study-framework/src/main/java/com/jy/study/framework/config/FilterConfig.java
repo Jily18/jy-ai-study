@@ -14,7 +14,7 @@ import com.jy.study.common.xss.XssFilter;
 /**
  * Filter配置
  *
- * @author ruoyi
+ * @author jily
  */
 @Configuration
 @ConditionalOnProperty(value = "xss.enabled", havingValue = "true")

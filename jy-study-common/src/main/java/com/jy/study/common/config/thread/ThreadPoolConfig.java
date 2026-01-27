@@ -12,7 +12,7 @@ import com.jy.study.common.utils.Threads;
 /**
  * 线程池配置
  *
- * @author ruoyi
+ * @author jily
  **/
 @Configuration
 public class ThreadPoolConfig

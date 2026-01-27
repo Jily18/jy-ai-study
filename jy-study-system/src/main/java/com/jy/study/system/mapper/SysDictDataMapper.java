@@ -7,7 +7,7 @@ import com.jy.study.common.core.domain.entity.SysDictData;
 /**
  * 字典表 数据层
  * 
- * @author ruoyi
+ * @author jily
  */
 public interface SysDictDataMapper
 {

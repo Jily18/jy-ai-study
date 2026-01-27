@@ -18,6 +18,8 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -43,11 +45,13 @@ import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 /**
  * 权限配置加载
  * 
- * @author ruoyi
+ * @author jily
  */
 @Configuration
 public class ShiroConfig
 {
+    private static final Logger log = LoggerFactory.getLogger(ShiroConfig.class);
+
     /**
      * Session超时时间，单位为毫秒（默认30分钟）
      */
@@ -129,8 +133,8 @@ public class ShiroConfig
     /**
      * 是否开启记住我功能
      */
-    @Value("${shiro.rememberMe.enabled: false}")
-    private boolean rememberMe;
+    @Value("${shiro.rememberMe.enabled:true}")
+    private boolean rememberMeEnabled;
 
     /**
      * 缓存管理器 使用Ehcache实现
@@ -245,7 +249,9 @@ public class ShiroConfig
         // 设置realm.
         securityManager.setRealm(userRealm);
         // 记住我
-        securityManager.setRememberMeManager(rememberMe ? rememberMeManager() : null);
+        if (rememberMeEnabled) {
+            securityManager.setRememberMeManager(rememberMeManager());
+        }
         // 注入缓存管理器;
         securityManager.setCacheManager(getEhCacheManager());
         // session管理器
@@ -286,10 +292,10 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/docs/**", "anon");
         filterChainDefinitionMap.put("/fonts/**", "anon");
         filterChainDefinitionMap.put("/img/**", "anon");
+        filterChainDefinitionMap.put("/image/**", "anon");
         filterChainDefinitionMap.put("/ajax/**", "anon");
         filterChainDefinitionMap.put("/js/**", "anon");
         filterChainDefinitionMap.put("/ruoyi/**", "anon");
-        filterChainDefinitionMap.put("/web/**", "anon");
         filterChainDefinitionMap.put("/captcha/captchaImage**", "anon");
         
         // 添加根路径匿名访问配置
@@ -307,6 +313,31 @@ public class ShiroConfig
         filterChainDefinitionMap.put("/login", "anon,captchaValidate");
         // 注册相关
         filterChainDefinitionMap.put("/register", "anon,captchaValidate");
+
+        // 添加学生端相关配置
+        log.debug("ShiroConfig配置拦截web/login");
+        filterChainDefinitionMap.put("/web/login", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/web/register", "anon,captchaValidate");
+        filterChainDefinitionMap.put("/web/logout", "logout");
+
+        
+        // 允许访问的静态资源
+        filterChainDefinitionMap.put("/web/css/**", "anon");
+        filterChainDefinitionMap.put("/web/js/**", "anon");
+        filterChainDefinitionMap.put("/web/images/**", "anon");
+        // 需要登录才能访问的接口，要放在/web/user/**之前
+        filterChainDefinitionMap.put("/web/user/**", "authc");
+        filterChainDefinitionMap.put("/llm/**", "authc");
+        filterChainDefinitionMap.put("/aichat/**", "authc");
+        filterChainDefinitionMap.put("/coze/**", "authc");
+
+        // 其他web路径允许匿名访问
+        filterChainDefinitionMap.put("/web/**","anon");
+        filterChainDefinitionMap.put("/web","anon");
+
+        // 首页和公共页面允许匿名访问
+        filterChainDefinitionMap.put("/web/index", "anon");
+        filterChainDefinitionMap.put("/web/public/**", "anon");
 
         Map<String, Filter> filters = new LinkedHashMap<String, Filter>();
         filters.put("onlineSession", onlineSessionFilter());

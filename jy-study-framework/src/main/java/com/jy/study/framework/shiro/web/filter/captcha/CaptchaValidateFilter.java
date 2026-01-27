@@ -12,7 +12,7 @@ import com.jy.study.common.utils.StringUtils;
 /**
  * 验证码过滤器
  * 
- * @author ruoyi
+ * @author jily
  */
 public class CaptchaValidateFilter extends AccessControlFilter
 {

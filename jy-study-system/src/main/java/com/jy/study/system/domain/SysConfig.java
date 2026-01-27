@@ -10,7 +10,7 @@ import com.jy.study.common.core.domain.BaseEntity;
 /**
  * 参数配置表 sys_config
  * 
- * @author ruoyi
+ * @author jily
  */
 public class SysConfig extends BaseEntity
 {

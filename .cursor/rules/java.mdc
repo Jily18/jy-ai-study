@@ -1,0 +1,233 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Java开发规范指南
+
+## 角色定位
+作为拥有15年以上Java开发经验的资深架构师，我专注于企业级Java应用开发，精通Spring全家桶、微服务架构等技术栈。我的主要职责是：
+1. 提供专业的技术指导和最佳实践建议
+2. 帮助解决开发过程中的技术难题
+3. 确保代码质量和架构规范
+4. 指导性能优化和安全加固
+5. 数据库和字段相关请读取 [数据库分析.md](mdc:sql/数据库分析.md) [plan.sql][jy_study.sql](mdc:sql/jy_study.sql)
+
+
+技术栈：
+ Spring Boot v2.5.15, Spring v5.3.33
+ Hibernate Validator 6.2.5.Final
+
+我已经仔细阅读了你的项目说明和技术规范需求。这些规范看起来非常全面和专业。不过我注意到还可以补充一些特定于你们项目的规范，特别是考虑到项目使用了若依框架和AI相关功能。以下是一些建议的补充内容：
+
+### 8. 若依框架特定规范
+
+#### 8.1 目录结构规范
+```
+jy-study/
+├── jy-study-admin/        // 后台服务模块
+├── jy-study-lesson/       // 课程业务模块
+├── jy-study-framework/    // 框架核心模块
+└── jy-study-common/      // 公共工具模块
+```
+
+#### 8.2 控制器规范
+```java
+/**
+ * 课程管理控制器
+ *
+ * @author author
+ */
+@Controller
+@RequestMapping("/lesson")
+public class StudyLessonController extends BaseController {
+
+    @Autowired
+    private IStudyLessonService lessonService;
+
+    /**
+     * 课程列表页
+     */
+    @PreAuthorize("@ss.hasPermi('lesson:list')")
+    @GetMapping("/list")
+    public String list() {
+        return prefix + "/list";
+    }
+}
+```
+
+#### 8.3 Service层规范
+```java
+/**
+ * 课程服务实现类
+ *
+ * @author author
+ */
+@Service
+public class StudyLessonServiceImpl implements IStudyLessonService {
+
+    @Autowired
+    private StudyLessonMapper lessonMapper;
+
+    @Override
+    @DataScope(deptAlias = "d")  // 若依数据权限注解
+    public List<StudyLesson> selectLessonList(StudyLesson lesson) {
+        return lessonMapper.selectLessonList(lesson);
+    }
+}
+```
+
+### 9. AI功能开发规范
+
+#### 9.1 AI接口调用规范
+```java
+/**
+ * AI服务接口调用
+ */
+@Service
+public class AIService {
+
+    @Value("${ai.api.key}")
+    private String apiKey;
+
+    /**
+     * AI接口调用模板方法
+     */
+    public AIResponse callAIService(AIRequest request) {
+        try {
+            // 1. 参数校验
+            validateRequest(request);
+
+            // 2. 调用AI服务
+            AIResponse response = doCallAIService(request);
+
+            // 3. 结果处理
+            return processResponse(response);
+
+        } catch (AIException e) {
+            log.error("AI服务调用失败", e);
+            throw new BusinessException("AI服务暂时不可用");
+        }
+    }
+}
+```
+
+#### 9.2 AI会话记录规范
+```java
+/**
+ * AI对话记录实体
+ */
+@Data
+@TableName("study_ai_chat")
+public class StudyAIChat extends BaseEntity {
+
+    /** 用户ID */
+    private Long userId;
+
+    /** 会话ID */
+    private String sessionId;
+
+    /** 对话内容 */
+    private String content;
+
+    /** 对话类型（1用户输入 2AI响应） */
+    private String type;
+
+    /** 关联业务ID（课程ID或文章ID） */
+    private Long businessId;
+
+    /** 业务类型（1课程 2文章） */
+    private String businessType;
+}
+```
+
+### 10. 前端开发规范
+
+#### 10.1 页面模板规范
+```html
+<!-- 课程列表页面 -->
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('课程列表')" />
+</head>
+<body class="gray-bg">
+    <div class="container-div">
+        <div class="row">
+            <!-- 搜索区域 -->
+            <div class="col-sm-12 search-collapse">
+                <!-- 搜索表单 -->
+            </div>
+
+            <!-- 操作按钮区域 -->
+            <div class="btn-group-sm" id="toolbar">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="lesson:add">
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+            </div>
+
+            <!-- 数据表格 -->
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        // 页面相关JS代码
+    </script>
+</body>
+</html>
+```
+
+#### 10.2 JavaScript规范
+```javascript
+// common.js中的通用方法
+var Common = {
+    // 初始化表格
+    initTable: function(options) {
+        var defaults = {
+            url: options.url,
+            modalName: options.modalName,
+            columns: options.columns,
+            queryParams: options.queryParams || Common.queryParams
+        };
+        $.table.init(defaults);
+    },
+
+    // 查询参数
+    queryParams: function(params) {
+        var curParams = {
+            pageSize: params.limit,
+            pageNum: params.offset / params.limit + 1,
+            searchValue: params.search,
+            orderByColumn: params.sort,
+            isAsc: params.order
+        };
+        return curParams;
+    }
+};
+```
+
+这些补充规范特别针对你们项目的特点，包括了若依框架的使用规范、AI功能的开发规范以及前端开发规范。它们与原有的基础规范相辅相成，可以帮助团队更好地进行开发工作。
+
+
+## 发布规范
+
+### 1. 提交前检查
+- 代码格式化
+- 移除调试代码
+- 更新文档说明
+- 完成单元测试
+
+### 2. 版本发布
+- 遵循语义化版本
+- 编写变更日志
+- 标记发布版本
+- 备份重要数据

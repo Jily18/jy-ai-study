@@ -1,0 +1,79 @@
+---
+description: CSS开发规范和最佳实践指南
+globs: *.css,*.scss,*.less
+alwaysApply: false
+---
+# CSS开发规范
+
+## 命名规范
+
+- 使用 kebab-case（短横线）命名方式
+  - 正确示例：`.user-profile`, `.nav-item`
+  - 错误示例：`.userProfile`, `.navItem`
+
+- 类名应具有语义性和描述性
+  - 正确示例：`.header-navigation`, `.article-summary`
+  - 错误示例：`.red-text`, `.mb-20`
+
+## BEM命名规范
+
+- Block：独立的组件块
+  - 示例：`.card`, `.button`
+
+- Element：组件中的元素
+  - 使用双下划线连接
+  - 示例：`.card__title`, `.card__image`
+
+- Modifier：修饰符
+  - 使用双中划线连接
+  - 示例：`.button--large`, `.card--featured`
+
+## 样式组织
+
+- 使用CSS预处理器（SCSS/LESS）
+  - 嵌套不超过3层
+  - 使用变量管理颜色、字体等
+
+- 优先使用class选择器
+  - 避免使用ID选择器
+  - 减少标签选择器的使用
+
+## 最佳实践
+
+- 避免!important
+  - 通过提高选择器优先级解决样式冲突
+
+- 使用简写属性
+  - 正确示例：`margin: 10px 20px;`
+  - 错误示例：`margin-top: 10px; margin-right: 20px;`
+
+- 保持代码整洁
+  - 属性按字母顺序排序
+  - 使用一致的缩进
+  - 在大括号前后添加空格
+
+## 响应式设计
+
+- 使用媒体查询
+  - 从移动端优先设计
+  - 使用相对单位（rem, em, %）
+
+- 设置合理的断点
+  ```css
+  /* 移动端 */
+  @media (max-width: 768px) { }
+  
+  /* 平板 */
+  @media (min-width: 769px) and (max-width: 1024px) { }
+  
+  /* 桌面 */
+  @media (min-width: 1025px) { }
+  ```
+
+## 性能优化
+
+- 避免过度嵌套
+- 合理使用选择器
+- 压缩和合并CSS文件
+- 使用CSS Sprites减少图片请求
+- 适当使用CSS动画，避免性能问题

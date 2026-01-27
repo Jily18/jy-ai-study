@@ -1,5 +1,6 @@
 package com.jy.study.lesson.service.impl;
 
+import com.jy.study.common.utils.ShiroUtils;
 import com.jy.study.lesson.mapper.StudyUserViewMapper;
 import com.jy.study.lesson.mapper.StudyUserLikeMapper;
 import com.jy.study.lesson.mapper.StudyUserCollectMapper;
@@ -9,12 +10,21 @@ import com.jy.study.lesson.domain.StudyUserView;
 import com.jy.study.lesson.domain.StudyUserLike;
 import com.jy.study.lesson.domain.StudyUserCollect;
 import com.jy.study.lesson.service.IStudyUserInteractionService;
+import com.jy.study.lesson.domain.dto.UserViewHistoryDTO;
+import com.jy.study.lesson.domain.dto.UserCollectionDTO;
+import com.jy.study.lesson.domain.dto.UserLikeDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
 
+/**
+ * 用户交互Service实现
+ */
 @Service
 public class StudyUserInteractionServiceImpl implements IStudyUserInteractionService {
     
@@ -33,14 +43,21 @@ public class StudyUserInteractionServiceImpl implements IStudyUserInteractionSer
     @Autowired
     private StudyLessonMapper lessonMapper;
 
+    @Autowired
+    private StudyUserViewMapper userViewMapper;
+
     @Override
-    public void recordView(Long userId, String type, Long targetId, String ipAddr) {
+    public void recordView(String type, Long targetId) {
         // 无论是否登录都记录浏览量
         if ("1".equals(type)) {
             lessonMapper.incrementViewCount(targetId);
         } else if ("2".equals(type)) {
             articleMapper.incrementViewCount(targetId);
         }
+        // 获取当前用户ID(使用Shiro)
+        Long userId = ShiroUtils.getUserId();
+        // 获取IP地址(使用Shiro工具类)
+        String ipAddr = ShiroUtils.getIp();
         
         // 只有登录用户才记录详细的浏览记录
         if (userId != null) {
@@ -154,5 +171,35 @@ public class StudyUserInteractionServiceImpl implements IStudyUserInteractionSer
         return collectMapper.checkCollected(userId, type, targetId);
     }
 
-    // ... 其他方法实现类似
-} 
+    @Override
+    public List<UserViewHistoryDTO> getUserViewHistory(Long userId, int limit) {
+        if (userId == null) {
+            return new ArrayList<>();
+        }
+        return viewMapper.selectUserViewHistory(userId, limit);
+    }
+
+    /**
+     * 获取用户浏览历史记录（包含详细信息）
+     */
+    @Override
+    public List<UserViewHistoryDTO> getUserViewHistoryWithDetails(Long userId, int limit) {
+        return viewMapper.selectUserViewHistoryWithDetails(userId, limit);
+    }
+
+    @Override
+    public List<UserCollectionDTO> getUserCollectionWithDetails(Long userId, int limit) {
+        return collectMapper.selectUserCollectionWithDetails(userId, limit);
+    }
+
+    @Override
+    public List<UserLikeDTO> getUserLikeWithDetails(Long userId, int limit) {
+        return likeMapper.selectUserLikeWithDetails(userId, limit);
+    }
+
+
+    @Override
+    public List<Map<String, Object>> selectRecentActiveUsers() {
+        return userViewMapper.selectRecentActiveUsers();
+    }
+}

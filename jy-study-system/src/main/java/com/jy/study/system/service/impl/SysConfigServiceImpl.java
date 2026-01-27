@@ -17,7 +17,7 @@ import com.jy.study.system.service.ISysConfigService;
 /**
  * 参数配置 服务层实现
  * 
- * @author ruoyi
+ * @author jily
  */
 @Service
 public class SysConfigServiceImpl implements ISysConfigService

@@ -7,7 +7,7 @@ ruoyi:
   # 版权年份
   copyrightYear: 2024
   # 实例演示开关
-  demoEnabled: true
+  demoEnabled: false
   # 文件路径
   profile: D:/jy-study/uploadPath
   # 获取ip地址开关
@@ -66,9 +66,9 @@ spring:
   servlet:
     multipart:
       # 单个文件大小
-      max-file-size: 10MB
+      max-file-size: 500MB
       # 设置总上传的文件大小
-      max-request-size: 20MB
+      max-request-size: 500MB
   # 服务模块
   devtools:
     restart:
@@ -97,8 +97,8 @@ shiro:
     loginUrl: /login
     # 权限认证失败地址
     unauthorizedUrl: /unauth
-    # 首页地址
-    indexUrl: /index
+    # 首页地址,改为前台的地址
+    indexUrl: /web/index
     # 验证码开关
     captchaEnabled: true
     # 验证码类型 math 数字计算 char 字符验证
@@ -142,3 +142,25 @@ xss:
 swagger:
   # 是否开启swagger
   enabled: true
+
+# 阿里云oss，存图片
+aliyun:
+  oss:
+    endpoint: oss-cn-shenzhen.aliyuncs.com # 替换为你的OSS Endpoint
+    accessKeyId: 已删除本key及用户 # 替换为你的AccessKeyId
+    accessKeySecret: 已删除key # 替换为你的AccessKeySecret
+    bucketName: bucket已关闭权限 # 替换为你的Bucket名称
+
+
+# 通义的api
+modelTongyi:
+  apiKey: sk- #此key已删除
+
+
+# 硅基流动的key
+siliconCouldAI:
+  apiKey: sk- #此key已删除
+
+# 扣子的token
+cozeAI:
+  token: #请填写你自己的key

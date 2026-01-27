@@ -80,6 +80,19 @@
             <version>${project.version}</version>
         </dependency>
 
+<!--        阿里云oss储存-->
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>3.17.4</version>
+        </dependency>
+
+        <!-- SSE请求所需-->
+        <dependency>
+            <groupId>com.jfinal</groupId>
+            <artifactId>jfinal</artifactId>
+            <version>5.2.3</version>
+        </dependency>
     </dependencies>
 
     <build>

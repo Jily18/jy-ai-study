@@ -3,7 +3,7 @@
 <head>
     <th:block th:include="include :: header('课程详细')" />
 </head>
-<body>
+<body class="white-bg">
     <div class="main-content">
         <form class="form-horizontal" th:object="${studyLesson}">
             <h4 class="form-header h4">基本信息</h4>
@@ -20,7 +20,7 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">课程分类：</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext" th:text="*{category}"></p>
+                            <p class="form-control-plaintext" th:text="*{categoryName}"></p>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,8 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">封面图片：</label>
                         <div class="col-sm-8">
-                            <p class="form-control-plaintext" th:text="*{coverImg}"></p>
+                            <img th:if="*{coverImg != null and coverImg != ''}" th:src="*{coverImg}" style="max-width: 200px; max-height: 200px;">
+                            <p th:if="*{coverImg == null or coverImg == ''}" class="form-control-plaintext">暂无图片</p>
                         </div>
                     </div>
                 </div>
@@ -70,6 +71,18 @@
                         <label class="col-xs-2 control-label">课程描述：</label>
                         <div class="col-xs-10">
                             <p class="form-control-plaintext" th:text="*{description}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label">课程视频：</label>
+                        <div class="col-xs-10">
+                            <video th:if="*{videoUrl != null and videoUrl != ''}" th:src="*{videoUrl}" style="max-width: 400px;" controls></video>
+                            <p th:if="*{videoUrl == null or videoUrl == ''}" class="form-control-plaintext">暂无视频</p>
                         </div>
                     </div>
                 </div>

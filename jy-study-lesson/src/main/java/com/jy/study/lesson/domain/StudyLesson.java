@@ -31,9 +31,13 @@ public class StudyLesson extends BaseEntity
     @Excel(name = "课程描述")
     private String description;
 
-    /** 课程分类 */
-    @Excel(name = "课程分类")
-    private String category;
+    /** 分类ID */
+    @Excel(name = "分类ID")
+    private Long categoryId;
+
+    /** 分类名称 */
+    @Excel(name = "分类名称")
+    private String categoryName;
 
     /** 课程标签(逗号分隔) */
     @Excel(name = "课程标签(逗号分隔)")
@@ -59,6 +63,14 @@ public class StudyLesson extends BaseEntity
     /** 收藏数 */
     @Excel(name = "收藏数")
     private Long collectCount;
+
+    /** 课程视频URL */
+    @Excel(name = "课程视频URL")
+    private String videoUrl;
+
+    /** 视频字幕识别文本 */
+    @Excel(name = "视频字幕识别文本")
+    private String videoSubtitleText;
 
     // getter和setter
     public Long getLessonId() {
@@ -93,12 +105,20 @@ public class StudyLesson extends BaseEntity
         this.description = description;
     }
 
-    public String getCategory() {
-        return category;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getTags() {
@@ -150,6 +170,22 @@ public class StudyLesson extends BaseEntity
         this.collectCount = collectCount;
     }
 
+    public String getVideoUrl() {
+        return videoUrl;
+    }
+
+    public void setVideoUrl(String videoUrl) {
+        this.videoUrl = videoUrl;
+    }
+
+    public String getVideoSubtitleText() {
+        return videoSubtitleText;
+    }
+
+    public void setVideoSubtitleText(String videoSubtitleText) {
+        this.videoSubtitleText = videoSubtitleText;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -157,13 +193,16 @@ public class StudyLesson extends BaseEntity
                 .append("title", getTitle())
                 .append("coverImg", getCoverImg())
                 .append("description", getDescription())
-                .append("category", getCategory())
+                .append("categoryId", getCategoryId())
+                .append("categoryName", getCategoryName())
                 .append("tags", getTags())
                 .append("status", getStatus())
                 .append("sort", getSort())
                 .append("viewCount", getViewCount())
                 .append("likeCount", getLikeCount())
                 .append("collectCount", getCollectCount())
+                .append("videoUrl", getVideoUrl())
+                .append("videoSubtitleText", getVideoSubtitleText())
                 .append("createBy", getCreateBy())
                 .append("createTime", getCreateTime())
                 .append("updateBy", getUpdateBy())

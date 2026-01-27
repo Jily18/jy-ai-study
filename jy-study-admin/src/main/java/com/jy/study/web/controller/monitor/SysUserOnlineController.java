@@ -25,7 +25,7 @@ import com.jy.study.system.service.ISysUserOnlineService;
 /**
  * 在线用户监控
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 @RequestMapping("/monitor/online")

@@ -1,0 +1,96 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# sql rule content
+# 创建表结构或表关联等参考sql文件
+[jy_study.sql](mdc:sql/jy_study.sql)
+[ry_20240601X.sql](mdc:sql/ry_20240601.sql)
+
+/* ========== 数据库表设计规范 ========== */
+
+/* 1. 基础命名规范 */
+-- 表命名规范
+CREATE_TABLE_NAMING:
+  - 业务表统一以 "study_" 开头
+  - 使用大写字母，下划线分隔
+  - 命名须体现业务含义
+  - 示例: study_article, study_lesson
+
+-- 字段命名规范
+COLUMN_NAMING:
+  - 全部小写字母，下划线分隔
+  - 避免使用数据库关键字
+  - 建议长度不超过100个字符
+  - 示例: user_name, create_time, order_amount
+
+/* 2. 字段类型规范 */
+FIELD_TYPE_STANDARDS:
+  - 主键: bigint，非空
+  - 时间: datetime 存储具体时间
+  - 金额: DECIMAL(18,2)
+  - 状态标识: INT(4)
+  - 普通文本: VARCHAR(长度根据实际需求定义)
+  - 大文本: TEXT 类型
+
+/* 3. 表结构规范 */
+TABLE_STRUCTURE:
+  - 引擎类型: InnoDB
+  - 字符集: utf8mb4
+  - 排序规则: utf8mb4_general_ci
+  - 必备字段:
+    * id: 主键
+    * create_time: 创建时间
+    * create_by: 创建人
+    * update_time: 更新时间
+    * update_by： 更新人
+
+/* 4. 字段属性规范 */
+COLUMN_PROPERTIES:
+  - 除主键外均可为空
+  - VARCHAR默认值: ''
+  - 数值类型默认值: 0
+  - 每个字段必须有注释
+  - 注释需包含: 用途说明、取值范围、特殊说明
+
+/* 5. 索引设计规范 */
+INDEX_DESIGN:
+  - 主键索引: 必须
+  - 业务索引: 根据查询需求建立
+  - 联合索引: 最左匹配原则
+  - 索引命名: IDX_字段名
+
+/* 6. 示例模板 */
+CREATE TABLE `study_lesson` (
+  `lesson_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '课程ID',
+  `title` varchar(100) NOT NULL COMMENT '课程标题',
+  `cover_img` varchar(255) DEFAULT NULL COMMENT '课程封面图片',
+  `description` text COMMENT '课程描述',
+  `category` varchar(50) DEFAULT NULL COMMENT '课程分类',
+  `tags` varchar(255) DEFAULT NULL COMMENT '课程标签(逗号分隔)',
+  `price` decimal(10,2) DEFAULT '0.00' COMMENT '课程价格',
+  `status` char(1) DEFAULT '0' COMMENT '状态（0正常 1停用）',
+  `sort` int(4) DEFAULT '0' COMMENT '排序',
+  `view_count` bigint(20) DEFAULT '0' COMMENT '浏览量',
+  `like_count` bigint(20) DEFAULT '0' COMMENT '点赞数',
+  `collect_count` bigint(20) DEFAULT '0' COMMENT '收藏数',
+  `create_by` varchar(64) DEFAULT '' COMMENT '创建者',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) DEFAULT '' COMMENT '更新者',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`lesson_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='课程表';
+/* 7. 性能优化建议 */
+PERFORMANCE_TIPS:
+  - 合理使用字段类型，避免过度设计
+  - 控制单表字段数量，建议不超过50个
+  - 大字段和访问频率低的字段可考虑垂直拆分
+  - 根据业务访问特点建立合适索引
+  - 避免使用外键约束，由应用层控制
+
+/* ========== 规范完成 ========== */
+
+
+

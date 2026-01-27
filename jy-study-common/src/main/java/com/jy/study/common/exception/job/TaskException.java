@@ -3,7 +3,7 @@ package com.jy.study.common.exception.job;
 /**
  * 计划策略异常
  * 
- * @author ruoyi
+ * @author jily
  */
 public class TaskException extends Exception
 {

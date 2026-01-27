@@ -36,7 +36,7 @@ import com.jy.study.system.service.ISysUserService;
 /**
  * 用户 业务层处理
  * 
- * @author ruoyi
+ * @author jily
  */
 @Service
 public class SysUserServiceImpl implements ISysUserService
@@ -556,5 +556,10 @@ public class SysUserServiceImpl implements ISysUserService
     public int changeStatus(SysUser user)
     {
         return userMapper.updateUser(user);
+    }
+
+    @Override
+    public Long selectUserCount(String type) {
+        return userMapper.selectUserCount(type);
     }
 }

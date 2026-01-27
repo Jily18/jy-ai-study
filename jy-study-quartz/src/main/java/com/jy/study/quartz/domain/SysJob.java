@@ -15,7 +15,7 @@ import com.jy.study.quartz.util.CronUtils;
 /**
  * 定时任务调度表 sys_job
  * 
- * @author ruoyi
+ * @author jily
  */
 public class SysJob extends BaseEntity implements Serializable
 {

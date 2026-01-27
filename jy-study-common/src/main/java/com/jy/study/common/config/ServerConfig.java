@@ -7,7 +7,7 @@ import com.jy.study.common.utils.ServletUtils;
 /**
  * 服务相关配置
  * 
- * @author ruoyi
+ * @author jily
  *
  */
 @Component

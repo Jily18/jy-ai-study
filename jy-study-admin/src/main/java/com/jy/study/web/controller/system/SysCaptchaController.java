@@ -19,7 +19,7 @@ import com.jy.study.common.core.controller.BaseController;
 /**
  * 图片验证码（支持算术形式）
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 @RequestMapping("/captcha")

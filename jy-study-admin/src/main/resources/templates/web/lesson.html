@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +9,7 @@
     <link th:href="@{/css/animate.min.css}" rel="stylesheet"/>
     <link th:href="@{/css/style.min.css}" rel="stylesheet"/>
     <link th:href="@{/ruoyi/css/ry-ui.css}" rel="stylesheet"/>
+    <link th:href="@{/css/web-common.css}" rel="stylesheet"/>
     <style>
         .lesson-header {
             background: linear-gradient(45deg, #6c757d, #343a40);
@@ -48,9 +49,13 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,.05);
+            margin-bottom: 30px;
         }
         .lesson-actions {
-            margin: 30px 0;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
         }
         .btn-action {
             margin-right: 15px;
@@ -80,19 +85,259 @@
         .navbar {
             box-shadow: 0 2px 4px rgba(0,0,0,.08);
         }
+        .btn-like, .btn-collect {
+            padding: 10px 30px;
+            border-radius: 25px;
+            transition: all .3s ease;
+            border: 2px solid;
+            background: transparent;
+            font-weight: 500;
+        }
+        
+        .btn-like {
+            color: #28a745;
+            border-color: #28a745;
+        }
+        
+        .btn-like:hover {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+        }
+        
+        .btn-like.active {
+            background: #28a745;
+            color: white;
+            border-color: #28a745;
+        }
+        
+        .btn-collect {
+            color: #5b73e8;
+            border-color: #5b73e8;
+        }
+        
+        .btn-collect:hover {
+            background: rgba(91, 115, 232, 0.1);
+            color: #5b73e8;
+        }
+
+        .btn-collect.active {
+            background: #5b73e8;
+            color: white;
+            border-color: #5b73e8;
+        }
+
+        .btn-like i, .btn-collect i {
+            margin-right: 5px;
+        }
+
+        .btn-like.active i, .btn-collect.active i {
+            animation: bounce 0.5s;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .video-container {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 宽高比 */
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,.1);
+        }
+        
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+        
+        /* 自定义视频控制器样式 */
+        video::-webkit-media-controls {
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        video::-webkit-media-controls-panel {
+            padding: 5px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            position: relative;
+            min-height: calc(100vh - 400px);
+        }
+
+        .lesson-content {
+            width: 75%;
+            transition: width 0.3s ease;
+            padding: 40px 20px 40px 40px;
+        }
+
+        .lesson-content.expanded {
+            width: 95%;
+        }
+
+        .ai-sidebar {
+            width: 25%;
+            position: fixed;
+            border-radius: 5px;
+            right: 0;
+            top: 60%;
+            transform: translateY(-50%);
+            height: 84vh;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .ai-sidebar.collapsed {
+            width: 40px;
+            right: 0;
+        }
+
+        .ai-toggle {
+            position: absolute;
+            left: -32px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 80px;
+            background: linear-gradient(135deg, #71b2f9, #4b93e3);
+            border: none;
+            border-radius: 6px 0 0 6px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            font-size: 16px;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .ai-content {
+            flex: 1;
+            overflow: hidden;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .ai-content.hidden {
+            display: none;
+        }
+
+        .lesson-ai-subtitle {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .lesson-ai-subtitle .card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            height: 100%;
+        }
+
+        .lesson-ai-subtitle .card-body {
+            flex: 1;
+            overflow: hidden;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .subtitle-content {
+            flex: 1;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            overflow-y: auto;
+            padding: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .subtitle-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .subtitle-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .subtitle-content::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+
+        .subtitle-content::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .subtitle-content.loading {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+            background: white;
+        }
+
+        .subtitle-content.loading:after {
+            content: "正在识别中...";
+            color: #6c757d;
+        }
+
+        .btn-analyze {
+            padding: 10px 30px;
+            border-radius: 25px;
+            transition: all .3s ease;
+            border: 2px solid;
+            background: transparent;
+            font-weight: 500;
+            color: #6f42c1;
+            border-color: #6f42c1;
+        }
+        
+        .btn-analyze:hover {
+            background: rgba(111, 66, 193, 0.1);
+            color: #6f42c1;
+        }
+        
+        .btn-analyze.active {
+            background: #6f42c1;
+            color: white;
+            border-color: #6f42c1;
+        }
     </style>
 </head>
 <body>
     <!-- 基础JS依赖 -->
     <script th:src="@{/js/jquery.min.js}"></script>
-    <script th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/js/common.js}"></script>
 
     <!-- 定义ctx变量 -->
     <script th:inline="javascript">
         var ctx = /*[[@{/}]]*/'';
         var prefix = ctx + "web/interaction";
-        var isUserLoggedIn = [[${session.webUser != null}]];
+        window.isAuthenticated = [[${@shiroService.getPrincipal() != null}]];
     </script>
     
     <!-- 其他JS依赖 -->
@@ -100,8 +345,8 @@
     <script th:src="@{/ruoyi/js/common.js}"></script>
     <script th:src="@{/ruoyi/js/ry-ui.js}"></script>
 
-    <!-- 导航栏 -->
-    <div th:replace="~{web/fragments/navbar :: navbar}"></div>
+    <!-- 使用th:replace引入导航栏 -->
+    <div th:replace="web/fragments/navbar :: navbar"></div>
 
     <!-- 课程头部 -->
     <div class="lesson-header">
@@ -109,7 +354,7 @@
             <div class="row align-items-center">
                 <div class="col-md-4">
                     <img th:if="${lesson.coverImg}" th:src="${lesson.coverImg}" class="lesson-cover" alt="课程封面">
-                    <img th:unless="${lesson.coverImg}" src="/img/default-course.jpg" class="lesson-cover" alt="默认封面">
+                    <img th:if="${lesson.coverImg == null}" th:src="@{/img/default-article.png}" class="article-cover" alt="默认封面">
                 </div>
                 <div class="col-md-8">
                     <h1 class="lesson-title" th:text="${lesson.title}">课程标题</h1>
@@ -119,7 +364,7 @@
                         <span><i class="fa fa-bookmark"></i> <span th:text="${lesson.collectCount}">0</span> 次收藏</span>
                     </div>
                     <div class="lesson-tags">
-                        <span class="badge badge-primary" th:text="${lesson.category}">分类</span>
+                        <span class="badge badge-primary" th:text="${lesson.categoryName}">分类</span>
                         <span class="badge badge-info" th:each="tag : ${#strings.arraySplit(lesson.tags, ',')}" th:text="${tag}">标签</span>
                     </div>
                 </div>
@@ -128,24 +373,78 @@
     </div>
 
     <!-- 课程内容 -->
-    <div class="lesson-content">
-        <div class="container">
-            <div class="lesson-description" th:utext="${lesson.description}">
-                课程描述...
+    <div class="content-wrapper">
+        <div class="lesson-content">
+            <div class="container">
+                <!-- 课程介绍 -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="lesson-description">
+                            <h4>课程介绍</h4>
+                            <p th:text="${lesson.description}">课程描述</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 视频播放区域 -->
+                <div class="row mb-4" th:if="${lesson.videoUrl != null and lesson.videoUrl != ''}">
+                    <div class="col-12">
+                        <div class="video-container" style="background: #000; border-radius: 8px; overflow: hidden;">
+                            <video id="lessonVideo" th:src="${lesson.videoUrl}" 
+                                style="width: 100%; max-height: 600px;" 
+                                controls
+                                controlsList="nodownload"
+                                oncontextmenu="return false;">
+                                您的浏览器不支持 HTML5 视频播放。
+                            </video>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 互动区域 -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="lesson-actions text-center">
+                             <button class="btn btn-like mr-3" onclick="toggleLike()" id="likeBtn">
+                                 <i class="fa fa-thumbs-up"></i> 点赞 <span id="likeCount" th:text="${lesson.likeCount}">0</span>
+                             </button>
+                             <button class="btn btn-collect mr-3" onclick="toggleCollect()" id="collectBtn">
+                                 <i class="fa fa-star"></i> 收藏 <span id="collectCount" th:text="${lesson.collectCount}">0</span>
+                             </button>
+                             <button class="btn btn-analyze" onclick="analyzeLesson()" id="analyzeBtn">
+                                 <i class="fa fa-robot"></i> AI解析
+                             </button>
+                         </div>
+                    </div>
+                </div>
             </div>
-            <div class="lesson-actions">
-                <button class="btn btn-primary btn-action" onclick="startLearning()">
-                    <i class="fa fa-play-circle"></i> 开始学习
-                </button>
-                <button class="btn btn-outline-primary btn-action" onclick="toggleLike()">
-                    <i class="fa fa-thumbs-up"></i> 点赞
-                </button>
-                <button class="btn btn-outline-primary btn-action" onclick="toggleCollect()">
-                    <i class="fa fa-bookmark"></i> 收藏
-                </button>
+        </div>
+
+        <!-- AI字幕侧边栏 -->
+        <div class="ai-sidebar" id="aiSidebar">
+            <button class="ai-toggle" onclick="toggleAiSidebar()" id="aiToggle">
+                <i class="fa fa-angle-left"></i>
+            </button>
+            <div class="ai-content" id="aiContent">
+                <div class="lesson-ai-subtitle">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">视频字幕</h5>
+                            <button class="btn btn-primary btn-sm" onclick="recognizeSubtitle()" id="recognizeBtn">
+                                <i class="fa fa-closed-captioning"></i> AI识别
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="subtitleResult" class="subtitle-content">
+                                <!-- 字幕内容将在这里显示 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+    <div th:replace="~{web/fragments/ai-chat :: ai-chat}"></div>
 
     <!-- 页脚 -->
     <footer class="footer bg-dark text-white py-4">
@@ -182,15 +481,13 @@
             if (!isLiked) {
                 handleLike("1", [[${lesson.lessonId}]], function() {
                     isLiked = true;
-                    var count = parseInt($(".lesson-meta span:nth-child(2)").text()) + 1;
-                    $(".lesson-meta span:nth-child(2)").text(count);
+                    $("#likeCount").text(parseInt($("#likeCount").text()) + 1);
                     updateButtonStatus();
                 });
             } else {
                 handleUnlike("1", [[${lesson.lessonId}]], function() {
                     isLiked = false;
-                    var count = parseInt($(".lesson-meta span:nth-child(2)").text()) - 1;
-                    $(".lesson-meta span:nth-child(2)").text(count);
+                    $("#likeCount").text(parseInt($("#likeCount").text()) - 1);
                     updateButtonStatus();
                 });
             }
@@ -200,15 +497,13 @@
             if (!isCollected) {
                 handleCollect("1", [[${lesson.lessonId}]], function() {
                     isCollected = true;
-                    var count = parseInt($(".lesson-meta span:nth-child(3)").text()) + 1;
-                    $(".lesson-meta span:nth-child(3)").text(count);
+                    $("#collectCount").text(parseInt($("#collectCount").text()) + 1);
                     updateButtonStatus();
                 });
             } else {
                 handleUncollect("1", [[${lesson.lessonId}]], function() {
                     isCollected = false;
-                    var count = parseInt($(".lesson-meta span:nth-child(3)").text()) - 1;
-                    $(".lesson-meta span:nth-child(3)").text(count);
+                    $("#collectCount").text(parseInt($("#collectCount").text()) - 1);
                     updateButtonStatus();
                 });
             }
@@ -217,14 +512,129 @@
         function updateButtonStatus() {
             if (isLiked) {
                 $("#likeBtn").addClass("active");
+                $("#likeBtn").html('<i class="fa fa-thumbs-up"></i> 已赞 <span id="likeCount">' + $("#likeCount").text() + '</span>');
             } else {
                 $("#likeBtn").removeClass("active");
+                $("#likeBtn").html('<i class="fa fa-thumbs-up"></i> 点赞 <span id="likeCount">' + $("#likeCount").text() + '</span>');
             }
             if (isCollected) {
                 $("#collectBtn").addClass("active");
+                $("#collectBtn").html('<i class="fa fa-star"></i> 已收藏 <span id="collectCount">' + $("#collectCount").text() + '</span>');
             } else {
                 $("#collectBtn").removeClass("active");
+                $("#collectBtn").html('<i class="fa fa-star"></i> 收藏 <span id="collectCount">' + $("#collectCount").text() + '</span>');
             }
+        }
+
+        // 记录浏览量
+        $(function() {
+            $.ajax({
+                url: prefix + "/view",
+                type: "POST",
+                data: {
+                    type: "1",
+                    targetId: [[${lesson.lessonId}]]
+                },
+                success: function(res) {
+                    if (res.code != 0) {
+                        console.log("浏览量记录失败：" + res.msg);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log("浏览量记录请求失败：" + error);
+                }
+            });
+        });
+
+        function recognizeSubtitle() {
+            // 如果需要登录，直接返回
+            if(handleLoginRequired()) {
+                return;
+            }
+            
+            const recognizeBtn = $("#recognizeBtn");
+            const resultDiv = $("#subtitleResult");
+            
+            // 禁用按钮
+            recognizeBtn.prop('disabled', true);
+            recognizeBtn.html('<i class="fa fa-spinner fa-spin"></i> 识别中...');
+            
+            // 清空并显示加载状态
+            resultDiv.empty().addClass('loading');
+            
+            $.ajax({
+                url: ctx + "tts/recognize/subtitle",
+                type: "POST",
+                data: {
+                    lessonId: [[${lesson.lessonId}]]
+                },
+                success: function(res) {
+                    if(res.code === 0) {
+                        resultDiv.removeClass('loading').html(res.data);
+                    } else {
+                        resultDiv.removeClass('loading')
+                            .html('<div class="alert alert-danger">识别失败：' + res.msg + '</div>');
+                    }
+                },
+                error: function() {
+                    resultDiv.removeClass('loading')
+                        .html('<div class="alert alert-danger">请求失败，请稍后重试</div>');
+                },
+                complete: function() {
+                    recognizeBtn.hide();  // 识别完成后隐藏按钮
+                }
+            });
+        }
+
+        // 添加侧边栏切换功能
+        function toggleAiSidebar() {
+            const sidebar = document.getElementById('aiSidebar');
+            const content = document.getElementById('aiContent');
+            const toggle = document.getElementById('aiToggle');
+            const mainContent = document.querySelector('.lesson-content');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                // 展开
+                sidebar.classList.remove('collapsed');
+                content.classList.remove('hidden');
+                toggle.innerHTML = '<i class="fa fa-angle-left"></i>';
+                mainContent.classList.remove('expanded');
+            } else {
+                // 折叠
+                sidebar.classList.add('collapsed');
+                content.classList.add('hidden');
+                toggle.innerHTML = '<i class="fa fa-angle-right"></i>';
+                mainContent.classList.add('expanded');
+            }
+        }
+
+        function analyzeLesson() {
+            // 如果需要登录，直接返回
+            if(handleLoginRequired()) {
+                return;
+            }
+            
+            const analyzeBtn = $("#analyzeBtn");
+            
+            // 禁用按钮
+            analyzeBtn.prop('disabled', true);
+            analyzeBtn.html('<i class="fa fa-spinner fa-spin"></i> 分析中...');
+            
+            // 检查函数是否存在
+            if (typeof window.triggerLessonAnalysis !== 'function') {
+                console.error('triggerLessonAnalysis function not found');
+                analyzeBtn.prop('disabled', false);
+                analyzeBtn.html('<i class="fa fa-robot"></i> AI解析');
+                $.modal.alertError("系统错误，请刷新页面后重试");
+                return;
+            }
+            
+            // 触发AI聊天框的课程分析
+            window.triggerLessonAnalysis([[${lesson.lessonId}]], function() {
+                // 分析完成后恢复按钮状态
+                analyzeBtn.prop('disabled', false);
+                analyzeBtn.html('<i class="fa fa-robot"></i> AI解析');
+            });
         }
     </script>
 </body>

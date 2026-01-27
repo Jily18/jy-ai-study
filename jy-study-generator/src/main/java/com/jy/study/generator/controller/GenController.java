@@ -40,7 +40,7 @@ import com.jy.study.generator.service.IGenTableService;
 /**
  * 代码生成 操作处理
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 @RequestMapping("/tool/gen")

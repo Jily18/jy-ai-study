@@ -13,7 +13,7 @@ import com.jy.study.common.utils.StringUtils;
 /**
  * spring工具类 方便在非spring管理环境中获取bean
  * 
- * @author ruoyi
+ * @author jily
  */
 @Component
 public final class SpringUtils implements BeanFactoryPostProcessor, ApplicationContextAware

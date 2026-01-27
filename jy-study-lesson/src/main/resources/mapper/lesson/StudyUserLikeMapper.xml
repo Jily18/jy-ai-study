@@ -42,4 +42,38 @@
         where user_id = #{userId} and type = #{type} and target_id = #{targetId}
     </select>
 
+    <select id="selectUserLikeWithDetails" resultType="com.jy.study.lesson.domain.dto.UserLikeDTO">
+        SELECT
+            l.like_id as id,
+            l.user_id as userId,
+            l.target_id as targetId,
+            l.type,
+            CASE
+                WHEN l.type = '1' THEN les.title
+                WHEN l.type = '2' THEN a.title
+                ELSE ''
+                END as title,
+            l.create_time as createTime,
+            CASE
+                WHEN l.type = '2' THEN SUBSTRING(a.content, 1, 150)
+                ELSE ''
+                END as contentSummary,
+            CASE
+                WHEN l.type = '1' THEN SUBSTRING(les.description, 1, 150)
+                ELSE ''
+                END as descriptionSummary
+        FROM
+            study_user_like l
+                LEFT JOIN
+            study_lesson les ON l.type = '1' AND l.target_id = les.lesson_id
+                LEFT JOIN
+            study_article a ON l.type = '2' AND l.target_id = a.article_id
+        WHERE
+            l.user_id = #{userId}
+        ORDER BY
+            l.create_time DESC
+            LIMIT
+            #{limit}
+    </select>
+
 </mapper> 

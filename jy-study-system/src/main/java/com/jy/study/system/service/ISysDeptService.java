@@ -8,7 +8,7 @@ import com.jy.study.common.core.domain.entity.SysRole;
 /**
  * 部门管理 服务层
  * 
- * @author ruoyi
+ * @author jily
  */
 public interface ISysDeptService
 {

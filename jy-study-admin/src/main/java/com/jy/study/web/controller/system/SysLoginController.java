@@ -2,6 +2,8 @@ package com.jy.study.web.controller.system;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.jy.study.common.core.domain.entity.SysUser;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -19,11 +21,13 @@ import com.jy.study.common.core.text.Convert;
 import com.jy.study.common.utils.ServletUtils;
 import com.jy.study.common.utils.StringUtils;
 import com.jy.study.framework.web.service.ConfigService;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 登录验证
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 public class SysLoginController extends BaseController
@@ -31,7 +35,7 @@ public class SysLoginController extends BaseController
     /**
      * 是否开启记住我功能
      */
-    @Value("${shiro.rememberMe.enabled: false}")
+    @Value("${shiro.rememberMe.enabled: true}")
     private boolean rememberMe;
 
     @Autowired
@@ -48,7 +52,7 @@ public class SysLoginController extends BaseController
         // 是否开启记住我
         mmap.put("isRemembered", rememberMe);
         // 是否开启用户注册
-        mmap.put("isAllowRegister", Convert.toBool(configService.getKey("sys.account.registerUser"), false));
+        mmap.put("isAllowRegister", Convert.toBool(configService.getKey("sys.account.registerUser"), true));
         return "login";
     }
 

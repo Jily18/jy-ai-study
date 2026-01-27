@@ -23,7 +23,7 @@ import com.jy.study.system.service.ISysPostService;
 /**
  * 岗位信息操作处理
  * 
- * @author ruoyi
+ * @author jily
  */
 @Controller
 @RequestMapping("/system/post")

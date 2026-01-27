@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.apache.shiro.subject.Subject;
+import org.springframework.util.StringUtils;
 
 @RestController
 @RequestMapping("/web/interaction")
@@ -31,35 +33,13 @@ public class WebInteractionController extends BaseController {
     @Autowired
     private IStudyLessonService lessonService;
 
-    /**
-     * 获取当前用户ID，优先获取前台session中的用户，如果没有则尝试获取后台登录用户
-     */
-    private Long getCurrentUserId(HttpServletRequest request) {
-        // 先尝试获取前台session中的用户
-        HttpSession session = request.getSession();
-        SysUser webUser = (SysUser) session.getAttribute("webUser");
-        if (webUser != null) {
-            return webUser.getUserId();
-        }
-        
-        // 如果前台未登录，尝试获取后台登录用户
-        try {
-            if (SecurityUtils.getSubject() != null && SecurityUtils.getSubject().getPrincipal() != null) {
-                return getUserId();
-            }
-        } catch (Exception e) {
-            // 忽略异常
-        }
-        
-        return null;
-    }
 
     @PostMapping("/like")
     public AjaxResult like(String type, Long targetId, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
-        log.info("/like !! userId:"+userId);
+        Long userId = ShiroUtils.getSysUser().getUserId();
 
         if (userId == null) {
+            log.warn("Like operation failed - User not authenticated");
             return error("请先登录");
         }
         boolean result = interactionService.like(userId, type, targetId);
@@ -68,7 +48,7 @@ public class WebInteractionController extends BaseController {
     
     @PostMapping("/unlike")
     public AjaxResult unlike(String type, Long targetId, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
+        Long userId = ShiroUtils.getUserId();
         if (userId == null) {
             return error("请先登录");
         }
@@ -78,9 +58,7 @@ public class WebInteractionController extends BaseController {
     
     @PostMapping("/collect")
     public AjaxResult collect(String type, Long targetId, HttpServletRequest request){
-        Long userId = getCurrentUserId(request);
-        log.info("/collect !! userId:"+userId);
-
+        Long userId = ShiroUtils.getUserId();
         if (userId == null) {
             return error("请先登录");
         }
@@ -90,7 +68,7 @@ public class WebInteractionController extends BaseController {
     
     @PostMapping("/uncollect")
     public AjaxResult uncollect(String type, Long targetId, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
+        Long userId = ShiroUtils.getUserId();
         if (userId == null) {
             return error("请先登录");
         }
@@ -100,8 +78,11 @@ public class WebInteractionController extends BaseController {
     
     @GetMapping("/status")
     public AjaxResult getStatus(String type, Long targetId, HttpServletRequest request) {
-        Long userId = getCurrentUserId(request);
-        log.info("/status !! userId:"+userId);
+        Long userId = ShiroUtils.getUserId();
+        if(userId == null){
+            return success()
+                    .put("data", new StatusResult(false, false));
+        }
         boolean liked = false;
         boolean collected = false;
         if (userId != null) {
@@ -116,7 +97,7 @@ public class WebInteractionController extends BaseController {
     @PostMapping("/view")
     @ResponseBody
     public AjaxResult recordView(String type, Long targetId, HttpServletRequest request) {
-        if (targetId == null) {
+        if (StringUtils.isEmpty(type) || targetId == null) {
             return AjaxResult.error("参数错误");
         }
         
@@ -134,14 +115,9 @@ public class WebInteractionController extends BaseController {
         } else {
             return AjaxResult.error("类型错误");
         }
-        
-        // 获取当前用户ID(优先获取前台用户)
-        Long userId = getCurrentUserId(request);
-        
-        // 获取IP地址
-        String ipAddr = ShiroUtils.getIp();
-        // 记录浏览信息(先不异步做)
-        interactionService.recordView(userId, type, targetId, ipAddr);
+
+        // 记录浏览信息
+        interactionService.recordView(type, targetId);
         return AjaxResult.success();
     }
     

@@ -12,7 +12,7 @@ import com.jy.study.system.service.ISysDictDataService;
 /**
  * 字典 业务层处理
  * 
- * @author ruoyi
+ * @author jily
  */
 @Service
 public class SysDictDataServiceImpl implements ISysDictDataService
